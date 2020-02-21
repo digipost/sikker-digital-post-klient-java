@@ -20,13 +20,13 @@ public class KlientKonfigurasjon {
     }
 
     @Deprecated
-    public static Builder builder(String meldingsformidlerRootUri) {
-        return builder(URI.create(meldingsformidlerRootUri));
+    public static Builder builder(String integrasjonspunktRootUri) {
+        return builder(URI.create(integrasjonspunktRootUri));
     }
 
     @Deprecated
-    public static Builder builder(URI meldingsformidlerRoot) {
-        return builder(new Miljo(null, meldingsformidlerRoot));
+    public static Builder builder(URI integrasjonspunktRoot) {
+        return builder(new Miljo(null, integrasjonspunktRoot));
     }
 
 

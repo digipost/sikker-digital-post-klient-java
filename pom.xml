@@ -5,14 +5,14 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <sdp-shared.version>2.13</sdp-shared.version>
+        <sdp-shared.version>2.17-SNAPSHOT</sdp-shared.version>
 
         <spring.ws.version>3.0.7.RELEASE</spring.ws.version>
     </properties>
 
     <groupId>no.difi.sdp</groupId>
     <artifactId>sikker-digital-post-klient-java</artifactId>
-    <version>5.10-SNAPSHOT</version>
+    <version>LOCAL-SNAPSHOT</version>
     <name>Sikker digital post-klient</name>
 
     <description>
@@ -28,9 +28,24 @@
     <dependencies>
 
         <dependency>
-            <groupId>jakarta.xml.bind</groupId>
-            <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>2.3.2</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.10.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.10.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.10.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.10.2</version>
         </dependency>
 
         <dependency>
@@ -70,25 +85,37 @@
             <artifactId>commons-io</artifactId>
             <version>2.6</version>
         </dependency>
-
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>2.3.2</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
-            <version>4.4.11</version>
+            <version>4.4.13</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.10</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
             <version>1.62</version>
         </dependency>
-
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
             <version>1.62</version>
         </dependency>
-
         <dependency>
             <groupId>no.digipost</groupId>
             <artifactId>sdp-api-client</artifactId>
@@ -98,6 +125,7 @@
             <groupId>no.digipost</groupId>
             <artifactId>sdp-xsd</artifactId>
             <version>${sdp-shared.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>no.digipost</groupId>
@@ -127,17 +155,6 @@
             <groupId>org.springframework.ws</groupId>
             <artifactId>spring-xml</artifactId>
             <version>${spring.ws.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.ws</groupId>
-            <artifactId>spring-ws-security</artifactId>
-            <version>${spring.ws.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>net.sf.ehcache</groupId>
-                    <artifactId>ehcache</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
@@ -350,6 +367,12 @@
                                     <include>com.sun.xml.messaging.saaj</include>
                                     <include>org.jvnet.mimepull:mimepull</include>
                                     <include>org.jvnet.staxex:stax-ex</include>
+                                    <include>com.fasterxml.jackson.core:jackson-annotations</include>
+                                    <include>com.fasterxml.jackson.core:jackson-core</include>
+                                    <include>com.fasterxml.jackson.core:jackson-databind</include>
+                                    <include>com.fasterxml.jackson.datatype:jackson-datatype-jsr310</include>
+
+
                                 </includes>
                                 <searchTransitive>true</searchTransitive>
                                 <message>

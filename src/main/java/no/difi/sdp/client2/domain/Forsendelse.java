@@ -12,13 +12,14 @@ import static no.difi.sdp.client2.domain.Forsendelse.Type.FYSISK;
 public class Forsendelse {
 
 	public enum Type {
-		DIGITAL(PMode.Action.FORMIDLE_DIGITAL),
-        FYSISK(PMode.Action.FORMIDLE_FYSISK);
+        DIGITAL("urn:no:difi:digitalpost:xsd:digital::digital"),
+        FYSISK("urn:no:difi:digitalpost:xsd:fysisk::print"),
+        ;
 
-        public final PMode.Action action;
+        public final String type;
 
-        Type(PMode.Action action) {
-            this.action = action;
+        Type(String type) {
+            this.type = type;
         }
     }
 

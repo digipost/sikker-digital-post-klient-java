@@ -1,29 +1,43 @@
 package no.difi.sdp.client2;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.difi.sdp.client2.domain.Databehandler;
 import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.exceptions.SendException;
 import no.difi.sdp.client2.domain.kvittering.ForretningsKvittering;
 import no.difi.sdp.client2.domain.kvittering.KvitteringForespoersel;
-import no.difi.sdp.client2.internal.Billable;
+import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
+import no.difi.sdp.client2.foretningsmelding.IntegrasjonspunktMessageSerializer;
 import no.difi.sdp.client2.internal.CertificateValidator;
-import no.difi.sdp.client2.internal.DigipostMessageSenderFacade;
-import no.difi.sdp.client2.internal.EbmsForsendelseBuilder;
+import no.difi.sdp.client2.internal.IntegrasjonspunktMessageSenderFacade;
 import no.difi.sdp.client2.internal.KvitteringBuilder;
+import no.difi.sdp.client2.internal.SBDForsendelseBuilder;
 import no.difi.sdp.client2.util.CryptoChecker;
 import no.digipost.api.representations.EbmsApplikasjonsKvittering;
-import no.digipost.api.representations.EbmsForsendelse;
 import no.digipost.api.representations.EbmsPullRequest;
 import no.digipost.api.representations.KanBekreftesSomBehandletKvittering;
-import no.digipost.api.representations.TransportKvittering;
+import org.apache.commons.io.FileUtils;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.springframework.ws.client.core.WebServiceTemplate;
+
+import java.io.File;
+import java.io.IOException;
 
 public class SikkerDigitalPostKlient {
 
     private final Databehandler databehandler;
-    private final EbmsForsendelseBuilder ebmsForsendelseBuilder;
+    private final SBDForsendelseBuilder SBDForsendelseBuilder;
     private final KvitteringBuilder kvitteringBuilder;
-    private final DigipostMessageSenderFacade digipostMessageSenderFacade;
+    private final IntegrasjonspunktMessageSenderFacade integrasjonspunktMessageSenderFacade;
     private final KlientKonfigurasjon klientKonfigurasjon;
 
     /**
@@ -34,9 +48,9 @@ public class SikkerDigitalPostKlient {
     public SikkerDigitalPostKlient(Databehandler databehandler, KlientKonfigurasjon klientKonfigurasjon) {
         CryptoChecker.checkCryptoPolicy();
 
-        this.ebmsForsendelseBuilder = new EbmsForsendelseBuilder();
+        this.SBDForsendelseBuilder = new SBDForsendelseBuilder();
         this.kvitteringBuilder = new KvitteringBuilder();
-        this.digipostMessageSenderFacade = new DigipostMessageSenderFacade(databehandler, klientKonfigurasjon);
+        this.integrasjonspunktMessageSenderFacade = new IntegrasjonspunktMessageSenderFacade(databehandler, klientKonfigurasjon);
 
         this.klientKonfigurasjon = klientKonfigurasjon;
         this.databehandler = databehandler;
@@ -52,10 +66,64 @@ public class SikkerDigitalPostKlient {
      * @throws SendException
      */
     public SendResultat send(Forsendelse forsendelse) throws SendException {
-        Billable<EbmsForsendelse> forsendelseBundleWithBillableBytes = ebmsForsendelseBuilder.buildEbmsForsendelse(databehandler, klientKonfigurasjon.getMeldingsformidlerOrganisasjon(), forsendelse);
-        TransportKvittering kvittering = digipostMessageSenderFacade.send(forsendelseBundleWithBillableBytes.entity);
+        StandardBusinessDocument sbd = SBDForsendelseBuilder.buildSBD(databehandler, forsendelse);
 
-        return new SendResultat(kvittering.messageId, kvittering.refToMessageId, forsendelseBundleWithBillableBytes.billableBytes);
+        try {
+            final SimpleModule sbdSerializerModule = new SimpleModule("sbd-serializer");
+            sbdSerializerModule.addSerializer(StandardBusinessDocument.class, new IntegrasjonspunktMessageSerializer());
+
+            String json = new ObjectMapper()
+                    .registerModule(new JavaTimeModule())
+                    .registerModule(sbdSerializerModule)
+
+                    .enable(SerializationFeature.INDENT_OUTPUT)
+                    .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                    .writeValueAsString(sbd);
+            System.out.println(json);
+
+            System.out.println();
+            System.out.println("-------------------------------------");
+            System.out.println();
+
+
+            HttpPost httpPost = new HttpPost("http://localhost:9093/api/messages/out");
+            httpPost.setEntity(new StringEntity(json));
+            httpPost.setHeader("content-type", "application/json");
+            CloseableHttpResponse response = HttpClients.createDefault().execute(httpPost);
+            System.out.println(EntityUtils.toString(response.getEntity()));
+
+            //if ok
+
+            File file = new File("/Users/johnksv/Downloads/test.pdf");
+
+            final String conversationId = sbd.getConversationId();
+
+            lastOppFil(conversationId, file, "primær");
+            lastOppFil(conversationId, file, "sekundær");
+
+            HttpPost fileHttpPost = new HttpPost("http://localhost:9093/api/messages/out/" + conversationId);
+            CloseableHttpResponse fileResponsePost = HttpClients.createDefault().execute(fileHttpPost);
+            System.out.println(EntityUtils.toString(fileResponsePost.getEntity()));
+
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
+
+        return null;
+    }
+
+    private void lastOppFil(String instanceIdentifier, File file, String title) throws IOException {
+        HttpPut fileHttpPut = new HttpPut("http://localhost:9093/api/messages/out/" + instanceIdentifier + "?title=" + title);
+        fileHttpPut.setEntity(new ByteArrayEntity(FileUtils.readFileToByteArray(file)));
+        fileHttpPut.setHeader("content-type", "application/pdf");
+        if (title.equals("primær")) {
+            fileHttpPut.setHeader("content-disposition", "attachment; filename=\"faktura.pdf\"");
+        } else {
+            fileHttpPut.setHeader("content-disposition", "attachment; filename=\"sekundær.pdf\"");
+        }
+        CloseableHttpResponse fileResponse = HttpClients.createDefault().execute(fileHttpPut);
+        System.out.println(EntityUtils.toString(fileResponse.getEntity()));
     }
 
     /**
@@ -92,9 +160,9 @@ public class SikkerDigitalPostKlient {
 
         EbmsApplikasjonsKvittering ebmsApplikasjonsKvittering;
         if (forrigeKvittering == null) {
-            ebmsApplikasjonsKvittering = digipostMessageSenderFacade.hentKvittering(ebmsPullRequest);
+            ebmsApplikasjonsKvittering = integrasjonspunktMessageSenderFacade.hentKvittering(ebmsPullRequest);
         } else {
-            ebmsApplikasjonsKvittering = digipostMessageSenderFacade.hentKvittering(ebmsPullRequest, forrigeKvittering);
+            ebmsApplikasjonsKvittering = integrasjonspunktMessageSenderFacade.hentKvittering(ebmsPullRequest, forrigeKvittering);
         }
 
         if (ebmsApplikasjonsKvittering == null) {
@@ -116,14 +184,14 @@ public class SikkerDigitalPostKlient {
      * </ol>
      */
     public void bekreft(KanBekreftesSomBehandletKvittering forrigeKvittering) throws SendException {
-        digipostMessageSenderFacade.bekreft(forrigeKvittering);
+        integrasjonspunktMessageSenderFacade.bekreft(forrigeKvittering);
     }
 
     /**
      * Registrer egen ExceptionMapper.
      */
     public void setExceptionMapper(ExceptionMapper exceptionMapper) {
-        this.digipostMessageSenderFacade.setExceptionMapper(exceptionMapper);
+        this.integrasjonspunktMessageSenderFacade.setExceptionMapper(exceptionMapper);
     }
 
     /**
@@ -134,12 +202,11 @@ public class SikkerDigitalPostKlient {
      * Man vil ikke under normale omstendigheter aksessere denne i produksjonskode.
      *
      * @return Spring {@code WebServiceTemplate} som er konfigurert internt i klientbiblioteket
-     *
      * @see <a href="https://docs.spring.io/spring-ws/docs/3.0.7.RELEASE/reference/#_using_the_client_side_api">Spring WS - 6.2. Using the client-side API</a>
      * @see <a href="https://docs.spring.io/spring-ws/docs/3.0.7.RELEASE/reference/#_client_side_testing">Spring WS - 6.3. Client-side testing</a>
      */
     public WebServiceTemplate getMeldingTemplate() {
-        return digipostMessageSenderFacade.getMeldingTemplate();
+        return integrasjonspunktMessageSenderFacade.getMeldingTemplate();
     }
 
 }

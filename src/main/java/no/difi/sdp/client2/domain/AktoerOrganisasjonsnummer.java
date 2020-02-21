@@ -1,7 +1,5 @@
 package no.difi.sdp.client2.domain;
 
-import no.digipost.api.representations.Organisasjonsnummer;
-
 public interface AktoerOrganisasjonsnummer {
 
     static AktoerOrganisasjonsnummer of(String organisasjonsnummer) {

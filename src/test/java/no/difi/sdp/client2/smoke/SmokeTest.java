@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 
-@Disabled("This test runs the client against a deployed backed, and thus needs correct keys set up. " +
-        "Run it, and it will tell you how to set things up!")
+//@Disabled("This test runs the client against a deployed backed, and thus needs correct keys set up. " +
+//        "Run it, and it will tell you how to set things up!")
 public class SmokeTest {
 
     @Test

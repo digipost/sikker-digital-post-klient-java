@@ -31,15 +31,15 @@ import java.util.function.Supplier;
 import static no.difi.sdp.client2.domain.exceptions.SendException.AntattSkyldig.KLIENT;
 import static no.difi.sdp.client2.domain.exceptions.SendException.AntattSkyldig.SERVER;
 
-public class DigipostMessageSenderFacade {
+public class IntegrasjonspunktMessageSenderFacade {
 
     private final MessageSender messageSender;
     private ExceptionMapper exceptionMapper = new ExceptionMapper();
 
 
-    public DigipostMessageSenderFacade(final Databehandler databehandler, final KlientKonfigurasjon klientKonfigurasjon) {
+    public IntegrasjonspunktMessageSenderFacade(final Databehandler databehandler, final KlientKonfigurasjon klientKonfigurasjon) {
         KeyStoreInfo keyStoreInfo = databehandler.noekkelpar.getKeyStoreInfo();
-        WsSecurityInterceptor wsSecurityInterceptor = new WsSecurityInterceptor(keyStoreInfo, new Wss4jClientSecurityExceptionMapper());
+        WsSecurityInterceptor wsSecurityInterceptor = new WsSecurityInterceptor(keyStoreInfo, null);
         wsSecurityInterceptor.afterPropertiesSet();
 
         MessageSender.Builder messageSenderBuilder = MessageSender.create(klientKonfigurasjon.getMeldingsformidlerRoot(),

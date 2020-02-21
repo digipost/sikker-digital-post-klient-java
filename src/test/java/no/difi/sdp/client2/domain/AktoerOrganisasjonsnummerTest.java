@@ -1,6 +1,5 @@
 package no.difi.sdp.client2.domain;
 
-import no.digipost.api.representations.Organisasjonsnummer;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;

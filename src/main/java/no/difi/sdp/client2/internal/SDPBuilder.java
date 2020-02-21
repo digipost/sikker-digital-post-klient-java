@@ -58,7 +58,7 @@ public class SDPBuilder {
         String spraakkode = forsendelse.getSpraakkode();
         SDPDokument sdpHovedDokument = sdpDokument(forsendelse.getDokumentpakke().getHoveddokument(), spraakkode);
 
-        List<SDPDokument> sdpVedlegg = new ArrayList<SDPDokument>();
+        List<SDPDokument> sdpVedlegg = new ArrayList<>();
         for (Dokument dokument : forsendelse.getDokumentpakke().getVedlegg()) {
             sdpVedlegg.add(sdpDokument(dokument, spraakkode));
         }
@@ -184,7 +184,7 @@ public class SDPBuilder {
     	final T _4;
 
     	static <T> UpTo4ElementsOfList<T> extract(Iterable<T> iterable) {
-    		return new UpTo4ElementsOfList<T>(iterable);
+    		return new UpTo4ElementsOfList<>(iterable);
     	}
 
     	private UpTo4ElementsOfList(Iterable<T> iterable) {

@@ -6,7 +6,7 @@ import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.Mottaker;
 import no.difi.sdp.client2.domain.digital_post.DigitalPost;
 import no.difi.sdp.client2.domain.exceptions.XmlValideringException;
-import no.digipost.api.representations.Organisasjonsnummer;
+import no.difi.sdp.client2.domain.Organisasjonsnummer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

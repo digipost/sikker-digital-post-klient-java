@@ -22,6 +22,7 @@ import no.difi.sdp.client2.domain.MetadataDokument;
 import no.difi.sdp.client2.domain.Mottaker;
 import no.difi.sdp.client2.domain.NoValidationNoekkelpar;
 import no.difi.sdp.client2.domain.Noekkelpar;
+import no.difi.sdp.client2.domain.Organisasjonsnummer;
 import no.difi.sdp.client2.domain.Prioritet;
 import no.difi.sdp.client2.domain.Sertifikat;
 import no.difi.sdp.client2.domain.digital_post.DigitalPost;
@@ -31,7 +32,6 @@ import no.difi.sdp.client2.domain.digital_post.SmsVarsel;
 import no.difi.sdp.client2.internal.TrustedCertificates;
 import no.digipost.api.representations.EbmsAktoer;
 import no.digipost.api.representations.EbmsApplikasjonsKvittering;
-import no.digipost.api.representations.Organisasjonsnummer;
 import no.digipost.api.representations.StandardBusinessDocumentFactory;
 import no.digipost.security.DigipostSecurity;
 import org.springframework.core.io.ClassPathResource;
@@ -132,7 +132,7 @@ public class ObjectMother {
                 .varselEtterDager(asList(1, 4, 10))
                 .build();
 
-        Mottaker mottaker = Mottaker.builder("04036125433", "ove.jonsen#6K5A", mottakerSertifikat(), Organisasjonsnummer.of("984661185"))
+        Mottaker mottaker = Mottaker.builder("30066714477", "", mottakerSertifikat(), Organisasjonsnummer.of("984661185"))
                 .build();
 
         SmsVarsel smsVarsel = SmsVarsel.builder("4799999999", varslingsTekst)
@@ -156,7 +156,7 @@ public class ObjectMother {
     }
 
     public static AvsenderOrganisasjonsnummer avsenderOrganisasjonsnummer() {
-        return AktoerOrganisasjonsnummer.of("988015814").forfremTilAvsender();
+        return AktoerOrganisasjonsnummer.of("984661185").forfremTilAvsender();
     }
 
     private static Sertifikat DigipostMottakerSertifikatTest() {
@@ -226,8 +226,8 @@ public class ObjectMother {
         StandardBusinessDocument sbd = new StandardBusinessDocument().withStandardBusinessDocumentHeader(
                 new StandardBusinessDocumentHeader()
                         .withHeaderVersion("1.0")
-                        .withSenders(new Partner().withIdentifier(new PartnerIdentification(avsenderOrganisasjonsnummer.getOrganisasjonsnummerMedLandkode(), Organisasjonsnummer.ISO6523_ACTORID)))
-                        .withReceivers(new Partner().withIdentifier(new PartnerIdentification(mottakerOrganisasjonsnummer.getOrganisasjonsnummerMedLandkode(), Organisasjonsnummer.ISO6523_ACTORID)))
+                        .withSender(new Partner().withIdentifier(new PartnerIdentification(avsenderOrganisasjonsnummer.getOrganisasjonsnummerMedLandkode(), Organisasjonsnummer.ISO6523_ACTORID)))
+                        .withReceiver(new Partner().withIdentifier(new PartnerIdentification(mottakerOrganisasjonsnummer.getOrganisasjonsnummerMedLandkode(), Organisasjonsnummer.ISO6523_ACTORID)))
                         .withDocumentIdentification(new DocumentIdentification()
                                 .withStandard("urn:no:difi:sdp:1.0")
                                 .withTypeVersion("1.0")
@@ -236,7 +236,7 @@ public class ObjectMother {
                                 .withCreationDateAndTime(ZonedDateTime.now())
                         )
                         .withBusinessScope(new BusinessScope()
-                                .withScopes(new Scope()
+                                .withScope(new Scope()
                                         .withIdentifier("urn:no:difi:sdp:1.0")
                                         .withType("ConversationId")
                                         .withInstanceIdentifier(UUID.randomUUID().toString())
@@ -245,7 +245,7 @@ public class ObjectMother {
         )
                 .withAny(sdpMelding);
 
-        EbmsApplikasjonsKvittering build = EbmsApplikasjonsKvittering.create(EbmsAktoer.avsender(avsenderOrganisasjonsnummer), EbmsAktoer.postkasse(mottakerOrganisasjonsnummer), sbd)
+        EbmsApplikasjonsKvittering build = EbmsApplikasjonsKvittering.create(EbmsAktoer.avsender(avsenderOrganisasjonsnummer.getOrganisasjonsnummer()), EbmsAktoer.postkasse(mottakerOrganisasjonsnummer.getOrganisasjonsnummer()), sbd)
                 .withReferences(getReferences())
                 .withRefToMessageId("RefToMessageId")
                 .build();
@@ -310,7 +310,7 @@ public class ObjectMother {
     public static Forsendelse forsendelse(String mpcId, InputStream dokumentStream) {
         DigitalPost digitalPost = digitalPost();
 
-        Dokument hovedDokument = Dokument.builder("Sensitiv brevtittel", "faktura.pdf", dokumentStream)
+        Dokument hovedDokument = Dokument.builder("ikkesensitiv brevtittel", "faktura.pdf", dokumentStream)
                 .mimeType("application/pdf")
                 .build();
 
