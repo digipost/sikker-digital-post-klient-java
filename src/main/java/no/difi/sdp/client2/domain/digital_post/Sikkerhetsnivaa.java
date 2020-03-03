@@ -1,6 +1,6 @@
 package no.difi.sdp.client2.domain.digital_post;
 
-import no.difi.begrep.sdp.schema_v10.SDPSikkerhetsnivaa;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum Sikkerhetsnivaa {
 
@@ -9,22 +9,23 @@ public enum Sikkerhetsnivaa {
      *
      * Vanligvis passord.
      */
-    NIVAA_3(SDPSikkerhetsnivaa.NIVAA_3),
+    NIVAA_3(3),
 
     /**
      * Offentlig godkjent to-faktor elektronisk ID.
      *
      * For eksempel BankID, Buypass eller Commfides.
      */
-    NIVAA_4(SDPSikkerhetsnivaa.NIVAA_4);
+    NIVAA_4(4);
 
-    private final SDPSikkerhetsnivaa xmlValue;
+    private final int verdi;
 
-    Sikkerhetsnivaa(SDPSikkerhetsnivaa xmlValue) {
-        this.xmlValue = xmlValue;
+    Sikkerhetsnivaa(int verdi) {
+        this.verdi = verdi;
     }
 
-    public SDPSikkerhetsnivaa getXmlValue() {
-        return xmlValue;
+    @JsonValue
+    public int getVerdi() {
+        return verdi;
     }
 }

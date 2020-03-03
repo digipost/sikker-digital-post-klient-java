@@ -1,7 +1,6 @@
 package no.difi.sdp.client2.domain.sbdh;
 
 import java.io.Serializable;
-import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.Objects;
 

@@ -2,7 +2,6 @@ package no.difi.sdp.client2.domain;
 
 import no.difi.sdp.client2.domain.digital_post.DigitalPost;
 import no.difi.sdp.client2.domain.fysisk_post.FysiskPost;
-import no.digipost.api.PMode;
 
 import java.util.UUID;
 
@@ -29,7 +28,6 @@ public class Forsendelse {
     private final Dokumentpakke dokumentpakke;
     private final Avsender avsender;
     private String konversasjonsId = UUID.randomUUID().toString();
-    private Prioritet prioritet = Prioritet.NORMAL;
     private String spraakkode = "NO";
     private String mpcId;
 
@@ -63,10 +61,6 @@ public class Forsendelse {
 
     public Dokumentpakke getDokumentpakke() {
         return dokumentpakke;
-    }
-
-    public Prioritet getPrioritet() {
-        return prioritet;
     }
 
     public String getSpraakkode() {
@@ -116,14 +110,6 @@ public class Forsendelse {
          */
         public Builder konversasjonsId(String konversasjonsId) {
             target.konversasjonsId = konversasjonsId;
-            return this;
-        }
-
-        /**
-         * Standard er {@link no.difi.sdp.client2.domain.Prioritet#NORMAL}
-         */
-        public Builder prioritet(Prioritet prioritet) {
-            target.prioritet = prioritet;
             return this;
         }
 

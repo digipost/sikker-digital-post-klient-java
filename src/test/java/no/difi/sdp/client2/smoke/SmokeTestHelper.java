@@ -7,7 +7,6 @@ import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.Miljo;
 import no.difi.sdp.client2.domain.Noekkelpar;
 import no.difi.sdp.client2.domain.Organisasjonsnummer;
-import no.difi.sdp.client2.domain.Prioritet;
 import no.difi.sdp.client2.domain.kvittering.ForretningsKvittering;
 import no.difi.sdp.client2.domain.kvittering.KvitteringForespoersel;
 import no.difi.sdp.client2.domain.kvittering.LeveringsKvittering;
@@ -16,9 +15,7 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x500.style.IETFUtils;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
-import org.springframework.core.io.ClassPathResource;
 
-import java.io.IOException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.cert.CertificateEncodingException;
@@ -41,7 +38,6 @@ import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 class SmokeTestHelper {
 
@@ -87,11 +83,7 @@ class SmokeTestHelper {
         assertState(_klient);
 
         Forsendelse forsendelse = null;
-        try {
-            forsendelse = forsendelse(_mpcId, new ClassPathResource("/test.pdf").getInputStream());
-        } catch (IOException e) {
-            fail("klarte ikke åpne hoveddokument.");
-        }
+        forsendelse = forsendelse(_mpcId, SmokeTestHelper.class.getResourceAsStream("/test.pdf"));
 
         _forsendelse = forsendelse;
 
@@ -107,7 +99,7 @@ class SmokeTestHelper {
     }
 
     SmokeTestHelper fetch_receipt() {
-        KvitteringForespoersel kvitteringForespoersel = KvitteringForespoersel.builder(Prioritet.PRIORITERT).mpcId(_mpcId).build();
+        KvitteringForespoersel kvitteringForespoersel = KvitteringForespoersel.builder().mpcId(_mpcId).build();
         ForretningsKvittering forretningsKvittering = null;
 
         try {

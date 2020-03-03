@@ -1,4 +1,4 @@
-package no.difi.sdp.client2.foretningsmelding;
+package no.difi.sdp.client2.domain;
 
 public enum ForretningMeldingsType {
     DIGITAL("digital"),

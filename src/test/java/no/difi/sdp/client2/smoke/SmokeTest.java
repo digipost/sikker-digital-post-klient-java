@@ -1,7 +1,6 @@
 package no.difi.sdp.client2.smoke;
 
 import no.difi.sdp.client2.domain.Miljo;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 

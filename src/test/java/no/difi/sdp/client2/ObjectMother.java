@@ -1,15 +1,5 @@
 package no.difi.sdp.client2;
 
-import no.difi.begrep.sdp.schema_v10.SDPAapning;
-import no.difi.begrep.sdp.schema_v10.SDPFeil;
-import no.difi.begrep.sdp.schema_v10.SDPFeiltype;
-import no.difi.begrep.sdp.schema_v10.SDPKvittering;
-import no.difi.begrep.sdp.schema_v10.SDPLevering;
-import no.difi.begrep.sdp.schema_v10.SDPMelding;
-import no.difi.begrep.sdp.schema_v10.SDPMottak;
-import no.difi.begrep.sdp.schema_v10.SDPReturpost;
-import no.difi.begrep.sdp.schema_v10.SDPVarslingfeilet;
-import no.difi.begrep.sdp.schema_v10.SDPVarslingskanal;
 import no.difi.sdp.client2.domain.AktoerOrganisasjonsnummer;
 import no.difi.sdp.client2.domain.Avsender;
 import no.difi.sdp.client2.domain.AvsenderOrganisasjonsnummer;
@@ -23,29 +13,13 @@ import no.difi.sdp.client2.domain.Mottaker;
 import no.difi.sdp.client2.domain.NoValidationNoekkelpar;
 import no.difi.sdp.client2.domain.Noekkelpar;
 import no.difi.sdp.client2.domain.Organisasjonsnummer;
-import no.difi.sdp.client2.domain.Prioritet;
 import no.difi.sdp.client2.domain.Sertifikat;
 import no.difi.sdp.client2.domain.digital_post.DigitalPost;
 import no.difi.sdp.client2.domain.digital_post.EpostVarsel;
 import no.difi.sdp.client2.domain.digital_post.Sikkerhetsnivaa;
 import no.difi.sdp.client2.domain.digital_post.SmsVarsel;
 import no.difi.sdp.client2.internal.TrustedCertificates;
-import no.digipost.api.representations.EbmsAktoer;
-import no.digipost.api.representations.EbmsApplikasjonsKvittering;
-import no.digipost.api.representations.StandardBusinessDocumentFactory;
 import no.digipost.security.DigipostSecurity;
-import org.springframework.core.io.ClassPathResource;
-import org.unece.cefact.namespaces.standardbusinessdocumentheader.BusinessScope;
-import org.unece.cefact.namespaces.standardbusinessdocumentheader.DocumentIdentification;
-import org.unece.cefact.namespaces.standardbusinessdocumentheader.Partner;
-import org.unece.cefact.namespaces.standardbusinessdocumentheader.PartnerIdentification;
-import org.unece.cefact.namespaces.standardbusinessdocumentheader.Scope;
-import org.unece.cefact.namespaces.standardbusinessdocumentheader.StandardBusinessDocument;
-import org.unece.cefact.namespaces.standardbusinessdocumentheader.StandardBusinessDocumentHeader;
-import org.w3.xmldsig.DigestMethod;
-import org.w3.xmldsig.Reference;
-import org.w3.xmldsig.Transform;
-import org.w3.xmldsig.Transforms;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -53,13 +27,9 @@ import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
-
-import static java.util.Arrays.asList;
 
 public class ObjectMother {
 
@@ -96,7 +66,7 @@ public class ObjectMother {
     private static KeyStore getKeyStore(String path, String password, String keyStoreType) {
         try {
             KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-            keyStore.load(new ClassPathResource(path).getInputStream(), password.toCharArray());
+            keyStore.load(ObjectMother.class.getResourceAsStream(path), password.toCharArray());
             return keyStore;
 
         } catch (Exception e) {
@@ -120,7 +90,6 @@ public class ObjectMother {
 
         return Forsendelse.digital(avsender, digitalPost, dokumentpakke)
                 .konversasjonsId(UUID.randomUUID().toString())
-                .prioritet(Prioritet.PRIORITERT)
                 .spraakkode("NO")
                 .build();
     }
@@ -128,17 +97,16 @@ public class ObjectMother {
     public static DigitalPost digitalPost() {
         String varslingsTekst = "Du har mottatt brev i din digitale postkasse";
 
-        EpostVarsel epostVarsel = EpostVarsel.builder("example@email.org", varslingsTekst)
-                .varselEtterDager(asList(1, 4, 10))
+        EpostVarsel epostVarsel = EpostVarsel.builder(varslingsTekst)
                 .build();
 
         Mottaker mottaker = Mottaker.builder("30066714477", "", mottakerSertifikat(), Organisasjonsnummer.of("984661185"))
                 .build();
 
-        SmsVarsel smsVarsel = SmsVarsel.builder("4799999999", varslingsTekst)
+        SmsVarsel smsVarsel = SmsVarsel.builder(varslingsTekst)
                 .build();
 
-        return DigitalPost.builder(mottaker, "Ikke-sensitiv tittel for forsendelsen")
+        return DigitalPost.builder(mottaker)
                 .virkningsdato(new Date())
                 .aapningskvittering(false)
                 .sikkerhetsnivaa(Sikkerhetsnivaa.NIVAA_3)
@@ -191,7 +159,7 @@ public class ObjectMother {
     }
 
     public static Databehandler databehandler() {
-        return Databehandler.builder(databehandlerOrganisasjonsnummer(), selvsignertNoekkelparUtenTrustStore()).build();
+        return Databehandler.builder(databehandlerOrganisasjonsnummer()).build();
     }
 
     public static Noekkelpar selvsignertNoekkelparUtenTrustStore() {
@@ -214,93 +182,93 @@ public class ObjectMother {
         return Mottaker.builder("01129955131", "postkasseadresse", mottakerSertifikat(), Organisasjonsnummer.of("984661185")).build();
     }
 
-    public static EbmsApplikasjonsKvittering createEbmsFeil(final SDPFeiltype feiltype) {
-        SDPFeil sdpFeil = new SDPFeil(null, ZonedDateTime.now(), feiltype, "Feilinformasjon");
-        return createEbmsKvittering(sdpFeil);
-    }
-
-    public static EbmsApplikasjonsKvittering createEbmsKvittering(final Object sdpMelding) {
-        Organisasjonsnummer avsenderOrganisasjonsnummer = Organisasjonsnummer.of("984661185");
-        Organisasjonsnummer mottakerOrganisasjonsnummer = Organisasjonsnummer.of("988015814");
-
-        StandardBusinessDocument sbd = new StandardBusinessDocument().withStandardBusinessDocumentHeader(
-                new StandardBusinessDocumentHeader()
-                        .withHeaderVersion("1.0")
-                        .withSender(new Partner().withIdentifier(new PartnerIdentification(avsenderOrganisasjonsnummer.getOrganisasjonsnummerMedLandkode(), Organisasjonsnummer.ISO6523_ACTORID)))
-                        .withReceiver(new Partner().withIdentifier(new PartnerIdentification(mottakerOrganisasjonsnummer.getOrganisasjonsnummerMedLandkode(), Organisasjonsnummer.ISO6523_ACTORID)))
-                        .withDocumentIdentification(new DocumentIdentification()
-                                .withStandard("urn:no:difi:sdp:1.0")
-                                .withTypeVersion("1.0")
-                                .withInstanceIdentifier("instanceIdentifier")
-                                .withType(StandardBusinessDocumentFactory.Type.from((SDPMelding) sdpMelding).toString())
-                                .withCreationDateAndTime(ZonedDateTime.now())
-                        )
-                        .withBusinessScope(new BusinessScope()
-                                .withScope(new Scope()
-                                        .withIdentifier("urn:no:difi:sdp:1.0")
-                                        .withType("ConversationId")
-                                        .withInstanceIdentifier(UUID.randomUUID().toString())
-                                )
-                        )
-        )
-                .withAny(sdpMelding);
-
-        EbmsApplikasjonsKvittering build = EbmsApplikasjonsKvittering.create(EbmsAktoer.avsender(avsenderOrganisasjonsnummer.getOrganisasjonsnummer()), EbmsAktoer.postkasse(mottakerOrganisasjonsnummer.getOrganisasjonsnummer()), sbd)
-                .withReferences(getReferences())
-                .withRefToMessageId("RefToMessageId")
-                .build();
-
-        return build;
-    }
-
-    private static List<Reference> getReferences() {
-        List<Reference> incomingReferences = new ArrayList<>();
-
-        Reference reference = new Reference();
-        reference.setURI("#id-f2ecf3b2-101e-433b-a30d-65a9b6779b5a");
-        incomingReferences.add(reference);
-
-        List<Transform> transforms = new ArrayList<>();
-        Transform transform = new Transform();
-        transform.setAlgorithm("http://www.w3.org/2001/10/xml-exc-c14n#");
-        transforms.add(transform);
-
-        DigestMethod digestMethod = new DigestMethod();
-        digestMethod.setAlgorithm("http://www.w3.org/2001/04/xmlenc#sha256");
-        reference.setDigestMethod(digestMethod);
-        reference.setDigestValue("xQbKUtuEGSrsgZsSAT5rF+/yflr+hl2cUC4cKyiMxRM=".getBytes());
-
-        Transforms transformsContainer = new Transforms(transforms);
-        reference.setTransforms(transformsContainer);
-        return incomingReferences;
-    }
-
-    public static EbmsApplikasjonsKvittering createEbmsAapningsKvittering() {
-        SDPKvittering aapningsKvittering = new SDPKvittering(null, ZonedDateTime.now(), null, null, new SDPAapning(), null, null);
-        return createEbmsKvittering(aapningsKvittering);
-    }
-
-    public static EbmsApplikasjonsKvittering createEbmsLeveringsKvittering() {
-        SDPKvittering leveringsKvittering = new SDPKvittering(null, ZonedDateTime.now(), null, null, null, new SDPLevering(), null);
-
-        return createEbmsKvittering(leveringsKvittering);
-    }
-
-    public static EbmsApplikasjonsKvittering createEbmsMottaksKvittering() {
-        SDPKvittering mottaksKvittering = new SDPKvittering(null, ZonedDateTime.now(), null, null, null, null, new SDPMottak());
-        return createEbmsKvittering(mottaksKvittering);
-    }
-
-    public static EbmsApplikasjonsKvittering createEbmsReturpostKvittering() {
-        SDPKvittering returpostKvittering = new SDPKvittering(null, ZonedDateTime.now(), new SDPReturpost(), null, null, null, null);
-        return createEbmsKvittering(returpostKvittering);
-    }
-
-    public static EbmsApplikasjonsKvittering createEbmsVarslingFeiletKvittering(final SDPVarslingskanal varslingskanal) {
-        SDPVarslingfeilet sdpVarslingfeilet = new SDPVarslingfeilet(varslingskanal, "Varsling feilet 'Viktig brev'");
-        SDPKvittering varslingFeiletKvittering = new SDPKvittering(null, ZonedDateTime.now(), null, sdpVarslingfeilet, null, null, null);
-        return createEbmsKvittering(varslingFeiletKvittering);
-    }
+//    public static EbmsApplikasjonsKvittering createEbmsFeil(final SDPFeiltype feiltype) {
+//        SDPFeil sdpFeil = new SDPFeil(null, ZonedDateTime.now(), feiltype, "Feilinformasjon");
+//        return createEbmsKvittering(sdpFeil);
+//    }
+//
+//    public static EbmsApplikasjonsKvittering createEbmsKvittering(final Object sdpMelding) {
+//        Organisasjonsnummer avsenderOrganisasjonsnummer = Organisasjonsnummer.of("984661185");
+//        Organisasjonsnummer mottakerOrganisasjonsnummer = Organisasjonsnummer.of("988015814");
+//
+//        StandardBusinessDocument sbd = new StandardBusinessDocument().withStandardBusinessDocumentHeader(
+//                new StandardBusinessDocumentHeader()
+//                        .withHeaderVersion("1.0")
+//                        .withSender(new Partner().withIdentifier(new PartnerIdentification(avsenderOrganisasjonsnummer.getOrganisasjonsnummerMedLandkode(), Organisasjonsnummer.ISO6523_ACTORID)))
+//                        .withReceiver(new Partner().withIdentifier(new PartnerIdentification(mottakerOrganisasjonsnummer.getOrganisasjonsnummerMedLandkode(), Organisasjonsnummer.ISO6523_ACTORID)))
+//                        .withDocumentIdentification(new DocumentIdentification()
+//                                .withStandard("urn:no:difi:sdp:1.0")
+//                                .withTypeVersion("1.0")
+//                                .withInstanceIdentifier("instanceIdentifier")
+//                                .withType(StandardBusinessDocumentFactory.Type.from((SDPMelding) sdpMelding).toString())
+//                                .withCreationDateAndTime(ZonedDateTime.now())
+//                        )
+//                        .withBusinessScope(new BusinessScope()
+//                                .withScope(new Scope()
+//                                        .withIdentifier("urn:no:difi:sdp:1.0")
+//                                        .withType("ConversationId")
+//                                        .withInstanceIdentifier(UUID.randomUUID().toString())
+//                                )
+//                        )
+//        )
+//                .withAny(sdpMelding);
+//
+//        EbmsApplikasjonsKvittering build = EbmsApplikasjonsKvittering.create(EbmsAktoer.avsender(avsenderOrganisasjonsnummer.getOrganisasjonsnummer()), EbmsAktoer.postkasse(mottakerOrganisasjonsnummer.getOrganisasjonsnummer()), sbd)
+//                .withReferences(getReferences())
+//                .withRefToMessageId("RefToMessageId")
+//                .build();
+//
+//        return build;
+//    }
+//
+//    private static List<Reference> getReferences() {
+//        List<Reference> incomingReferences = new ArrayList<>();
+//
+//        Reference reference = new Reference();
+//        reference.setURI("#id-f2ecf3b2-101e-433b-a30d-65a9b6779b5a");
+//        incomingReferences.add(reference);
+//
+//        List<Transform> transforms = new ArrayList<>();
+//        Transform transform = new Transform();
+//        transform.setAlgorithm("http://www.w3.org/2001/10/xml-exc-c14n#");
+//        transforms.add(transform);
+//
+//        DigestMethod digestMethod = new DigestMethod();
+//        digestMethod.setAlgorithm("http://www.w3.org/2001/04/xmlenc#sha256");
+//        reference.setDigestMethod(digestMethod);
+//        reference.setDigestValue("xQbKUtuEGSrsgZsSAT5rF+/yflr+hl2cUC4cKyiMxRM=".getBytes());
+//
+//        Transforms transformsContainer = new Transforms(transforms);
+//        reference.setTransforms(transformsContainer);
+//        return incomingReferences;
+//    }
+//
+//    public static EbmsApplikasjonsKvittering createEbmsAapningsKvittering() {
+//        SDPKvittering aapningsKvittering = new SDPKvittering(null, ZonedDateTime.now(), null, null, new SDPAapning(), null, null);
+//        return createEbmsKvittering(aapningsKvittering);
+//    }
+//
+//    public static EbmsApplikasjonsKvittering createEbmsLeveringsKvittering() {
+//        SDPKvittering leveringsKvittering = new SDPKvittering(null, ZonedDateTime.now(), null, null, null, new SDPLevering(), null);
+//
+//        return createEbmsKvittering(leveringsKvittering);
+//    }
+//
+//    public static EbmsApplikasjonsKvittering createEbmsMottaksKvittering() {
+//        SDPKvittering mottaksKvittering = new SDPKvittering(null, ZonedDateTime.now(), null, null, null, null, new SDPMottak());
+//        return createEbmsKvittering(mottaksKvittering);
+//    }
+//
+//    public static EbmsApplikasjonsKvittering createEbmsReturpostKvittering() {
+//        SDPKvittering returpostKvittering = new SDPKvittering(null, ZonedDateTime.now(), new SDPReturpost(), null, null, null, null);
+//        return createEbmsKvittering(returpostKvittering);
+//    }
+//
+//    public static EbmsApplikasjonsKvittering createEbmsVarslingFeiletKvittering(final SDPVarslingskanal varslingskanal) {
+//        SDPVarslingfeilet sdpVarslingfeilet = new SDPVarslingfeilet(varslingskanal, "Varsling feilet 'Viktig brev'");
+//        SDPKvittering varslingFeiletKvittering = new SDPKvittering(null, ZonedDateTime.now(), null, sdpVarslingfeilet, null, null, null);
+//        return createEbmsKvittering(varslingFeiletKvittering);
+//    }
 
     public static Dokumentpakke dokumentpakke() {
         Dokument dokument = Dokument.builder("Sensitiv tittel", "filnavn", new ByteArrayInputStream("hei".getBytes())).build();
@@ -322,7 +290,6 @@ public class ObjectMother {
 
         return Forsendelse.digital(avsender, digitalPost, dokumentpakke)
                 .konversasjonsId(UUID.randomUUID().toString())
-                .prioritet(Prioritet.PRIORITERT)
                 .mpcId(mpcId)
                 .spraakkode("NO")
                 .build();
@@ -330,7 +297,7 @@ public class ObjectMother {
 
     public static Databehandler databehandlerMedSertifikat(final Organisasjonsnummer organisasjonsnummer, final Noekkelpar noekkelpar) {
         return Databehandler
-                .builder(AktoerOrganisasjonsnummer.of(organisasjonsnummer).forfremTilDatabehandler(), noekkelpar)
+                .builder(AktoerOrganisasjonsnummer.of(organisasjonsnummer).forfremTilDatabehandler())
                 .build();
     }
 

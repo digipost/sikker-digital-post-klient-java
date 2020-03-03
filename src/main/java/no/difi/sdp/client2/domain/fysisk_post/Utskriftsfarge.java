@@ -1,14 +1,12 @@
 package no.difi.sdp.client2.domain.fysisk_post;
 
-import no.difi.begrep.sdp.schema_v10.SDPUtskriftsfarge;
-
 public enum Utskriftsfarge {
-	SORT_HVIT   (SDPUtskriftsfarge.SORT_HVIT),
-	FARGE       (SDPUtskriftsfarge.FARGE);
+	SORT_HVIT   ("SORT_HVIT"),
+	FARGE       ("FARGE");
 
-	public final SDPUtskriftsfarge sdpUtskriftsfarge;
+	public final String sdpUtskriftsfarge;
 
-	private Utskriftsfarge(SDPUtskriftsfarge sdpUtskriftsfarge) {
+	private Utskriftsfarge(String sdpUtskriftsfarge) {
 		this.sdpUtskriftsfarge = sdpUtskriftsfarge;
 	}
 

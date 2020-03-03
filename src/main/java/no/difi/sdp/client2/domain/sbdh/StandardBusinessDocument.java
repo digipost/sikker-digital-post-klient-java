@@ -1,16 +1,11 @@
-
-
-
 package no.difi.sdp.client2.domain.sbdh;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import no.difi.sdp.client2.foretningsmelding.ForretningsMelding;
+import no.difi.sdp.client2.domain.ForretningsMelding;
 
-import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 
 public class StandardBusinessDocument {

@@ -2,7 +2,6 @@ package no.difi.sdp.client2.internal;
 
 import no.difi.sdp.client2.domain.exceptions.SendIOException;
 import org.apache.http.Header;
-import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.protocol.HttpContext;
@@ -24,6 +23,7 @@ public class AddClientVersionInterceptor implements HttpRequestInterceptor {
         }
     }
 
+    private final static String CLIENT_USER_AGENT = "difi-sikker-digital-post-klient-java";
     private final String javaVersion;
 
     public AddClientVersionInterceptor() {
@@ -32,9 +32,9 @@ public class AddClientVersionInterceptor implements HttpRequestInterceptor {
     }
 
     @Override
-    public void process(HttpRequest request, HttpContext context) throws HttpException, IOException {
+    public void process(HttpRequest request, HttpContext context) {
         Header[] headers = request.getHeaders("User-Agent");
-        String clientUserAgent = MessageFormat.format("difi-sikker-digital-post-klient-java/{0} (Java/{1})", CLIENT_VERSION, javaVersion);
+        String clientUserAgent = MessageFormat.format("{0}/{1} (Java/{2})", CLIENT_USER_AGENT, CLIENT_VERSION, javaVersion);
 
         if (headers.length == 0) {
             request.addHeader("User-Agent", clientUserAgent);

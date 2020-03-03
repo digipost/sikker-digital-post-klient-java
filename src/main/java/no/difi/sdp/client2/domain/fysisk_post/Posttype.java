@@ -1,14 +1,12 @@
 package no.difi.sdp.client2.domain.fysisk_post;
 
-import no.difi.begrep.sdp.schema_v10.SDPFysiskPostType;
-
 public enum Posttype {
-	A_PRIORITERT (SDPFysiskPostType.A),
-	B_OEKONOMI   (SDPFysiskPostType.B);
+	A_PRIORITERT ("A"),
+	B_OEKONOMI   ("B");
 
-	public final SDPFysiskPostType sdpType;
+	public final String sdpType;
 
-	Posttype(SDPFysiskPostType sdpType) {
+	Posttype(String sdpType) {
 		this.sdpType = sdpType;
 	}
 }

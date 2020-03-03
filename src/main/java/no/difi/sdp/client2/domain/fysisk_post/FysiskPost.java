@@ -1,8 +1,10 @@
 package no.difi.sdp.client2.domain.fysisk_post;
 
+import no.difi.sdp.client2.domain.ForretningMeldingsType;
+import no.difi.sdp.client2.domain.ForretningsMelding;
 import no.difi.sdp.client2.domain.TekniskMottaker;
 
-public class FysiskPost {
+public class FysiskPost extends ForretningsMelding {
 
     private KonvoluttAdresse adressat;
     private Posttype posttype;
@@ -10,6 +12,10 @@ public class FysiskPost {
     private Returhaandtering returhaandtering;
     private KonvoluttAdresse returadresse;
     private TekniskMottaker utskriftsleverandoer;
+
+    public FysiskPost() {
+        super(ForretningMeldingsType.PRINT);
+    }
 
     public KonvoluttAdresse getAdresse() {
         return adressat;

@@ -1,16 +1,14 @@
 package no.difi.sdp.client2.domain.fysisk_post;
 
-import no.difi.begrep.sdp.schema_v10.SDPFysiskPostReturhaandtering;
-
 public enum Returhaandtering {
 
-	DIREKTE_RETUR            (SDPFysiskPostReturhaandtering.DIREKTE_RETUR),
-	MAKULERING_MED_MELDING   (SDPFysiskPostReturhaandtering.MAKULERING_MED_MELDING);
+	DIREKTE_RETUR            ("DIREKTE_RETUR"),
+	MAKULERING_MED_MELDING   ("MAKULERING_MED_MELDING");
 
 
-	public final SDPFysiskPostReturhaandtering sdpReturhaandtering;
+	public final String sdpReturhaandtering;
 
-	private Returhaandtering(SDPFysiskPostReturhaandtering sdpReturhaandtering) {
+	private Returhaandtering(String sdpReturhaandtering) {
 		this.sdpReturhaandtering = sdpReturhaandtering;
 	}
 }

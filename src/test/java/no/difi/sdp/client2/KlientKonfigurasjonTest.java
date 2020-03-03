@@ -17,7 +17,7 @@ public class KlientKonfigurasjonTest {
         @SuppressWarnings("deprecation")
         KlientKonfigurasjon klientKonfigurasjon = KlientKonfigurasjon.builder(meldingsformidlerRoot).build();
 
-        assertThat(klientKonfigurasjon.getMeldingsformidlerRoot().getBaseUri(), is(meldingsformidlerRoot));
+        assertThat(klientKonfigurasjon.getIntegrasjonspunktRoot(), is(meldingsformidlerRoot));
         assertThat(klientKonfigurasjon.getMiljo().getMeldingsformidlerRoot(), is(meldingsformidlerRoot));
     }
 
@@ -31,7 +31,7 @@ public class KlientKonfigurasjonTest {
         Miljo actualMiljo = klientKonfigurasjon.getMiljo();
 
         assertThat(actualMiljo, is(funksjoneltTestmiljo));
-        assertThat(actualMiljo.getMeldingsformidlerRoot(), is(klientKonfigurasjon.getMeldingsformidlerRoot().getBaseUri()));
+        assertThat(actualMiljo.getMeldingsformidlerRoot(), is(klientKonfigurasjon.getIntegrasjonspunktRoot()));
     }
 
 }

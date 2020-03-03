@@ -1,6 +1,5 @@
 package no.difi.sdp.client2.domain.exceptions;
 
-import no.digipost.api.exceptions.MessageSenderValidationException;
 
 import static no.difi.sdp.client2.domain.exceptions.SendException.AntattSkyldig.SERVER;
 

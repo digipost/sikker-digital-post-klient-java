@@ -68,15 +68,4 @@ public class SikkerDigitalPostKlientTest {
 
         assertThrows(SertifikatException.class, () -> new SikkerDigitalPostKlient(databehandlerWithTestCertificate, konfigurasjon));
     }
-
-    @Test
-    public void get_meldings_template_returns_not_null() {
-        @SuppressWarnings("deprecation")
-        KlientKonfigurasjon klientKonfigurasjon = KlientKonfigurasjon.builder(lokalTimeoutUrl)
-                .build();
-
-        SikkerDigitalPostKlient postklient = new SikkerDigitalPostKlient(databehandler(), klientKonfigurasjon);
-
-        assertThat(postklient.getMeldingTemplate(), notNullValue());
-    }
 }
