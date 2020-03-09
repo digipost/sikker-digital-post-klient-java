@@ -106,7 +106,7 @@ public class ObjectMother {
         SmsVarsel smsVarsel = SmsVarsel.builder(varslingsTekst)
                 .build();
 
-        return DigitalPost.builder(mottaker)
+        return DigitalPost.builder(mottaker, "Ikke-sensitiv brevtittel")
                 .virkningsdato(new Date())
                 .aapningskvittering(false)
                 .sikkerhetsnivaa(Sikkerhetsnivaa.NIVAA_3)

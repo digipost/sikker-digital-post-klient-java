@@ -1,9 +1,27 @@
 package no.difi.sdp.client2.domain.digital_post;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+
 public class EpostVarsel extends Varsel {
+
+    private static final Logger LOG = LoggerFactory.getLogger(EpostVarsel.class);
 
     private EpostVarsel(String varslingsTekst) {
         super(varslingsTekst);
+    }
+
+    @Deprecated
+    public String getEpostadresse() {
+        LOG.warn("NOT SUPPORTED");
+        return null;
+    }
+
+    @Deprecated
+    public static Builder builder(String epostadresse, String varslingsTekst) {
+        return new Builder(varslingsTekst);
     }
 
     /**
@@ -19,6 +37,12 @@ public class EpostVarsel extends Varsel {
 
         private Builder(String varslingsTekst) {
             target = new EpostVarsel(varslingsTekst);
+        }
+
+        @Deprecated
+        public Builder varselEtterDager(List<Integer> varselEtterDager) {
+            LOG.warn("NOT SUPPORTED");
+            return this;
         }
 
         public EpostVarsel build() {

@@ -32,7 +32,7 @@ public class ForsendelseTest {
     public void setup() {
         Mottaker mottaker = mottaker();
 
-        digitalPost = DigitalPost.builder(mottaker)
+        digitalPost = DigitalPost.builder(mottaker, "Tittel")
                 .build();
 
         Dokument hovedDokument = Dokument.builder("Sensitiv brevtittel", "faktura.pdf", new ByteArrayInputStream("hei".getBytes()))

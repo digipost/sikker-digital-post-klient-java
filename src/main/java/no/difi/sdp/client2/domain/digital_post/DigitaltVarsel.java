@@ -4,36 +4,25 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class DigitaltVarsel {
 
-    private EpostVarsel epostVarsel;
-    private SmsVarsel smsVarsel;
+    private String epostTekst;
+    private String smsTekst;
 
     public DigitaltVarsel() {
     }
 
-
     public String getEpostTekst(){
-        return epostVarsel.getVarslingsTekst();
+        return epostTekst;
     }
 
     public String getSmsTekst(){
-        return smsVarsel.getVarslingsTekst();
+        return smsTekst;
     }
 
-    @JsonIgnore
-    public EpostVarsel getEpostVarsel() {
-        return epostVarsel;
+    public void setEpostTekst(String epostTekst) {
+        this.epostTekst = epostTekst;
     }
 
-    public void setEpostVarsel(EpostVarsel epostVarsel) {
-        this.epostVarsel = epostVarsel;
-    }
-
-    @JsonIgnore
-    public SmsVarsel getSmsVarsel() {
-        return smsVarsel;
-    }
-
-    public void setSmsVarsel(SmsVarsel smsVarsel) {
-        this.smsVarsel = smsVarsel;
+    public void setSmsTekst(String smsTekst) {
+        this.smsTekst = smsTekst;
     }
 }

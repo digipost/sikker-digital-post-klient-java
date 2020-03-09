@@ -18,9 +18,10 @@ public class DigitalPost extends ForretningsMelding {
     private DigitaltVarsel varsler = new DigitaltVarsel();
     private Spraak spraak = Spraak.NO;
 
-    private DigitalPost(Mottaker mottaker) {
+    private DigitalPost(Mottaker mottaker, String tittel) {
         super(ForretningMeldingsType.DIGITAL);
         this.mottaker = mottaker;
+        this.tittel = tittel;
     }
 
     @JsonIgnore
@@ -47,13 +48,15 @@ public class DigitalPost extends ForretningsMelding {
     }
 
     @JsonIgnore
+    @Deprecated
     public EpostVarsel getEpostVarsel() {
-        return varsler.getEpostVarsel();
+        return EpostVarsel.builder(varsler.getEpostTekst()).build();
     }
 
     @JsonIgnore
+    @Deprecated
     public SmsVarsel getSmsVarsel() {
-        return varsler.getSmsVarsel();
+        return SmsVarsel.builder(varsler.getSmsTekst()).build();
     }
 
     public void setTittel(String tittel) {
@@ -74,9 +77,11 @@ public class DigitalPost extends ForretningsMelding {
 
     /**
      * @param mottaker           Mottaker av digital post.
+     * @param tittel Ikke-sensitiv tittel på brevet.
+     *                           Denne tittelen vil være synlig under transport av meldingen og kan vises i mottakerens postkasse selv om det ikke er autentisert med tilstrekkelig autentiseringsnivå.
      */
-    public static Builder builder(Mottaker mottaker) {
-        return new Builder(mottaker);
+    public static Builder builder(Mottaker mottaker, String tittel) {
+        return new Builder(mottaker, tittel);
     }
 
     public static class Builder {
@@ -84,8 +89,8 @@ public class DigitalPost extends ForretningsMelding {
         private final DigitalPost target;
         private boolean built = false;
 
-        private Builder(Mottaker mottaker) {
-            target = new DigitalPost(mottaker);
+        private Builder(Mottaker mottaker, String tittel) {
+            target = new DigitalPost(mottaker, tittel);
         }
 
         /**
@@ -124,7 +129,7 @@ public class DigitalPost extends ForretningsMelding {
          * Standard er standardoppførselen til postkasseleverandøren.
          */
         public Builder epostVarsel(EpostVarsel epostVarsel) {
-            target.varsler.setEpostVarsel(epostVarsel);
+            target.varsler.setEpostTekst(epostVarsel.getVarslingsTekst());
             return this;
         }
 
@@ -134,12 +139,7 @@ public class DigitalPost extends ForretningsMelding {
          * Standard er standardoppførselen til postkasseleverandøren.
          */
         public Builder smsVarsel(SmsVarsel smsVarsel) {
-            target.varsler.setSmsVarsel(smsVarsel);
-            return this;
-        }
-
-        public Builder tittel(String tittel) {
-            target.tittel = tittel;
+            target.varsler.setSmsTekst(smsVarsel.getVarslingsTekst());
             return this;
         }
 
