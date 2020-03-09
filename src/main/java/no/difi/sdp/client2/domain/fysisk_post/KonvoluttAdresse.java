@@ -1,5 +1,7 @@
 package no.difi.sdp.client2.domain.fysisk_post;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -23,7 +25,10 @@ public class KonvoluttAdresse {
 
 	private Type type;
 	private String navn;
-	private List<String> adresselinjer;
+	private String adresselinje1;
+	private String adresselinje2;
+	private String adresselinje3;
+	private String adresselinje4;
 
 	private String postnummer;
 	private String poststed;
@@ -35,10 +40,12 @@ public class KonvoluttAdresse {
 		return new Builder(mottakersNavn);
 	}
 
+    @Deprecated
 	public boolean er(Type type) {
 		return this.type == type;
     }
 
+    @Deprecated
 	public Type getType() {
 		return type;
     }
@@ -47,11 +54,28 @@ public class KonvoluttAdresse {
 		return navn;
 	}
 
+	@JsonIgnore
 	public List<String> getAdresselinjer() {
-		return unmodifiableList(adresselinjer);
+		return Stream.of(adresselinje1, adresselinje2, adresselinje3, adresselinje4).filter(l -> l != null).collect(toList());
 	}
 
-	public String getLandkode() {
+    public String getAdresselinje1() {
+        return adresselinje1;
+    }
+
+    public String getAdresselinje2() {
+        return adresselinje2;
+    }
+
+    public String getAdresselinje3() {
+        return adresselinje3;
+    }
+
+    public String getAdresselinje4() {
+        return adresselinje4;
+    }
+
+    public String getLandkode() {
 		return landkode;
 	}
 
@@ -85,6 +109,10 @@ public class KonvoluttAdresse {
 			postadresse.navn = mottakersNavn;
 		}
 
+        @Deprecated
+        public Builder iNorge(String adresselinje1, String adresselinje2, String adresselinje3, String postnummer, String poststed) {
+            return iNorge(adresselinje1, adresselinje2, adresselinje3, null, postnummer, poststed);
+        }
 
 		/**
 		 * Lag norsk postadresse for fysisk post.
@@ -92,15 +120,21 @@ public class KonvoluttAdresse {
 		 * @param adresselinje1
 		 * @param adresselinje2 (valgfri)
 		 * @param adresselinje3 (valgfri)
+		 * @param adresselinje4 (valgfri)
 		 * @param postnummer
 		 * @param poststed
 		 * @return builder. Kall {@link #build()} for å få en {@link KonvoluttAdresse}.
 		 */
-		public Builder iNorge(String adresselinje1, String adresselinje2, String adresselinje3, String postnummer, String poststed) {
+		public Builder iNorge(String adresselinje1, String adresselinje2, String adresselinje3, String adresselinje4, String postnummer, String poststed) {
 			postadresse.type = Type.NORSK;
-			postadresse.adresselinjer = Stream.of(adresselinje1, adresselinje2, adresselinje3).filter(l -> l != null).collect(toList());
+			postadresse.adresselinje1 =adresselinje1;
+			postadresse.adresselinje2 =adresselinje2;
+			postadresse.adresselinje3 =adresselinje3;
+			postadresse.adresselinje4 =adresselinje4;
 			postadresse.postnummer = postnummer;
 			postadresse.poststed = poststed;
+			postadresse.landkode = "NO";
+			postadresse.land = "Norway";
 			return this;
 		}
 
@@ -154,7 +188,10 @@ public class KonvoluttAdresse {
 
 		private Builder iUtlandet(String adresselinje1, String adresselinje2, String adresselinje3, String adresselinje4, String land, Landkode landkode) {
 			postadresse.type = Type.UTENLANDSK;
-			postadresse.adresselinjer = Stream.of(adresselinje1, adresselinje2, adresselinje3, adresselinje4).filter(l -> l != null).collect(toList());
+            postadresse.adresselinje1 =adresselinje1;
+            postadresse.adresselinje2 =adresselinje2;
+            postadresse.adresselinje3 =adresselinje3;
+            postadresse.adresselinje4 =adresselinje4;
 			postadresse.land = land;
 			postadresse.landkode = landkode != null ? landkode.getKode() : null;
 			return this;

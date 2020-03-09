@@ -1,7 +1,9 @@
 package no.difi.sdp.client2.internal;
 
+import no.difi.sdp.client2.domain.ForretningsMelding;
 import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.digital_post.DigitalPost;
+import no.difi.sdp.client2.domain.fysisk_post.FysiskPost;
 import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
 import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocumentHeader;
 
@@ -17,26 +19,31 @@ public class SBDForsendelseBuilder {
     public static StandardBusinessDocument buildSBD(Forsendelse forsendelse) {
         Clock clock = Clock.system(ZoneId.of("UTC"));
 
+        String mottaker = "";
         //SBD
-        final DigitalPost digitalPost = forsendelse.getDigitalPost();
-        String mottaker = digitalPost.getMottaker().getPersonidentifikator();
+        ForretningsMelding forretningsMelding = forsendelse.getForretningsMelding().get();
+        forretningsMelding.setHoveddokument(forsendelse.getDokumentpakke().getHoveddokument().getFilnavn());
 
-        digitalPost.setHoveddokument(forsendelse.getDokumentpakke().getHoveddokument().getFilnavn());
-        digitalPost.setTittel(forsendelse.getDokumentpakke().getHoveddokument().getTittel());
+        if (forretningsMelding instanceof DigitalPost) {
+            mottaker = ((DigitalPost) forretningsMelding).getMottaker().getPersonidentifikator();
+        } else if ( forretningsMelding instanceof FysiskPost) {
+            ((FysiskPost) forretningsMelding)
+        }
+
 
         StandardBusinessDocument sbd = new StandardBusinessDocument();
 
         String instanceIdentifier = UUID.randomUUID().toString();
         final StandardBusinessDocumentHeader sbdHeader = new StandardBusinessDocumentHeader.Builder().process(DIGITAL_POST_INFO)
-                .standard(forsendelse.type)
-                .to(mottaker)
-                .type(digitalPost.getType())
-                .relatedToConversationId(instanceIdentifier)
-                .relatedToMessageId(instanceIdentifier)
-                .creationDateAndTime(ZonedDateTime.now(clock)).build();
+            .standard(forsendelse.type)
+            .to(mottaker)
+            .type(forretningsMelding.getType())
+            .relatedToConversationId(instanceIdentifier)
+            .relatedToMessageId(instanceIdentifier)
+            .creationDateAndTime(ZonedDateTime.now(clock)).build();
 
         sbd.setStandardBusinessDocumentHeader(sbdHeader);
-        sbd.setAny(digitalPost);
+        sbd.setAny(forretningsMelding);
 
         return sbd;
     }

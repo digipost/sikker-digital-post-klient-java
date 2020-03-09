@@ -17,4 +17,5 @@ public class SmokeTest {
                 .expect_receipt_to_be_leveringskvittering()
                 .confirm_receipt();
     }
+
 }

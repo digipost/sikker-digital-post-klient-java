@@ -8,7 +8,7 @@
     </properties>
 
     <groupId>no.difi.sdp</groupId>
-    <artifactId>integrasjonspunkt-digital-post-klient-java</artifactId>
+    <artifactId>sikker-digital-post-klient-java</artifactId>
     <version>LOCAL-SNAPSHOT</version>
     <name>Sikker digital post-klient</name>
 

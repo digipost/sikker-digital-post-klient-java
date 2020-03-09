@@ -3,6 +3,7 @@ package no.difi.sdp.client2.domain;
 import no.difi.sdp.client2.domain.digital_post.DigitalPost;
 import no.difi.sdp.client2.domain.fysisk_post.FysiskPost;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static no.difi.sdp.client2.domain.Forsendelse.Type.DIGITAL;
@@ -57,6 +58,16 @@ public class Forsendelse {
 
 	public FysiskPost getFysiskPost() {
 		return fysiskPost;
+    }
+
+    public Optional<ForretningsMelding> getForretningsMelding() {
+        if (digitalPost != null) {
+            return Optional.of(digitalPost);
+        } else if (fysiskPost != null) {
+            return Optional.of(fysiskPost);
+        } else {
+            return Optional.empty();
+        }
     }
 
     public Dokumentpakke getDokumentpakke() {

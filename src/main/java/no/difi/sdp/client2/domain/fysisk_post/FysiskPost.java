@@ -83,4 +83,36 @@ public class FysiskPost extends ForretningsMelding {
         }
 
     }
+
+//  "print" : {
+//    "hoveddokument" : "kafka_quotes.txt",
+//    "mottaker" : {
+//      "navn" : "Ola Nordmann",
+//      "adresselinje1" : "Langtoppilia 1",
+//      "adresselinje2" : "",
+//      "adresselinje3" : "",
+//      "adresselinje4" : "",
+//      "postnummer" : "9999",
+//      "poststed" : "FJELL",
+//      "landkode" : "NO",
+//      "land" : "Norway"
+//    },
+//    "utskriftsfarge" : "FARGE",
+//    "posttype" : "A_PRIORITERT",
+//    "retur" : {
+//      "mottaker" : {
+//        "navn" : "Fjellheimen kommune",
+//        "adresselinje1" : "Luftigveien 1",
+//        "adresselinje2" : "",
+//        "adresselinje3" : "",
+//        "adresselinje4" : "",
+//        "postnummer" : "9999",
+//        "poststed" : "FJELL",
+//        "landkode" : "NO",
+//        "land" : "Norway"
+//      },
+//      "returhaandtering" : "DIREKTE_RETUR"
+//    }
+//  }
+
 }
