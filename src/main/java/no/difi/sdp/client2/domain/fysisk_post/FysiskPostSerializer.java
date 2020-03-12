@@ -7,17 +7,26 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import java.io.IOException;
 
 public class FysiskPostSerializer extends StdSerializer<FysiskPost> {
-    protected FysiskPostSerializer() {
+    public FysiskPostSerializer() {
         super(FysiskPost.class);
     }
 
     @Override
     public void serialize(FysiskPost value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+        gen.writeStartObject();
+        gen.writeObjectField("hoveddokument", value.getHoveddokument());
+        gen.writeObjectField("posttype", value.getPosttype());
+        gen.writeObjectField("utskriftsfarge", value.getUtskriftsfarge());
+        gen.writeObjectField("returhaandtering", value.getReturhaandtering());
+
         gen.writeObjectField("mottaker", value.getAdresse());
 
         gen.writeFieldName("retur");
         gen.writeStartObject();
         gen.writeObjectField("mottaker", value.getReturadresse());
+
+        gen.writeEndObject();
+
         gen.writeEndObject();
     }
 }

@@ -6,6 +6,7 @@ import no.difi.sdp.client2.domain.digital_post.DigitalPost;
 import no.difi.sdp.client2.domain.fysisk_post.FysiskPost;
 import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
 import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocumentHeader;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.time.Clock;
 import java.time.ZoneId;
@@ -21,13 +22,13 @@ public class SBDForsendelseBuilder {
 
         String mottaker = "";
         //SBD
-        ForretningsMelding forretningsMelding = forsendelse.getForretningsMelding().get();
+        ForretningsMelding forretningsMelding = forsendelse.getForretningsMelding();
         forretningsMelding.setHoveddokument(forsendelse.getDokumentpakke().getHoveddokument().getFilnavn());
 
         if (forretningsMelding instanceof DigitalPost) {
             mottaker = ((DigitalPost) forretningsMelding).getMottaker().getPersonidentifikator();
         } else if ( forretningsMelding instanceof FysiskPost) {
-            ((FysiskPost) forretningsMelding)
+            throw new NotImplementedException("IP does not support sending DPI print p.t.");
         }
 
 

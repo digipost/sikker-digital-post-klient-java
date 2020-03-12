@@ -31,7 +31,8 @@ import static no.difi.sdp.client2.ObjectMother.TESTMILJO_VIRKSOMHETSSERTIFIKAT_P
 import static no.difi.sdp.client2.ObjectMother.TESTMILJO_VIRKSOMHETSSERTIFIKAT_PATH_ENVIRONMENT_VARIABLE;
 import static no.difi.sdp.client2.ObjectMother.TESTMILJO_VIRKSOMHETSSERTIFIKAT_PATH_VALUE;
 import static no.difi.sdp.client2.ObjectMother.databehandlerMedSertifikat;
-import static no.difi.sdp.client2.ObjectMother.forsendelse;
+import static no.difi.sdp.client2.ObjectMother.digitalForsendelse;
+import static no.difi.sdp.client2.ObjectMother.fysiskPostForsendelse;
 import static no.difi.sdp.client2.ObjectMother.getVirksomhetssertifikat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyString;
@@ -79,11 +80,22 @@ class SmokeTestHelper {
         }
     }
 
+    SmokeTestHelper create_print_forsendelse() {
+        assertState(_klient);
+
+        Forsendelse forsendelse = null;
+        forsendelse = fysiskPostForsendelse();
+
+        _forsendelse = forsendelse;
+
+        return this;
+    }
+
     SmokeTestHelper create_digital_forsendelse() {
         assertState(_klient);
 
         Forsendelse forsendelse = null;
-        forsendelse = forsendelse(_mpcId, SmokeTestHelper.class.getResourceAsStream("/test.pdf"));
+        forsendelse = digitalForsendelse(_mpcId, SmokeTestHelper.class.getResourceAsStream("/test.pdf"));
 
         _forsendelse = forsendelse;
 

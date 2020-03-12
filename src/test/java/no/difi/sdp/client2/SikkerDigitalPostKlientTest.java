@@ -10,7 +10,7 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import static no.difi.sdp.client2.ObjectMother.databehandler;
-import static no.difi.sdp.client2.ObjectMother.forsendelse;
+import static no.difi.sdp.client2.ObjectMother.digitalForsendelse;
 import static no.difi.sdp.client2.domain.exceptions.SendException.AntattSkyldig.UKJENT;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -32,7 +32,7 @@ public class SikkerDigitalPostKlientTest {
         SikkerDigitalPostKlient postklient = new SikkerDigitalPostKlient(databehandler(), klientKonfigurasjon);
 
         try {
-            postklient.send(forsendelse());
+            postklient.send(ObjectMother.digitalForsendelse());
             fail("Should fail");
         } catch (SendIOException e) {
             assertThat(e.getAntattSkyldig(), equalTo(UKJENT));
@@ -54,7 +54,7 @@ public class SikkerDigitalPostKlientTest {
         SikkerDigitalPostKlient postklient = new SikkerDigitalPostKlient(databehandler(), klientKonfigurasjon);
 
         try {
-            postklient.send(forsendelse());
+            postklient.send(ObjectMother.digitalForsendelse());
             fail("Fails");
         } catch (SendIOException e) {
             assertThat(interceptorString.toString(), equalTo("First interceptor called, and second too!"));

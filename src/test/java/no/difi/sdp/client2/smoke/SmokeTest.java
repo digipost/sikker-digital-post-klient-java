@@ -18,4 +18,15 @@ public class SmokeTest {
                 .confirm_receipt();
     }
 
+
+    @Test
+    public void send_simple_fysisk_post_message() {
+        new SmokeTestHelper(Miljo.FUNKSJONELT_TESTMILJO)
+            .create_print_forsendelse()
+            .send()
+            .fetch_receipt()
+            .expect_receipt_to_be_leveringskvittering()
+            .confirm_receipt();
+    }
+
 }

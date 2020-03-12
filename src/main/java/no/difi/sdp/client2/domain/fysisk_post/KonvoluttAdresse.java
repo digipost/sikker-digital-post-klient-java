@@ -46,6 +46,7 @@ public class KonvoluttAdresse {
     }
 
     @Deprecated
+    @JsonIgnore
 	public Type getType() {
 		return type;
     }

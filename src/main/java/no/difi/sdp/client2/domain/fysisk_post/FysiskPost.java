@@ -1,5 +1,6 @@
 package no.difi.sdp.client2.domain.fysisk_post;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import no.difi.sdp.client2.domain.ForretningMeldingsType;
 import no.difi.sdp.client2.domain.ForretningsMelding;
 import no.difi.sdp.client2.domain.TekniskMottaker;
@@ -11,7 +12,6 @@ public class FysiskPost extends ForretningsMelding {
     private Utskriftsfarge utskriftsfarge;
     private Returhaandtering returhaandtering;
     private KonvoluttAdresse returadresse;
-    private TekniskMottaker utskriftsleverandoer;
 
     public FysiskPost() {
         super(ForretningMeldingsType.PRINT);
@@ -37,8 +37,10 @@ public class FysiskPost extends ForretningsMelding {
         return returadresse;
     }
 
+    @Deprecated
+    @JsonIgnore
     public TekniskMottaker getUtskriftsleverandoer() {
-        return utskriftsleverandoer;
+        return null;
     }
 
     public static FysiskPost.Builder builder() {
@@ -64,9 +66,13 @@ public class FysiskPost extends ForretningsMelding {
             return this;
         }
 
+        @Deprecated
         public Builder utskrift(Utskriftsfarge utskriftsfarge, TekniskMottaker utskriftsleverandoer) {
+            return utskrift(utskriftsfarge);
+        }
+
+        public Builder utskrift(Utskriftsfarge utskriftsfarge) {
             fysiskPost.utskriftsfarge = utskriftsfarge;
-            fysiskPost.utskriftsleverandoer = utskriftsleverandoer;
             return this;
         }
 
@@ -83,36 +89,4 @@ public class FysiskPost extends ForretningsMelding {
         }
 
     }
-
-//  "print" : {
-//    "hoveddokument" : "kafka_quotes.txt",
-//    "mottaker" : {
-//      "navn" : "Ola Nordmann",
-//      "adresselinje1" : "Langtoppilia 1",
-//      "adresselinje2" : "",
-//      "adresselinje3" : "",
-//      "adresselinje4" : "",
-//      "postnummer" : "9999",
-//      "poststed" : "FJELL",
-//      "landkode" : "NO",
-//      "land" : "Norway"
-//    },
-//    "utskriftsfarge" : "FARGE",
-//    "posttype" : "A_PRIORITERT",
-//    "retur" : {
-//      "mottaker" : {
-//        "navn" : "Fjellheimen kommune",
-//        "adresselinje1" : "Luftigveien 1",
-//        "adresselinje2" : "",
-//        "adresselinje3" : "",
-//        "adresselinje4" : "",
-//        "postnummer" : "9999",
-//        "poststed" : "FJELL",
-//        "landkode" : "NO",
-//        "land" : "Norway"
-//      },
-//      "returhaandtering" : "DIREKTE_RETUR"
-//    }
-//  }
-
 }

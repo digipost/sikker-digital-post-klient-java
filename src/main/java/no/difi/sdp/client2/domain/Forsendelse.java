@@ -2,6 +2,7 @@ package no.difi.sdp.client2.domain;
 
 import no.difi.sdp.client2.domain.digital_post.DigitalPost;
 import no.difi.sdp.client2.domain.fysisk_post.FysiskPost;
+import no.digipost.api.representations.EbmsOutgoingMessage;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -60,14 +61,11 @@ public class Forsendelse {
 		return fysiskPost;
     }
 
-    public Optional<ForretningsMelding> getForretningsMelding() {
+    public ForretningsMelding getForretningsMelding() {
         if (digitalPost != null) {
-            return Optional.of(digitalPost);
-        } else if (fysiskPost != null) {
-            return Optional.of(fysiskPost);
-        } else {
-            return Optional.empty();
-        }
+            return digitalPost;
+        } else
+        return (fysiskPost);
     }
 
     public Dokumentpakke getDokumentpakke() {
@@ -80,6 +78,11 @@ public class Forsendelse {
 
     public String getMpcId() {
         return mpcId;
+    }
+
+    @Deprecated
+    public EbmsOutgoingMessage.Prioritet getPrioritet() {
+        return EbmsOutgoingMessage.Prioritet.NORMAL;
     }
 
     public Avsender getAvsender() {
@@ -144,6 +147,11 @@ public class Forsendelse {
          */
         public Builder mpcId(String mpcId) {
             target.mpcId = mpcId;
+            return this;
+        }
+
+        @Deprecated
+        public Builder prioritet(EbmsOutgoingMessage.Prioritet prioritet) {
             return this;
         }
 
