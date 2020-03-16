@@ -48,6 +48,7 @@ public class ObjectMother {
     public static String TESTMILJO_VIRKSOMHETSSERTIFIKAT_PATH_VALUE = System.getenv(TESTMILJO_VIRKSOMHETSSERTIFIKAT_PATH_ENVIRONMENT_VARIABLE);
     public static String TESTMILJO_VIRKSOMHETSSERTIFIKAT_ALIAS_VALUE = System.getenv(TESTMILJO_VIRKSOMHETSSERTIFIKAT_ALIAS_ENVIRONMENT_VARIABLE);
     public static String TESTMILJO_VIRKSOMHETSSERTIFIKAT_PASSWORD_VALUE = System.getenv(TESTMILJO_VIRKSOMHETSSERTIFIKAT_PASSWORD_ENVIRONMENT_VARIABLE);
+    public static final String PERSONIDENTIFIKATOR = "30066714477";
 
     public static Noekkelpar testEnvironmentNoekkelpar() {
         return Noekkelpar.fraKeyStoreUtenTrustStore(getVirksomhetssertifikat(), TESTMILJO_VIRKSOMHETSSERTIFIKAT_ALIAS_VALUE, TESTMILJO_VIRKSOMHETSSERTIFIKAT_PASSWORD_VALUE);
@@ -105,7 +106,7 @@ public class ObjectMother {
         EpostVarsel epostVarsel = EpostVarsel.builder(varslingsTekst)
                 .build();
 
-        Mottaker mottaker = Mottaker.builder("30066714477", "", mottakerSertifikat(), Organisasjonsnummer.of("984661185"))
+        Mottaker mottaker = Mottaker.builder(PERSONIDENTIFIKATOR, "", mottakerSertifikat(), Organisasjonsnummer.of("984661185"))
                 .build();
 
         SmsVarsel smsVarsel = SmsVarsel.builder(varslingsTekst)
@@ -121,9 +122,8 @@ public class ObjectMother {
     }
 
     public static Forsendelse fysiskPostForsendelse(){
-        final FysiskPost fysiskPost = fysiskPost();
-
-        return Forsendelse.fysisk(avsender(), fysiskPost(), dokumentpakke()).build();
+        final Mottaker mottaker = Mottaker.builder("27127000293").build();
+        return Forsendelse.fysisk(avsender(), fysiskPost(), printDokumentpakke(), mottaker).build();
     }
 
     public static FysiskPost fysiskPost() {
@@ -304,12 +304,18 @@ public class ObjectMother {
         return Dokumentpakke.builder(dokument).build();
     }
 
+    public static Dokumentpakke printDokumentpakke() {
+        Dokument dokument = Dokument.builder("Sensitiv tittel", "filnavn", ObjectMother.class.getResourceAsStream("/printvennligA4.pdf")).build();
+        return Dokumentpakke.builder(dokument).build();
+    }
+
     public static Forsendelse digitalForsendelse(String mpcId, InputStream dokumentStream) {
         DigitalPost digitalPost = digitalPost();
 
         Dokument hovedDokument = Dokument.builder("HoveddokumentTittel", "faktura.pdf", ObjectMother.class.getResourceAsStream("/test.pdf"))
-                .mimeType("application/pdf")
-                .build();
+            .mimeType("application/pdf")
+            .metadataDocument(new MetadataDokument("lenke.xml", "application/vnd.difi.dpi.lenke+xml", "<lenke></lenke>".getBytes()))
+            .build();
 
         final ArrayList<Dokument> list = new ArrayList<>();
         list.add(Dokument.builder("vedleggtittel", "vedlegg.pdf", dokumentStream).build());

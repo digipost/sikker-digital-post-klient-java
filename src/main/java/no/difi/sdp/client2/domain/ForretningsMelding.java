@@ -5,16 +5,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public abstract class ForretningsMelding {
 
     @JsonIgnore
-    private ForretningMeldingsType type;
+    private ForretningsMeldingType type;
 
     public String hoveddokument;
 
-    public ForretningsMelding(ForretningMeldingsType type, String hoveddokument) {
+    public ForretningsMelding(ForretningsMeldingType type, String hoveddokument) {
         this.type = type;
         this.hoveddokument = hoveddokument;
     }
 
-    public ForretningsMelding(ForretningMeldingsType type) {
+    public ForretningsMelding(ForretningsMeldingType type) {
         this.type = type;
     }
 
@@ -33,7 +33,12 @@ public abstract class ForretningsMelding {
         return this.hoveddokument;
     }
 
-    public void setType(ForretningMeldingsType type) {
+
+    public boolean isType(ForretningsMeldingType type){
+        return this.type.equals(type);
+    }
+
+    public void setType(ForretningsMeldingType type) {
         this.type = type;
     }
 

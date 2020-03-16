@@ -1,13 +1,13 @@
 package no.difi.sdp.client2.domain;
 
-public enum ForretningMeldingsType {
+public enum ForretningsMeldingType {
     DIGITAL("digital"),
     PRINT("print"),
     ;
 
     private String type;
 
-    ForretningMeldingsType(String type) {
+    ForretningsMeldingType(String type) {
         this.type = type;
     }
 

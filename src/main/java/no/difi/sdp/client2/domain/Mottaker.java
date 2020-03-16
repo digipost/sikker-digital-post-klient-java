@@ -36,6 +36,9 @@ public class Mottaker {
     public static Builder builder(String personidentifikator, String postkasseadresse, Sertifikat mottakerSertifikat, Organisasjonsnummer organisasjonsnummerPostkasse) {
         return new Builder(personidentifikator, postkasseadresse, mottakerSertifikat, organisasjonsnummerPostkasse);
     }
+    public static Builder builder(String personidentifikator) {
+        return new Builder(personidentifikator, null, null, null);
+    }
 
     public static class Builder {
         private final Mottaker target;

@@ -17,13 +17,13 @@ public class FysiskPostSerializer extends StdSerializer<FysiskPost> {
         gen.writeObjectField("hoveddokument", value.getHoveddokument());
         gen.writeObjectField("posttype", value.getPosttype());
         gen.writeObjectField("utskriftsfarge", value.getUtskriftsfarge());
-        gen.writeObjectField("returhaandtering", value.getReturhaandtering());
 
-        gen.writeObjectField("mottaker", value.getAdresse());
+        gen.writeObjectField("mottaker", value.getMottaker());
 
         gen.writeFieldName("retur");
         gen.writeStartObject();
         gen.writeObjectField("mottaker", value.getReturadresse());
+        gen.writeObjectField("returhaandtering", value.getReturhaandtering());
 
         gen.writeEndObject();
 

@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 
+import static no.difi.sdp.client2.ObjectMother.PERSONIDENTIFIKATOR;
 import static no.difi.sdp.client2.ObjectMother.mottaker;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -67,7 +68,7 @@ public class ForsendelseTest {
                 .sendesMed(Posttype.A_PRIORITERT)
                 .utskrift(Utskriftsfarge.FARGE, new TekniskMottaker(Organisasjonsnummer.of("988015814"), null)).build();
         Forsendelse fysiskForsendelse = Forsendelse.fysisk(ObjectMother.avsender(), adresse,
-                Dokumentpakke.builder(Dokument.builder("Sensitiv brevtittel", "faktura.pdf", new ByteArrayInputStream("hei".getBytes())).build()).build()).build();
+                Dokumentpakke.builder(Dokument.builder("Sensitiv brevtittel", "faktura.pdf", new ByteArrayInputStream("hei".getBytes())).build()).build(), Mottaker.builder(PERSONIDENTIFIKATOR).build()).build();
 
         assertThat(fysiskForsendelse.type, equalTo(Forsendelse.Type.FYSISK));
         assertThat(fysiskForsendelse.getFysiskPost().getAdresse().getLandkode(), equalTo("SE"));

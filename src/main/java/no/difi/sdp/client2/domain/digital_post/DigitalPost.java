@@ -1,8 +1,9 @@
 package no.difi.sdp.client2.domain.digital_post;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import no.difi.sdp.client2.domain.ForretningMeldingsType;
+import no.difi.sdp.client2.domain.ForretningsMeldingType;
 import no.difi.sdp.client2.domain.ForretningsMelding;
+import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.Mottaker;
 
 import java.util.Date;
@@ -19,12 +20,16 @@ public class DigitalPost extends ForretningsMelding {
     private Spraak spraak = Spraak.NO;
 
     private DigitalPost(Mottaker mottaker, String tittel) {
-        super(ForretningMeldingsType.DIGITAL);
+        super(ForretningsMeldingType.DIGITAL);
         this.mottaker = mottaker;
         this.tittel = tittel;
     }
 
+    /**
+     * @see Forsendelse#getMottaker()
+     */
     @JsonIgnore
+    @Deprecated
     public Mottaker getMottaker() {
         return mottaker;
     }
@@ -47,12 +52,20 @@ public class DigitalPost extends ForretningsMelding {
         return sikkerhetsnivaa;
     }
 
+    /**
+     *
+     * @see #getVarsler()
+     */
     @JsonIgnore
     @Deprecated
     public EpostVarsel getEpostVarsel() {
         return EpostVarsel.builder(varsler.getEpostTekst()).build();
     }
 
+    /**
+     *
+     * @see #getVarsler()
+     */
     @JsonIgnore
     @Deprecated
     public SmsVarsel getSmsVarsel() {

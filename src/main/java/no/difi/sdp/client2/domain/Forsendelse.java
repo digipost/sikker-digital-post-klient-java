@@ -4,7 +4,6 @@ import no.difi.sdp.client2.domain.digital_post.DigitalPost;
 import no.difi.sdp.client2.domain.fysisk_post.FysiskPost;
 import no.digipost.api.representations.EbmsOutgoingMessage;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import static no.difi.sdp.client2.domain.Forsendelse.Type.DIGITAL;
@@ -28,21 +27,24 @@ public class Forsendelse {
     private final DigitalPost digitalPost;
     private final FysiskPost fysiskPost;
     private final Dokumentpakke dokumentpakke;
+    private final Mottaker mottaker;
     private final Avsender avsender;
     private String konversasjonsId = UUID.randomUUID().toString();
     private String spraakkode = "NO";
     private String mpcId;
 
-    private Forsendelse(Avsender avsender, DigitalPost digitalPost, Dokumentpakke dokumentpakke) {
-    	this.type = DIGITAL;
+    private Forsendelse(Avsender avsender, DigitalPost digitalPost, Dokumentpakke dokumentpakke, Mottaker mottaker) {
+        this.mottaker = mottaker;
+        this.type = DIGITAL;
         this.avsender = avsender;
         this.digitalPost = digitalPost;
         this.fysiskPost = null;
         this.dokumentpakke = dokumentpakke;
     }
 
-    private Forsendelse(Avsender avsender, FysiskPost fysiskPost, Dokumentpakke dokumentpakke) {
-    	this.type = FYSISK;
+    private Forsendelse(Avsender avsender, FysiskPost fysiskPost, Dokumentpakke dokumentpakke, Mottaker mottaker) {
+        this.mottaker = mottaker;
+        this.type = FYSISK;
     	this.avsender = avsender;
     	this.dokumentpakke = dokumentpakke;
     	this.fysiskPost = fysiskPost;
@@ -99,8 +101,8 @@ public class Forsendelse {
         return new Builder(avsender, digitalPost, dokumentpakke);
     }
 
-	public static Builder fysisk(Avsender avsender, FysiskPost fysiskPost, Dokumentpakke dokumentpakke) {
-	    return new Builder(avsender, fysiskPost, dokumentpakke);
+	public static Builder fysisk(Avsender avsender, FysiskPost fysiskPost, Dokumentpakke dokumentpakke, Mottaker mottaker) {
+	    return new Builder(avsender, fysiskPost, dokumentpakke, mottaker);
     }
 
     public static class Builder {
@@ -109,11 +111,11 @@ public class Forsendelse {
         private boolean built = false;
 
         private Builder(Avsender avsender, DigitalPost digitalPost, Dokumentpakke dokumentpakke) {
-            this.target = new Forsendelse(avsender, digitalPost, dokumentpakke);
+            this.target = new Forsendelse(avsender, digitalPost, dokumentpakke, digitalPost.getMottaker());
         }
 
-        private Builder(Avsender avsender, FysiskPost fysiskPost, Dokumentpakke dokumentpakke) {
-            this.target = new Forsendelse(avsender, fysiskPost, dokumentpakke);
+        private Builder(Avsender avsender, FysiskPost fysiskPost, Dokumentpakke dokumentpakke, Mottaker mottaker) {
+            this.target = new Forsendelse(avsender, fysiskPost, dokumentpakke, mottaker);
         }
 
         /**
@@ -162,9 +164,13 @@ public class Forsendelse {
         }
     }
 
-	public TekniskMottaker getTekniskMottaker() {
+    public Mottaker getMottaker() {
+        return mottaker;
+    }
+
+    public TekniskMottaker getTekniskMottaker() {
 		switch (type) {
-    		case DIGITAL: return digitalPost.getMottaker().getMottakersPostkasse();
+    		case DIGITAL: return mottaker.getMottakersPostkasse();
     		case FYSISK: return fysiskPost.getUtskriftsleverandoer();
     		default: throw new IllegalStateException("Forsendelse av type " + type + " har ikke teknisk mottaker");
 		}

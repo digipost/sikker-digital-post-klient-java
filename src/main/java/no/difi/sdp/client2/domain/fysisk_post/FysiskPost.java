@@ -1,24 +1,28 @@
 package no.difi.sdp.client2.domain.fysisk_post;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import no.difi.sdp.client2.domain.ForretningMeldingsType;
+import no.difi.sdp.client2.domain.ForretningsMeldingType;
 import no.difi.sdp.client2.domain.ForretningsMelding;
 import no.difi.sdp.client2.domain.TekniskMottaker;
 
 public class FysiskPost extends ForretningsMelding {
 
-    private KonvoluttAdresse adressat;
+    private KonvoluttAdresse mottaker;
     private Posttype posttype;
     private Utskriftsfarge utskriftsfarge;
     private Returhaandtering returhaandtering;
     private KonvoluttAdresse returadresse;
 
     public FysiskPost() {
-        super(ForretningMeldingsType.PRINT);
+        super(ForretningsMeldingType.PRINT);
     }
 
+    @Deprecated
     public KonvoluttAdresse getAdresse() {
-        return adressat;
+        return mottaker;
+    }
+
+    public KonvoluttAdresse getMottaker() {
+        return mottaker;
     }
 
     public Posttype getPosttype() {
@@ -38,7 +42,6 @@ public class FysiskPost extends ForretningsMelding {
     }
 
     @Deprecated
-    @JsonIgnore
     public TekniskMottaker getUtskriftsleverandoer() {
         return null;
     }
@@ -57,7 +60,7 @@ public class FysiskPost extends ForretningsMelding {
         }
 
         public Builder adresse(KonvoluttAdresse adresse) {
-            fysiskPost.adressat = adresse;
+            fysiskPost.mottaker = adresse;
             return this;
         }
 
