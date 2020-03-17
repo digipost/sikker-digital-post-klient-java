@@ -2,9 +2,8 @@ package no.difi.sdp.client2.smoke;
 
 import no.difi.sdp.client2.KlientKonfigurasjon;
 import no.difi.sdp.client2.SikkerDigitalPostKlient;
-import no.difi.sdp.client2.domain.AktoerOrganisasjonsnummer;
+import no.difi.sdp.client2.domain.Avsender;
 import no.difi.sdp.client2.domain.Databehandler;
-import no.difi.sdp.client2.domain.DatabehandlerOrganisasjonsnummer;
 import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.Miljo;
 import no.difi.sdp.client2.domain.Noekkelpar;
@@ -33,8 +32,8 @@ import static no.difi.sdp.client2.ObjectMother.TESTMILJO_VIRKSOMHETSSERTIFIKAT_P
 import static no.difi.sdp.client2.ObjectMother.TESTMILJO_VIRKSOMHETSSERTIFIKAT_PASSWORD_VALUE;
 import static no.difi.sdp.client2.ObjectMother.TESTMILJO_VIRKSOMHETSSERTIFIKAT_PATH_ENVIRONMENT_VARIABLE;
 import static no.difi.sdp.client2.ObjectMother.TESTMILJO_VIRKSOMHETSSERTIFIKAT_PATH_VALUE;
-import static no.difi.sdp.client2.ObjectMother.databehandlerMedSertifikat;
 import static no.difi.sdp.client2.ObjectMother.digitalForsendelse;
+import static no.difi.sdp.client2.ObjectMother.ehfForsendelse;
 import static no.difi.sdp.client2.ObjectMother.fysiskPostForsendelse;
 import static no.difi.sdp.client2.ObjectMother.getVirksomhetssertifikat;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -84,21 +83,19 @@ class SmokeTestHelper {
     }
 
     SmokeTestHelper create_print_forsendelse() {
-        assertState(_klient);
-
-        Forsendelse forsendelse = null;
-        forsendelse = fysiskPostForsendelse();
-
-        _forsendelse = forsendelse;
-
-        return this;
+        return set_forsendelse(fysiskPostForsendelse());
     }
 
-    SmokeTestHelper create_digital_forsendelse() {
-        assertState(_klient);
+    SmokeTestHelper create_digital_forsendelse(Avsender avsender) {
+        return set_forsendelse(digitalForsendelse(_mpcId, SmokeTestHelper.class.getResourceAsStream("/test.pdf"), avsender));
+    }
 
-        Forsendelse forsendelse = null;
-        forsendelse = digitalForsendelse(_mpcId, SmokeTestHelper.class.getResourceAsStream("/test.pdf"));
+    SmokeTestHelper create_ehf_forsendelse(Avsender avsender) {
+        return set_forsendelse(ehfForsendelse(_mpcId, SmokeTestHelper.class.getResourceAsStream("/test.pdf"), avsender));
+    }
+
+    private SmokeTestHelper set_forsendelse(Forsendelse forsendelse) {
+        assertState(_klient);
 
         _forsendelse = forsendelse;
 

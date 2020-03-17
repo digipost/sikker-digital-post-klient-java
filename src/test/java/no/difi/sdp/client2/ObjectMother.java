@@ -1,8 +1,8 @@
 package no.difi.sdp.client2;
 
+import no.difi.begrep.sdp.utvidelser.lenke.SDPLenke;
 import no.difi.sdp.client2.domain.AktoerOrganisasjonsnummer;
 import no.difi.sdp.client2.domain.Avsender;
-import no.difi.sdp.client2.domain.AvsenderOrganisasjonsnummer;
 import no.difi.sdp.client2.domain.Databehandler;
 import no.difi.sdp.client2.domain.DatabehandlerOrganisasjonsnummer;
 import no.difi.sdp.client2.domain.Dokument;
@@ -26,9 +26,12 @@ import no.difi.sdp.client2.domain.fysisk_post.Utskriftsfarge;
 import no.difi.sdp.client2.internal.TrustedCertificates;
 import no.digipost.security.DigipostSecurity;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.text.MessageFormat;
@@ -50,6 +53,7 @@ public class ObjectMother {
     public static final String TESTMILJO_VIRKSOMHETSSERTIFIKAT_PATH_ENVIRONMENT_VARIABLE = "no_difi_sdp_client2_virksomhetssertifikat_sti";
     public static final String TESTMILJO_VIRKSOMHETSSERTIFIKAT_ALIAS_ENVIRONMENT_VARIABLE = "no_difi_sdp_client2_virksomhetssertifikat_alias";
     public static final String TESTMILJO_VIRKSOMHETSSERTIFIKAT_PASSWORD_ENVIRONMENT_VARIABLE = "no_difi_sdp_client2_virksomhetssertifikat_passord";
+    public static final String EHFMimeType = "application/ehf+xml";
     public static String TESTMILJO_VIRKSOMHETSSERTIFIKAT_PATH_VALUE = System.getenv(TESTMILJO_VIRKSOMHETSSERTIFIKAT_PATH_ENVIRONMENT_VARIABLE);
     public static String TESTMILJO_VIRKSOMHETSSERTIFIKAT_ALIAS_VALUE = System.getenv(TESTMILJO_VIRKSOMHETSSERTIFIKAT_ALIAS_ENVIRONMENT_VARIABLE);
     public static String TESTMILJO_VIRKSOMHETSSERTIFIKAT_PASSWORD_VALUE = System.getenv(TESTMILJO_VIRKSOMHETSSERTIFIKAT_PASSWORD_ENVIRONMENT_VARIABLE);
@@ -97,7 +101,7 @@ public class ObjectMother {
                 .vedlegg(new ArrayList<Dokument>())
                 .build();
 
-        Avsender avsender = avsender();
+        Avsender avsender = avsender(POSTEN_ORGNR);
 
         return Forsendelse.digital(avsender, digitalPost, dokumentpakke)
                 .konversasjonsId(UUID.randomUUID().toString())
@@ -128,7 +132,7 @@ public class ObjectMother {
 
     public static Forsendelse fysiskPostForsendelse(){
         final Mottaker mottaker = Mottaker.builder("27127000293").build();
-        return Forsendelse.fysisk(avsender(), fysiskPost(), printDokumentpakke(), mottaker).build();
+        return Forsendelse.fysisk(avsender(POSTEN_ORGNR), fysiskPost(), printDokumentpakke(), mottaker).build();
     }
 
     public static FysiskPost fysiskPost() {
@@ -149,16 +153,12 @@ public class ObjectMother {
             .build();
     }
 
-    public static Avsender avsender() {
-        return Avsender.builder(avsenderOrganisasjonsnummer()).build();
+    public static Avsender avsender(AktoerOrganisasjonsnummer aktoerOrganisasjonsnummer) {
+        return Avsender.builder(aktoerOrganisasjonsnummer.forfremTilAvsender()).build();
     }
 
     public static Sertifikat mottakerSertifikat() {
         return DigipostMottakerSertifikatTest();
-    }
-
-    public static AvsenderOrganisasjonsnummer avsenderOrganisasjonsnummer() {
-        return POSTEN_ORGNR.forfremTilAvsender();
     }
 
     private static Sertifikat DigipostMottakerSertifikatTest() {
@@ -314,12 +314,27 @@ public class ObjectMother {
         return Dokumentpakke.builder(dokument).build();
     }
 
-    public static Forsendelse digitalForsendelse(String mpcId, InputStream dokumentStream) {
+    public static Dokumentpakke ehfDokumentpakke() {
+        Dokument dokument = Dokument.builder("Ehf-Dokument", "ehf.xml", ObjectMother.class.getResourceAsStream("/ehf_BII05_T10_gyldig_faktura.xml"))
+            .mimeType(EHFMimeType)
+            .build();
+        return Dokumentpakke.builder(dokument).build();
+    }
+
+    public static Forsendelse ehfForsendelse(String mpcId, InputStream dokumentStream, Avsender avsender) {
+        return Forsendelse.digital(avsender, digitalPost(), ehfDokumentpakke())
+            .konversasjonsId(UUID.randomUUID().toString())
+            .mpcId(mpcId)
+            .spraakkode("NO")
+            .build();
+    }
+
+    public static Forsendelse digitalForsendelse(String mpcId, InputStream dokumentStream, Avsender avsender) {
         DigitalPost digitalPost = digitalPost();
 
         Dokument hovedDokument = Dokument.builder("HoveddokumentTittel", "faktura.pdf", ObjectMother.class.getResourceAsStream("/test.pdf"))
             .mimeType("application/pdf")
-            .metadataDocument(new MetadataDokument("lenke.xml", "application/vnd.difi.dpi.lenke+xml", "<lenke></lenke>".getBytes()))
+            .metadataDocument(lenkeMetadataDokument())
             .build();
 
         final ArrayList<Dokument> list = new ArrayList<>();
@@ -329,13 +344,26 @@ public class ObjectMother {
                 .vedlegg(list)
                 .build();
 
-        Avsender avsender = avsender();
-
         return Forsendelse.digital(avsender, digitalPost, dokumentpakke)
                 .konversasjonsId(UUID.randomUUID().toString())
                 .mpcId(mpcId)
                 .spraakkode("NO")
                 .build();
+    }
+
+    private static MetadataDokument lenkeMetadataDokument() {
+        SDPLenke lenke = new SDPLenke();
+        lenke.setUrl("http://example.com");
+
+
+        final StringWriter stringWriter = new StringWriter(lenke.toString().length());
+        try {
+            JAXBContext.newInstance(SDPLenke.class).createMarshaller().marshal(lenke, stringWriter);
+        } catch (JAXBException ignored) {
+            throw new RuntimeException();
+        }
+
+        return new MetadataDokument("lenke.xml", "application/vnd.difi.dpi.lenke+xml", stringWriter.toString().getBytes());
     }
 
     public static Databehandler databehandlerMedSertifikat(final Organisasjonsnummer organisasjonsnummer, final Noekkelpar noekkelpar) {

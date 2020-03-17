@@ -44,7 +44,7 @@ public class ForsendelseTest {
                 .vedlegg(new ArrayList<Dokument>())
                 .build();
 
-        Avsender avsender = ObjectMother.avsender();
+        Avsender avsender = ObjectMother.avsender(ObjectMother.POSTEN_ORGNR);
 
         forsendelse = Forsendelse.digital(avsender, digitalPost, dokumentpakke)
                 .build();
@@ -67,7 +67,7 @@ public class ForsendelseTest {
                 .retur(Returhaandtering.MAKULERING_MED_MELDING, KonvoluttAdresse.build("Rall").iUtlandet("Hungary street 2", null, null, null, "Ungarn").build())
                 .sendesMed(Posttype.A_PRIORITERT)
                 .utskrift(Utskriftsfarge.FARGE, new TekniskMottaker(Organisasjonsnummer.of("988015814"), null)).build();
-        Forsendelse fysiskForsendelse = Forsendelse.fysisk(ObjectMother.avsender(), adresse,
+        Forsendelse fysiskForsendelse = Forsendelse.fysisk(ObjectMother.avsender(ObjectMother.POSTEN_ORGNR), adresse,
                 Dokumentpakke.builder(Dokument.builder("Sensitiv brevtittel", "faktura.pdf", new ByteArrayInputStream("hei".getBytes())).build()).build(), Mottaker.builder(PERSONIDENTIFIKATOR).build()).build();
 
         assertThat(fysiskForsendelse.type, equalTo(Forsendelse.Type.FYSISK));
