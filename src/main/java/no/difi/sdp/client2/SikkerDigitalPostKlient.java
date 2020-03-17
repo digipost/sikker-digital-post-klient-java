@@ -39,7 +39,7 @@ public class SikkerDigitalPostKlient {
      * @throws SendException
      */
     public SendResultat send(Forsendelse forsendelse) throws SendException {
-        StandardBusinessDocument sbd = SBDForsendelseBuilder.buildSBD(forsendelse);
+        StandardBusinessDocument sbd = SBDForsendelseBuilder.buildSBD(databehandler.organisasjonsnummer, forsendelse);
         integrasjonspunktMessageSenderFacade.send(sbd, forsendelse.getDokumentpakke());
 
 

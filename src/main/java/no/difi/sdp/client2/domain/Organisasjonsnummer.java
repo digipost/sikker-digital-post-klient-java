@@ -13,7 +13,7 @@ import static java.util.Arrays.asList;
 public final class Organisasjonsnummer {
 
     public static final String ISO6523_ACTORID = "iso6523-actorid-upis";
-    private static final String COUNTRY_CODE_ORGANIZATION_NUMBER_NORWAY = "0192";
+    public static final String COUNTRY_CODE_ORGANIZATION_NUMBER_NORWAY = "0192";
     private static final Pattern ORGANIZATION_NUMBER_PATTERN = Pattern.compile("^(" + COUNTRY_CODE_ORGANIZATION_NUMBER_NORWAY + ":)?([0-9]{9})$");
     private final String organisasjonsnummer;
 

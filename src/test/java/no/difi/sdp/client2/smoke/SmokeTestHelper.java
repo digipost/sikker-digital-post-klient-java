@@ -2,7 +2,9 @@ package no.difi.sdp.client2.smoke;
 
 import no.difi.sdp.client2.KlientKonfigurasjon;
 import no.difi.sdp.client2.SikkerDigitalPostKlient;
+import no.difi.sdp.client2.domain.AktoerOrganisasjonsnummer;
 import no.difi.sdp.client2.domain.Databehandler;
+import no.difi.sdp.client2.domain.DatabehandlerOrganisasjonsnummer;
 import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.Miljo;
 import no.difi.sdp.client2.domain.Noekkelpar;
@@ -24,6 +26,7 @@ import java.util.UUID;
 
 import static java.lang.System.out;
 import static java.lang.Thread.sleep;
+import static no.difi.sdp.client2.ObjectMother.POSTEN_ORGNR;
 import static no.difi.sdp.client2.ObjectMother.TESTMILJO_VIRKSOMHETSSERTIFIKAT_ALIAS_ENVIRONMENT_VARIABLE;
 import static no.difi.sdp.client2.ObjectMother.TESTMILJO_VIRKSOMHETSSERTIFIKAT_ALIAS_VALUE;
 import static no.difi.sdp.client2.ObjectMother.TESTMILJO_VIRKSOMHETSSERTIFIKAT_PASSWORD_ENVIRONMENT_VARIABLE;
@@ -54,7 +57,7 @@ class SmokeTestHelper {
         _mpcId = UUID.randomUUID().toString();
 
         Noekkelpar databehandlerNoekkelpar = createValidDatabehandlerNoekkelparFromCertificate(databehandlerCertificate);
-        Databehandler databehandler = databehandlerMedSertifikat(databehanderOrgnr, databehandlerNoekkelpar);
+        Databehandler databehandler = Databehandler.builder(POSTEN_ORGNR.forfremTilDatabehandler()).build();//databehandlerMedSertifikat(databehanderOrgnr, databehandlerNoekkelpar);
 
         KlientKonfigurasjon klientKonfigurasjon = KlientKonfigurasjon.builder(miljo).build();
         _klient = new SikkerDigitalPostKlient(databehandler, klientKonfigurasjon);

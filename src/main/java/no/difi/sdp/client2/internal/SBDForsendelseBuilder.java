@@ -1,8 +1,11 @@
 package no.difi.sdp.client2.internal;
 
+import no.difi.sdp.client2.domain.Databehandler;
+import no.difi.sdp.client2.domain.DatabehandlerOrganisasjonsnummer;
 import no.difi.sdp.client2.domain.ForretningsMeldingType;
 import no.difi.sdp.client2.domain.ForretningsMelding;
 import no.difi.sdp.client2.domain.Forsendelse;
+import no.difi.sdp.client2.domain.Organisasjonsnummer;
 import no.difi.sdp.client2.domain.digital_post.DigitalPost;
 import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
 import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocumentHeader;
@@ -18,7 +21,7 @@ import static no.difi.sdp.client2.domain.sbdh.Process.DIGITAL_POST_INFO;
 
 public class SBDForsendelseBuilder {
 
-    public static StandardBusinessDocument buildSBD(Forsendelse forsendelse) {
+    public static StandardBusinessDocument buildSBD(DatabehandlerOrganisasjonsnummer databehandler, Forsendelse forsendelse) {
         Clock clock = Clock.system(ZoneId.of("UTC"));
 
         //SBD
@@ -30,6 +33,7 @@ public class SBDForsendelseBuilder {
         String instanceIdentifier = UUID.randomUUID().toString();
         final StandardBusinessDocumentHeader sbdHeader = new StandardBusinessDocumentHeader.Builder().process(DIGITAL_POST_INFO)
             .standard(forsendelse.type)
+            .from(databehandler).onBehalfOf(forsendelse.getAvsender().getOrganisasjonsnummer())
             .to(forsendelse.getMottaker())
             .type(forretningsMelding.getType())
             .relatedToConversationId(instanceIdentifier)

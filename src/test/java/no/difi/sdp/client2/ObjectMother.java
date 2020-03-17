@@ -36,10 +36,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
+
 public class ObjectMother {
 
     public static final X509Certificate POSTEN_TEST_CERTIFICATE = DigipostSecurity.readCertificate("certificates/test/posten_test.pem");
     public static final X509Certificate POSTEN_PROD_CERTIFICATE = DigipostSecurity.readCertificate("certificates/prod/posten_prod.pem");
+
+    public static final AktoerOrganisasjonsnummer POSTEN_ORGNR = AktoerOrganisasjonsnummer.of("984661185");
+    public static final AktoerOrganisasjonsnummer BRING_ORGNR = AktoerOrganisasjonsnummer.of("988015814");
+
     public static final String SELVSIGNERT_VIRKSOMHETSSERTIFIKAT_ALIAS = "avsender";
     public static final String SELVSIGNERT_VIRKSOMHETSSERTIFIKAT_PASSORD = "password1234";
     public static final String TESTMILJO_VIRKSOMHETSSERTIFIKAT_PATH_ENVIRONMENT_VARIABLE = "no_difi_sdp_client2_virksomhetssertifikat_sti";
@@ -153,7 +158,7 @@ public class ObjectMother {
     }
 
     public static AvsenderOrganisasjonsnummer avsenderOrganisasjonsnummer() {
-        return AktoerOrganisasjonsnummer.of("984661185").forfremTilAvsender();
+        return POSTEN_ORGNR.forfremTilAvsender();
     }
 
     private static Sertifikat DigipostMottakerSertifikatTest() {

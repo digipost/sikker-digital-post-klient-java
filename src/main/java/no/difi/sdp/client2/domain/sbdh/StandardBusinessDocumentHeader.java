@@ -1,6 +1,8 @@
 package no.difi.sdp.client2.domain.sbdh;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import no.difi.sdp.client2.domain.AvsenderOrganisasjonsnummer;
+import no.difi.sdp.client2.domain.DatabehandlerOrganisasjonsnummer;
 import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.Mottaker;
 import no.difi.sdp.client2.domain.Organisasjonsnummer;
@@ -11,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static no.difi.sdp.client2.domain.Organisasjonsnummer.COUNTRY_CODE_ORGANIZATION_NUMBER_NORWAY;
 import static no.difi.sdp.client2.domain.Organisasjonsnummer.ISO6523_ACTORID;
 
 
@@ -35,7 +38,9 @@ public class StandardBusinessDocumentHeader {
     }
 
     public StandardBusinessDocumentHeader addSender(Sender partner) {
-        getSender().add(partner);
+        if (partner != null) {
+            getSender().add(partner);
+        }
         return this;
     }
 
@@ -123,6 +128,8 @@ public class StandardBusinessDocumentHeader {
         private static final String TYPE_VERSION = "1.0";
 
         private String mottaker;
+        private String sender;
+        private String onBehalfOf;
         private String conversationId;
         private String messageId;
         private String documentType;
@@ -142,6 +149,16 @@ public class StandardBusinessDocumentHeader {
 
         public Builder to(String mottaker) {
             this.mottaker = mottaker;
+            return this;
+        }
+
+        public Builder from(DatabehandlerOrganisasjonsnummer sender) {
+            this.sender = sender.getOrganisasjonsnummer();
+            return this;
+        }
+
+        public Builder onBehalfOf(AvsenderOrganisasjonsnummer onBehalfOf) {
+            this.onBehalfOf = onBehalfOf.getOrganisasjonsnummer();
             return this;
         }
 
@@ -181,6 +198,7 @@ public class StandardBusinessDocumentHeader {
 
             return standardBusinessDocumentHeader
                     .addReceiver(createReciever(mottaker))
+                    .addSender(createSender(sender, onBehalfOf))
                     .setBusinessScope(createBusinessScope(fromConversationId(conversationId)))
                     .setDocumentIdentification(createDocumentIdentification(messageId, documentType, standard, creationDateAndTime));
         }
@@ -191,6 +209,17 @@ public class StandardBusinessDocumentHeader {
             identification.setAuthority(ISO6523_ACTORID);
 
             return new Receiver(identification);
+        }
+
+        private static Sender createSender(String avsender, String onBehalfOf) {
+            PartnerIdentification identification = new PartnerIdentification();
+            String value = COUNTRY_CODE_ORGANIZATION_NUMBER_NORWAY + ":" + avsender;
+            if(onBehalfOf != null) {
+                value += ":" + onBehalfOf;
+            }
+            identification.setValue(value);
+            identification.setAuthority(ISO6523_ACTORID);
+            return new Sender(identification);
         }
 
         private static DocumentIdentification createDocumentIdentification(String messageId, String documentType, String standard, ZonedDateTime creationDateAndTime) {
