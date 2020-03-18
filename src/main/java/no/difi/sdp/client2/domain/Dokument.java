@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 
-public class Dokument {
+public class Dokument implements MedDokumentEgenskaper {
 
     private String tittel;
     private String filnavn;
@@ -24,10 +24,12 @@ public class Dokument {
         this.metadataDocument = Optional.ofNullable(metadataDocument);
     }
 
+    @Override
     public String getFileName() {
         return getFilnavn();
     }
 
+    @Override
     public byte[] getBytes() {
         return dokument;
     }
@@ -36,12 +38,18 @@ public class Dokument {
         return filnavn;
     }
 
+    @Override
     public String getMimeType() {
         return mimeType;
     }
 
     public String getTittel() {
         return tittel;
+    }
+
+    @Override
+    public Optional<String> getDokumentTittel() {
+        return Optional.ofNullable(tittel);
     }
     
     public Optional<MetadataDokument> getMetadataDocument() {

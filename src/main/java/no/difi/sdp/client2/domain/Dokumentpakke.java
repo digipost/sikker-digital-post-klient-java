@@ -3,6 +3,9 @@ package no.difi.sdp.client2.domain;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 
@@ -21,6 +24,10 @@ public class Dokumentpakke {
 
     public List<Dokument> getVedlegg() {
         return vedlegg;
+    }
+
+    public Stream<Dokument> getHoveddokumentOgVedlegg() {
+        return Stream.concat(Stream.of(hoveddokument), vedlegg.stream());
     }
 
     public static Builder builder(Dokument hoveddokument) {

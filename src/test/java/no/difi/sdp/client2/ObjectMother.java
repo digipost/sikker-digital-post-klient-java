@@ -1,6 +1,7 @@
 package no.difi.sdp.client2;
 
 import no.difi.begrep.sdp.utvidelser.lenke.SDPLenke;
+import no.difi.begrep.sdp.utvidelser.lenke.SDPLenkeKnappTekst;
 import no.difi.sdp.client2.domain.AktoerOrganisasjonsnummer;
 import no.difi.sdp.client2.domain.Avsender;
 import no.difi.sdp.client2.domain.Databehandler;
@@ -353,6 +354,7 @@ public class ObjectMother {
 
     private static MetadataDokument lenkeMetadataDokument() {
         SDPLenke lenke = new SDPLenke();
+        lenke.setKnappTekst(new SDPLenkeKnappTekst("Trykk på meg", "NO"));
         lenke.setUrl("http://example.com");
 
 

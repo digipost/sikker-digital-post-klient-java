@@ -7,6 +7,8 @@ import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.Mottaker;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DigitalPost extends ForretningsMelding {
 
@@ -18,6 +20,7 @@ public class DigitalPost extends ForretningsMelding {
     private Sikkerhetsnivaa sikkerhetsnivaa = Sikkerhetsnivaa.NIVAA_4;
     private DigitaltVarsel varsler = new DigitaltVarsel();
     private Spraak spraak = Spraak.NO;
+    private Map<String, String> metadatafiler = new HashMap<>();
 
     private DigitalPost(Mottaker mottaker, String tittel) {
         super(ForretningsMeldingType.DIGITAL);
@@ -86,6 +89,14 @@ public class DigitalPost extends ForretningsMelding {
 
     public DigitaltVarsel getVarsler() {
         return varsler;
+    }
+
+    public void addMetadataMapping(String dokumentTittel, String metaDokumentTittel) {
+        metadatafiler.put(dokumentTittel, metaDokumentTittel);
+    }
+
+    public Map<String, String> getMetadataFiler() {
+        return metadatafiler;
     }
 
     /**

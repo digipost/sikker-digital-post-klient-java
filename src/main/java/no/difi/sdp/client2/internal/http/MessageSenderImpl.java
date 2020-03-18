@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import no.difi.sdp.client2.domain.Dokument;
 import no.difi.sdp.client2.domain.Dokumentpakke;
+import no.difi.sdp.client2.domain.MedDokumentEgenskaper;
 import no.difi.sdp.client2.domain.exceptions.SendException;
 import no.difi.sdp.client2.domain.fysisk_post.FysiskPost;
 import no.difi.sdp.client2.domain.fysisk_post.FysiskPostSerializer;
@@ -27,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URI;
 
+import static java.util.stream.Collectors.toList;
 import static no.difi.sdp.client2.domain.exceptions.SendException.AntattSkyldig.fraHttpStatusCode;
 
 public class MessageSenderImpl implements MessageSender {
@@ -63,12 +65,14 @@ public class MessageSenderImpl implements MessageSender {
         try {
             createMessage(sbd);
 
-            LOG.info("---------------------------");
+            final String conversationId = sbd.getConversationId();
 
-            addContent(sbd.getConversationId(), dokumentpakke.getHoveddokument());
-            for (Dokument dokument : dokumentpakke.getVedlegg()) {
+            for (Dokument dokument : dokumentpakke.getHoveddokumentOgVedlegg().collect(toList())) {
                 LOG.info("---------------------------");
-                addContent(sbd.getConversationId(), dokument);
+                addContent(conversationId, dokument);
+                if (dokument.getMetadataDocument().isPresent()) {
+                    addContent(conversationId, dokument.getMetadataDocument().get());
+                }
             }
             LOG.info("---------------------------");
             closeMessage(sbd);
@@ -98,16 +102,15 @@ public class MessageSenderImpl implements MessageSender {
         }
     }
 
-    private void addContent(String conversationId, Dokument dokument) throws IOException {
+    private void addContent(String conversationId, MedDokumentEgenskaper dokument) throws IOException {
         String messageEndpointPath = String.format(MESSAGE_ENDPOINT_PATH_TEMPLATE, conversationId);
         HttpPut documentPut = new HttpPut(endpointUri + messageEndpointPath);
         documentPut.setEntity(new ByteArrayEntity(dokument.getBytes()));
         documentPut.setHeader("content-type", dokument.getMimeType());
 
-        String contentDisposition = String.format("attachment; filename=\"%s\"", dokument.getFilnavn());
-        if(dokument.getTittel() != null ) {
-            contentDisposition += String.format("; name=\"%s\"", dokument.getTittel());
-        }
+        String contentDisposition = String.format("attachment; filename=\"%s\"", dokument.getFileName());
+        contentDisposition += dokument.getDokumentTittel().map(tittel -> String.format("; name=\"%s\"", tittel)).orElse("");
+
         documentPut.setHeader("content-disposition", contentDisposition);
 
         final HttpResponse response = httpClient.execute(documentPut);

@@ -83,18 +83,18 @@ class SmokeTestHelper {
     }
 
     SmokeTestHelper create_print_forsendelse() {
-        return set_forsendelse(fysiskPostForsendelse());
+        return setForsendelse(fysiskPostForsendelse());
     }
 
     SmokeTestHelper create_digital_forsendelse(Avsender avsender) {
-        return set_forsendelse(digitalForsendelse(_mpcId, SmokeTestHelper.class.getResourceAsStream("/test.pdf"), avsender));
+        return setForsendelse(digitalForsendelse(_mpcId, SmokeTestHelper.class.getResourceAsStream("/test.pdf"), avsender));
     }
 
     SmokeTestHelper create_ehf_forsendelse(Avsender avsender) {
-        return set_forsendelse(ehfForsendelse(_mpcId, SmokeTestHelper.class.getResourceAsStream("/test.pdf"), avsender));
+        return setForsendelse(ehfForsendelse(_mpcId, SmokeTestHelper.class.getResourceAsStream("/test.pdf"), avsender));
     }
 
-    private SmokeTestHelper set_forsendelse(Forsendelse forsendelse) {
+    private SmokeTestHelper setForsendelse(Forsendelse forsendelse) {
         assertState(_klient);
 
         _forsendelse = forsendelse;

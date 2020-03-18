@@ -8,7 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class MetadataDokument {
+public class MetadataDokument implements MedDokumentEgenskaper {
 
     private String filnavn;
     private byte[] dokument;
