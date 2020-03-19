@@ -1,59 +1,111 @@
 package no.difi.sdp.client2.domain.digital_post;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import no.difi.sdp.client2.domain.ForretningsMeldingType;
+import no.difi.sdp.client2.domain.ForretningsMelding;
+import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.Mottaker;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-public class DigitalPost {
+public class DigitalPost extends ForretningsMelding {
+
 
     private Mottaker mottaker;
-    private Date virkningsdato;
-    private boolean aapningskvittering;
-    private Sikkerhetsnivaa sikkerhetsnivaa = Sikkerhetsnivaa.NIVAA_4;
-    private String ikkeSensitivTittel;
-    private EpostVarsel epostVarsel;
-    private SmsVarsel smsVarsel;
+    private String tittel;
 
-    private DigitalPost(Mottaker mottaker, String ikkeSensitivTittel) {
+    private DigitalPostInfo digitalPostInfo = new DigitalPostInfo();
+    private Sikkerhetsnivaa sikkerhetsnivaa = Sikkerhetsnivaa.NIVAA_4;
+    private DigitaltVarsel varsler = new DigitaltVarsel();
+    private Spraak spraak = Spraak.NO;
+    private Map<String, String> metadatafiler = new HashMap<>();
+
+    private DigitalPost(Mottaker mottaker, String tittel) {
+        super(ForretningsMeldingType.DIGITAL);
         this.mottaker = mottaker;
-        this.ikkeSensitivTittel = ikkeSensitivTittel;
+        this.tittel = tittel;
     }
 
+    /**
+     * @see Forsendelse#getMottaker()
+     */
+    @JsonIgnore
+    @Deprecated
     public Mottaker getMottaker() {
         return mottaker;
     }
 
+    @JsonIgnore
     public Date getVirkningsdato() {
-        return virkningsdato;
+        return Date.from(digitalPostInfo.getVirkningsdato());
     }
 
+    @JsonIgnore
     public boolean isAapningskvittering() {
-        return aapningskvittering;
+        return digitalPostInfo.isAapningskvittering();
+    }
+
+    public DigitalPostInfo getDigitalPostInfo() {
+        return digitalPostInfo;
     }
 
     public Sikkerhetsnivaa getSikkerhetsnivaa() {
         return sikkerhetsnivaa;
     }
 
-    public String getIkkeSensitivTittel() {
-        return ikkeSensitivTittel;
-    }
-
+    /**
+     *
+     * @see #getVarsler()
+     */
+    @JsonIgnore
+    @Deprecated
     public EpostVarsel getEpostVarsel() {
-        return epostVarsel;
+        return EpostVarsel.builder(varsler.getEpostTekst()).build();
     }
 
+    /**
+     *
+     * @see #getVarsler()
+     */
+    @JsonIgnore
+    @Deprecated
     public SmsVarsel getSmsVarsel() {
-        return smsVarsel;
+        return SmsVarsel.builder(varsler.getSmsTekst()).build();
+    }
+
+    public void setTittel(String tittel) {
+        this.tittel = tittel;
+    }
+
+    public String getTittel() {
+        return tittel;
+    }
+
+    public Spraak getSpraak() {
+        return spraak;
+    }
+
+    public DigitaltVarsel getVarsler() {
+        return varsler;
+    }
+
+    public void addMetadataMapping(String dokumentTittel, String metaDokumentTittel) {
+        metadatafiler.put(dokumentTittel, metaDokumentTittel);
+    }
+
+    public Map<String, String> getMetadataFiler() {
+        return metadatafiler;
     }
 
     /**
      * @param mottaker           Mottaker av digital post.
-     * @param ikkeSensitivTittel Ikke-sensitiv tittel på brevet.
+     * @param tittel Ikke-sensitiv tittel på brevet.
      *                           Denne tittelen vil være synlig under transport av meldingen og kan vises i mottakerens postkasse selv om det ikke er autentisert med tilstrekkelig autentiseringsnivå.
      */
-    public static Builder builder(Mottaker mottaker, String ikkeSensitivTittel) {
-        return new Builder(mottaker, ikkeSensitivTittel);
+    public static Builder builder(Mottaker mottaker, String tittel) {
+        return new Builder(mottaker, tittel);
     }
 
     public static class Builder {
@@ -61,8 +113,8 @@ public class DigitalPost {
         private final DigitalPost target;
         private boolean built = false;
 
-        private Builder(Mottaker mottaker, String ikkeSensitivTittel) {
-            target = new DigitalPost(mottaker, ikkeSensitivTittel);
+        private Builder(Mottaker mottaker, String tittel) {
+            target = new DigitalPost(mottaker, tittel);
         }
 
         /**
@@ -71,7 +123,7 @@ public class DigitalPost {
          * Standard er nå.
          */
         public Builder virkningsdato(Date virkningsdato) {
-            target.virkningsdato = virkningsdato;
+            target.digitalPostInfo.setVirkningsdato(virkningsdato);
             return this;
         }
 
@@ -81,7 +133,7 @@ public class DigitalPost {
          * Standard er false.
          */
         public Builder aapningskvittering(boolean aapningskvittering) {
-            target.aapningskvittering = aapningskvittering;
+            target.digitalPostInfo.setAapningskvittering(aapningskvittering);
             return this;
         }
 
@@ -101,7 +153,7 @@ public class DigitalPost {
          * Standard er standardoppførselen til postkasseleverandøren.
          */
         public Builder epostVarsel(EpostVarsel epostVarsel) {
-            target.epostVarsel = epostVarsel;
+            target.varsler.setEpostTekst(epostVarsel.getVarslingsTekst());
             return this;
         }
 
@@ -111,7 +163,7 @@ public class DigitalPost {
          * Standard er standardoppførselen til postkasseleverandøren.
          */
         public Builder smsVarsel(SmsVarsel smsVarsel) {
-            target.smsVarsel = smsVarsel;
+            target.varsler.setSmsTekst(smsVarsel.getVarslingsTekst());
             return this;
         }
 
@@ -122,4 +174,33 @@ public class DigitalPost {
             return target;
         }
     }
+
+//    public static DigitalPost from(Forsendelse forsendelse) {
+//        int sikkerhetsnivaa = forsendelse.getDigitalPost().getSikkerhetsnivaa().getVerdi();
+//        String hoveddokument = forsendelse.getDokumentpakke().getHoveddokument().getFilnavn();
+//        String tittel = forsendelse.getDokumentpakke().getHoveddokument().getTittel();
+//        String spraak = "NO";
+//        DigitalPostInfo digitalPostInfo = new DigitalPostInfo(forsendelse.getDigitalPost().getVirkningsdato(), forsendelse.getDigitalPost().isAapningskvittering());
+//        DigitaltVarsel varsler = new DigitaltVarsel(forsendelse.getDigitalPost().getEpostVarsel().getVarslingsTekst(), forsendelse.getDigitalPost().getSmsVarsel().getVarslingsTekst());
+//        return new DigitalPost(sikkerhetsnivaa, hoveddokument, tittel, spraak, digitalPostInfo, varsler);
+//    }
+
+
+//{
+//    "digital": {
+//        "sikkerhetsnivaa": "",
+//        "hoveddokument": "",
+//        "tittel": "",
+//        "spraak": "NO",
+//        "digitalPostInfo": {
+//            "virkningsdato": "",
+//            "aapningskvittering": "false"
+//        },
+//        "varsler": {
+//            "epostTekst": "Varseltekst",
+//            "smsTekst": "Varseltekst"
+//        }
+//    }
+//}
+
 }

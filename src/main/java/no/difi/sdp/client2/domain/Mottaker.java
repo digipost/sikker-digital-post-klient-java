@@ -1,7 +1,5 @@
 package no.difi.sdp.client2.domain;
 
-import no.digipost.api.representations.Organisasjonsnummer;
-
 public class Mottaker {
 
     private final String personidentifikator;
@@ -37,6 +35,9 @@ public class Mottaker {
      */
     public static Builder builder(String personidentifikator, String postkasseadresse, Sertifikat mottakerSertifikat, Organisasjonsnummer organisasjonsnummerPostkasse) {
         return new Builder(personidentifikator, postkasseadresse, mottakerSertifikat, organisasjonsnummerPostkasse);
+    }
+    public static Builder builder(String personidentifikator) {
+        return new Builder(personidentifikator, null, null, null);
     }
 
     public static class Builder {

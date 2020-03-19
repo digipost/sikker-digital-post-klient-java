@@ -1,6 +1,5 @@
 package no.difi.sdp.client2.domain;
 
-import no.difi.sdp.client2.asice.AsicEAttachable;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
@@ -10,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 
-public class Dokument implements AsicEAttachable {
+public class Dokument implements MedDokumentEgenskaper {
 
     private String tittel;
     private String filnavn;
@@ -46,6 +45,11 @@ public class Dokument implements AsicEAttachable {
 
     public String getTittel() {
         return tittel;
+    }
+
+    @Override
+    public Optional<String> getDokumentTittel() {
+        return Optional.ofNullable(tittel);
     }
     
     public Optional<MetadataDokument> getMetadataDocument() {

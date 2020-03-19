@@ -3,7 +3,6 @@ package no.difi.sdp.client2.domain;
 import no.difi.sdp.client2.domain.exceptions.NoekkelException;
 import no.difi.sdp.client2.domain.exceptions.SertifikatException;
 import no.difi.sdp.client2.internal.TrustedCertificates;
-import no.digipost.api.interceptors.KeyStoreInfo;
 
 import java.security.Key;
 import java.security.KeyStore;
@@ -85,14 +84,6 @@ public class Noekkelpar {
 
     public KeyStore getTrustStore() {
         return trustStore;
-    }
-
-    public KeyStoreInfo getKeyStoreInfo() {
-        if (trustStore != null) {
-            return new KeyStoreInfo(keyStore, trustStore, virksomhetssertifikatAlias, virksomhetssertifikatPassword);
-        }
-
-        return new KeyStoreInfo(keyStore, virksomhetssertifikatAlias, virksomhetssertifikatPassword);
     }
 
     public Sertifikat getVirksomhetssertifikat() {

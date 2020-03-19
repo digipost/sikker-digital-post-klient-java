@@ -1,18 +1,28 @@
 package no.difi.sdp.client2.domain.fysisk_post;
 
+import no.difi.sdp.client2.domain.ForretningsMeldingType;
+import no.difi.sdp.client2.domain.ForretningsMelding;
 import no.difi.sdp.client2.domain.TekniskMottaker;
 
-public class FysiskPost {
+public class FysiskPost extends ForretningsMelding {
 
-    private KonvoluttAdresse adressat;
+    private KonvoluttAdresse mottaker;
     private Posttype posttype;
     private Utskriftsfarge utskriftsfarge;
     private Returhaandtering returhaandtering;
     private KonvoluttAdresse returadresse;
-    private TekniskMottaker utskriftsleverandoer;
 
+    public FysiskPost() {
+        super(ForretningsMeldingType.PRINT);
+    }
+
+    @Deprecated
     public KonvoluttAdresse getAdresse() {
-        return adressat;
+        return mottaker;
+    }
+
+    public KonvoluttAdresse getMottaker() {
+        return mottaker;
     }
 
     public Posttype getPosttype() {
@@ -31,8 +41,9 @@ public class FysiskPost {
         return returadresse;
     }
 
+    @Deprecated
     public TekniskMottaker getUtskriftsleverandoer() {
-        return utskriftsleverandoer;
+        return null;
     }
 
     public static FysiskPost.Builder builder() {
@@ -49,7 +60,7 @@ public class FysiskPost {
         }
 
         public Builder adresse(KonvoluttAdresse adresse) {
-            fysiskPost.adressat = adresse;
+            fysiskPost.mottaker = adresse;
             return this;
         }
 
@@ -58,9 +69,13 @@ public class FysiskPost {
             return this;
         }
 
+        @Deprecated
         public Builder utskrift(Utskriftsfarge utskriftsfarge, TekniskMottaker utskriftsleverandoer) {
+            return utskrift(utskriftsfarge);
+        }
+
+        public Builder utskrift(Utskriftsfarge utskriftsfarge) {
             fysiskPost.utskriftsfarge = utskriftsfarge;
-            fysiskPost.utskriftsleverandoer = utskriftsleverandoer;
             return this;
         }
 

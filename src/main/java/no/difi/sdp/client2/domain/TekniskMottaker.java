@@ -1,7 +1,5 @@
 package no.difi.sdp.client2.domain;
 
-import no.digipost.api.representations.Organisasjonsnummer;
-
 public class TekniskMottaker {
 
 	public final Organisasjonsnummer organisasjonsnummer;

@@ -1,7 +1,5 @@
 package no.difi.sdp.client2.domain.exceptions;
 
-import javax.xml.namespace.QName;
-
 /**
  * Felles superklasse for alle Exceptions som oppstår under sending/mottak av forespørsler mot meldingsformidler.
  */
@@ -21,14 +19,14 @@ public class SendException extends SikkerDigitalPostException {
     public enum AntattSkyldig {
         /**
          * Feilen er trolig forårsaket av en feil i klienten eller klientoppsettet.
-         *
+         * <p>
          * Å forsøke samme forespørsel igjen vil sannsynligvis ikke gjøre noe med situasjonen.
          */
         KLIENT,
 
         /**
          * Feilen er trolig forårsaket av en feil i meldingsformidleren.
-         *
+         * <p>
          * Det kan fungere å prøve forespørselen igjen senere.
          */
         SERVER,
@@ -38,15 +36,11 @@ public class SendException extends SikkerDigitalPostException {
          */
         UKJENT;
 
-        public static AntattSkyldig fraSoapFaultCode(QName soapFaultCode) {
-            if (soapFaultCode == null) {
-                return UKJENT;
-            }
+        public static AntattSkyldig fraHttpStatusCode(int statusKode) {
 
-            String localPart = soapFaultCode.getLocalPart();
-            if ("Receiver".equals(localPart)) {
+            if (statusKode / 100 == 5) {
                 return SERVER;
-            } else if("Sender".equals(localPart)) {
+            } else if (statusKode / 100 == 4) {
                 return KLIENT;
             } else {
                 return UKJENT;

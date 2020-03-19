@@ -1,12 +1,17 @@
 package no.difi.sdp.client2.domain;
 
 import no.difi.sdp.client2.domain.exceptions.SertifikatException;
-import org.apache.commons.codec.binary.Base64;
 
 import java.io.ByteArrayInputStream;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
-import java.security.cert.*;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+
+import static java.util.Base64.getDecoder;
 
 public class Sertifikat {
 
@@ -30,7 +35,8 @@ public class Sertifikat {
 
     public static Sertifikat fraBase64X509String(String base64) {
         try {
-            return lagSertifikat(Base64.decodeBase64(base64));
+
+            return lagSertifikat(getDecoder().decode(base64));
         } catch (CertificateException e) {
             throw new SertifikatException("Kunne ikke lese sertifikat fra base64-streng", e);
         }

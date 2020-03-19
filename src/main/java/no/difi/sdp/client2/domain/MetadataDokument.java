@@ -1,6 +1,5 @@
 package no.difi.sdp.client2.domain;
 
-import no.difi.sdp.client2.asice.AsicEAttachable;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
@@ -9,7 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class MetadataDokument implements AsicEAttachable {
+public class MetadataDokument implements MedDokumentEgenskaper {
 
     private String filnavn;
     private byte[] dokument;
@@ -56,17 +55,14 @@ public class MetadataDokument implements AsicEAttachable {
         }
     }
 
-    @Override
     public String getFileName() {
         return this.filnavn;
     }
 
-    @Override
     public byte[] getBytes() {
         return this.dokument;
     }
 
-    @Override
     public String getMimeType() {
         return this.mimeType;
     }

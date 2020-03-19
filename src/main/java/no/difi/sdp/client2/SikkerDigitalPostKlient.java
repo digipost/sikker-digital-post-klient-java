@@ -4,44 +4,31 @@ import no.difi.sdp.client2.domain.Databehandler;
 import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.exceptions.SendException;
 import no.difi.sdp.client2.domain.kvittering.ForretningsKvittering;
+import no.difi.sdp.client2.domain.kvittering.KanBekreftesSomBehandletKvittering;
 import no.difi.sdp.client2.domain.kvittering.KvitteringForespoersel;
-import no.difi.sdp.client2.internal.Billable;
-import no.difi.sdp.client2.internal.CertificateValidator;
-import no.difi.sdp.client2.internal.DigipostMessageSenderFacade;
-import no.difi.sdp.client2.internal.EbmsForsendelseBuilder;
+import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
+import no.difi.sdp.client2.internal.IntegrasjonspunktMessageSenderFacade;
 import no.difi.sdp.client2.internal.KvitteringBuilder;
-import no.difi.sdp.client2.util.CryptoChecker;
-import no.digipost.api.representations.EbmsApplikasjonsKvittering;
-import no.digipost.api.representations.EbmsForsendelse;
-import no.digipost.api.representations.EbmsPullRequest;
-import no.digipost.api.representations.KanBekreftesSomBehandletKvittering;
-import no.digipost.api.representations.TransportKvittering;
-import org.springframework.ws.client.core.WebServiceTemplate;
+import no.difi.sdp.client2.internal.SBDForsendelseBuilder;
 
 public class SikkerDigitalPostKlient {
 
     private final Databehandler databehandler;
-    private final EbmsForsendelseBuilder ebmsForsendelseBuilder;
     private final KvitteringBuilder kvitteringBuilder;
-    private final DigipostMessageSenderFacade digipostMessageSenderFacade;
+    private final IntegrasjonspunktMessageSenderFacade integrasjonspunktMessageSenderFacade;
     private final KlientKonfigurasjon klientKonfigurasjon;
 
     /**
      * @param databehandler       parten som er ansvarlig for den tekniske utførelsen av sendingen.
      *                            Se <a href="http://begrep.difi.no/SikkerDigitalPost/forretningslag/Aktorer">oversikt over aktører</a> for mer informasjon.
-     * @param klientKonfigurasjon Oppsett for blant annet oppkoblingen mot meldingsformidler og interceptorer for å få ut data som sendes.
+     * @param klientKonfigurasjon Oppsett for blant annet oppkoblingen mot integrasjonspunkt og interceptorer for å få ut data som sendes.
      */
     public SikkerDigitalPostKlient(Databehandler databehandler, KlientKonfigurasjon klientKonfigurasjon) {
-        CryptoChecker.checkCryptoPolicy();
-
-        this.ebmsForsendelseBuilder = new EbmsForsendelseBuilder();
         this.kvitteringBuilder = new KvitteringBuilder();
-        this.digipostMessageSenderFacade = new DigipostMessageSenderFacade(databehandler, klientKonfigurasjon);
+        this.integrasjonspunktMessageSenderFacade = new IntegrasjonspunktMessageSenderFacade(databehandler, klientKonfigurasjon);
 
         this.klientKonfigurasjon = klientKonfigurasjon;
         this.databehandler = databehandler;
-
-        CertificateValidator.validate(klientKonfigurasjon.getMiljo(), databehandler.noekkelpar.getVirksomhetssertifikat().getX509Certificate());
     }
 
     /**
@@ -52,10 +39,11 @@ public class SikkerDigitalPostKlient {
      * @throws SendException
      */
     public SendResultat send(Forsendelse forsendelse) throws SendException {
-        Billable<EbmsForsendelse> forsendelseBundleWithBillableBytes = ebmsForsendelseBuilder.buildEbmsForsendelse(databehandler, klientKonfigurasjon.getMeldingsformidlerOrganisasjon(), forsendelse);
-        TransportKvittering kvittering = digipostMessageSenderFacade.send(forsendelseBundleWithBillableBytes.entity);
+        StandardBusinessDocument sbd = SBDForsendelseBuilder.buildSBD(databehandler.organisasjonsnummer, forsendelse);
+        integrasjonspunktMessageSenderFacade.send(sbd, forsendelse.getDokumentpakke());
 
-        return new SendResultat(kvittering.messageId, kvittering.refToMessageId, forsendelseBundleWithBillableBytes.billableBytes);
+
+        return null;
     }
 
     /**
@@ -88,20 +76,21 @@ public class SikkerDigitalPostKlient {
      * </dl>
      */
     public ForretningsKvittering hentKvitteringOgBekreftForrige(KvitteringForespoersel kvitteringForespoersel, KanBekreftesSomBehandletKvittering forrigeKvittering) throws SendException {
-        EbmsPullRequest ebmsPullRequest = kvitteringBuilder.buildEbmsPullRequest(klientKonfigurasjon.getMeldingsformidlerOrganisasjon(), kvitteringForespoersel);
-
-        EbmsApplikasjonsKvittering ebmsApplikasjonsKvittering;
-        if (forrigeKvittering == null) {
-            ebmsApplikasjonsKvittering = digipostMessageSenderFacade.hentKvittering(ebmsPullRequest);
-        } else {
-            ebmsApplikasjonsKvittering = digipostMessageSenderFacade.hentKvittering(ebmsPullRequest, forrigeKvittering);
-        }
-
-        if (ebmsApplikasjonsKvittering == null) {
-            return null;
-        }
-
-        return kvitteringBuilder.buildForretningsKvittering(ebmsApplikasjonsKvittering);
+        return null;
+//        EbmsPullRequest ebmsPullRequest = kvitteringBuilder.buildEbmsPullRequest(klientKonfigurasjon.getMeldingsformidlerOrganisasjon(), kvitteringForespoersel);
+//
+//        EbmsApplikasjonsKvittering ebmsApplikasjonsKvittering;
+//        if (forrigeKvittering == null) {
+//            ebmsApplikasjonsKvittering = integrasjonspunktMessageSenderFacade.hentKvittering(ebmsPullRequest);
+//        } else {
+//            ebmsApplikasjonsKvittering = integrasjonspunktMessageSenderFacade.hentKvittering(ebmsPullRequest, forrigeKvittering);
+//        }
+//
+//        if (ebmsApplikasjonsKvittering == null) {
+//            return null;
+//        }
+//
+//        return kvitteringBuilder.buildForretningsKvittering(ebmsApplikasjonsKvittering);
     }
 
     /**
@@ -116,14 +105,14 @@ public class SikkerDigitalPostKlient {
      * </ol>
      */
     public void bekreft(KanBekreftesSomBehandletKvittering forrigeKvittering) throws SendException {
-        digipostMessageSenderFacade.bekreft(forrigeKvittering);
+        integrasjonspunktMessageSenderFacade.bekreft(forrigeKvittering);
     }
 
     /**
      * Registrer egen ExceptionMapper.
      */
     public void setExceptionMapper(ExceptionMapper exceptionMapper) {
-        this.digipostMessageSenderFacade.setExceptionMapper(exceptionMapper);
+        this.integrasjonspunktMessageSenderFacade.setExceptionMapper(exceptionMapper);
     }
 
     /**
@@ -134,12 +123,10 @@ public class SikkerDigitalPostKlient {
      * Man vil ikke under normale omstendigheter aksessere denne i produksjonskode.
      *
      * @return Spring {@code WebServiceTemplate} som er konfigurert internt i klientbiblioteket
-     *
      * @see <a href="https://docs.spring.io/spring-ws/docs/3.0.7.RELEASE/reference/#_using_the_client_side_api">Spring WS - 6.2. Using the client-side API</a>
      * @see <a href="https://docs.spring.io/spring-ws/docs/3.0.7.RELEASE/reference/#_client_side_testing">Spring WS - 6.3. Client-side testing</a>
      */
-    public WebServiceTemplate getMeldingTemplate() {
-        return digipostMessageSenderFacade.getMeldingTemplate();
+    public void getMeldingTemplate() {
     }
 
 }

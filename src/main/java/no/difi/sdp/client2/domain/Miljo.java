@@ -6,6 +6,7 @@ import no.digipost.security.cert.Trust;
 
 import java.net.URI;
 
+
 public class Miljo {
 
     public static Miljo PRODUKSJON = new Miljo(Environment.PRODUCTION, URI.create("https://meldingsformidler.digipost.no/api/"));

@@ -2,23 +2,21 @@ package no.difi.sdp.client2.smoke;
 
 import no.difi.sdp.client2.KlientKonfigurasjon;
 import no.difi.sdp.client2.SikkerDigitalPostKlient;
+import no.difi.sdp.client2.domain.Avsender;
 import no.difi.sdp.client2.domain.Databehandler;
 import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.Miljo;
 import no.difi.sdp.client2.domain.Noekkelpar;
-import no.difi.sdp.client2.domain.Prioritet;
+import no.difi.sdp.client2.domain.Organisasjonsnummer;
 import no.difi.sdp.client2.domain.kvittering.ForretningsKvittering;
 import no.difi.sdp.client2.domain.kvittering.KvitteringForespoersel;
 import no.difi.sdp.client2.domain.kvittering.LeveringsKvittering;
-import no.digipost.api.representations.Organisasjonsnummer;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x500.style.IETFUtils;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
-import org.springframework.core.io.ClassPathResource;
 
-import java.io.IOException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.cert.CertificateEncodingException;
@@ -27,21 +25,22 @@ import java.util.UUID;
 
 import static java.lang.System.out;
 import static java.lang.Thread.sleep;
+import static no.difi.sdp.client2.ObjectMother.POSTEN_ORGNR;
 import static no.difi.sdp.client2.ObjectMother.TESTMILJO_VIRKSOMHETSSERTIFIKAT_ALIAS_ENVIRONMENT_VARIABLE;
 import static no.difi.sdp.client2.ObjectMother.TESTMILJO_VIRKSOMHETSSERTIFIKAT_ALIAS_VALUE;
 import static no.difi.sdp.client2.ObjectMother.TESTMILJO_VIRKSOMHETSSERTIFIKAT_PASSWORD_ENVIRONMENT_VARIABLE;
 import static no.difi.sdp.client2.ObjectMother.TESTMILJO_VIRKSOMHETSSERTIFIKAT_PASSWORD_VALUE;
 import static no.difi.sdp.client2.ObjectMother.TESTMILJO_VIRKSOMHETSSERTIFIKAT_PATH_ENVIRONMENT_VARIABLE;
 import static no.difi.sdp.client2.ObjectMother.TESTMILJO_VIRKSOMHETSSERTIFIKAT_PATH_VALUE;
-import static no.difi.sdp.client2.ObjectMother.databehandlerMedSertifikat;
-import static no.difi.sdp.client2.ObjectMother.forsendelse;
+import static no.difi.sdp.client2.ObjectMother.digitalForsendelse;
+import static no.difi.sdp.client2.ObjectMother.ehfForsendelse;
+import static no.difi.sdp.client2.ObjectMother.fysiskPostForsendelse;
 import static no.difi.sdp.client2.ObjectMother.getVirksomhetssertifikat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 class SmokeTestHelper {
 
@@ -57,7 +56,7 @@ class SmokeTestHelper {
         _mpcId = UUID.randomUUID().toString();
 
         Noekkelpar databehandlerNoekkelpar = createValidDatabehandlerNoekkelparFromCertificate(databehandlerCertificate);
-        Databehandler databehandler = databehandlerMedSertifikat(databehanderOrgnr, databehandlerNoekkelpar);
+        Databehandler databehandler = Databehandler.builder(POSTEN_ORGNR.forfremTilDatabehandler()).build();//databehandlerMedSertifikat(databehanderOrgnr, databehandlerNoekkelpar);
 
         KlientKonfigurasjon klientKonfigurasjon = KlientKonfigurasjon.builder(miljo).build();
         _klient = new SikkerDigitalPostKlient(databehandler, klientKonfigurasjon);
@@ -83,15 +82,20 @@ class SmokeTestHelper {
         }
     }
 
-    SmokeTestHelper create_digital_forsendelse() {
-        assertState(_klient);
+    SmokeTestHelper create_print_forsendelse() {
+        return setForsendelse(fysiskPostForsendelse());
+    }
 
-        Forsendelse forsendelse = null;
-        try {
-            forsendelse = forsendelse(_mpcId, new ClassPathResource("/test.pdf").getInputStream());
-        } catch (IOException e) {
-            fail("klarte ikke åpne hoveddokument.");
-        }
+    SmokeTestHelper create_digital_forsendelse(Avsender avsender) {
+        return setForsendelse(digitalForsendelse(_mpcId, SmokeTestHelper.class.getResourceAsStream("/test.pdf"), avsender));
+    }
+
+    SmokeTestHelper create_ehf_forsendelse(Avsender avsender) {
+        return setForsendelse(ehfForsendelse(_mpcId, SmokeTestHelper.class.getResourceAsStream("/test.pdf"), avsender));
+    }
+
+    private SmokeTestHelper setForsendelse(Forsendelse forsendelse) {
+        assertState(_klient);
 
         _forsendelse = forsendelse;
 
@@ -107,7 +111,7 @@ class SmokeTestHelper {
     }
 
     SmokeTestHelper fetch_receipt() {
-        KvitteringForespoersel kvitteringForespoersel = KvitteringForespoersel.builder(Prioritet.PRIORITERT).mpcId(_mpcId).build();
+        KvitteringForespoersel kvitteringForespoersel = KvitteringForespoersel.builder().mpcId(_mpcId).build();
         ForretningsKvittering forretningsKvittering = null;
 
         try {
