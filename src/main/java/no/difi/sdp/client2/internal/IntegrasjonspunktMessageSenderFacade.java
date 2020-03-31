@@ -10,6 +10,7 @@ import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
 import no.difi.sdp.client2.internal.http.MessageSender;
 import no.digipost.http.client3.DigipostHttpClientFactory;
 import org.apache.http.HttpRequestInterceptor;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 
 import java.util.Arrays;
@@ -77,4 +78,7 @@ public class IntegrasjonspunktMessageSenderFacade {
         this.exceptionMapper = exceptionMapper;
     }
 
+    public void hentKvittering() {
+        performRequest(() -> messageSender.hentKvittering());
+    }
 }

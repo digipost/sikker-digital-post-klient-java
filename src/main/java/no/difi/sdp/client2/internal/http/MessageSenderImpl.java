@@ -16,10 +16,12 @@ import no.difi.sdp.client2.foretningsmelding.IntegrasjonspunktMessageSerializer;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -38,12 +40,13 @@ public class MessageSenderImpl implements MessageSender {
 
     private final static String CREATE_ENDPOINT_PATH = "/api/messages/out";
     private final static String MESSAGE_ENDPOINT_PATH_TEMPLATE = "/api/messages/out/%s";
+    private final static String STATUSES_PATH = "/api/statuses";
 
     private final String endpointUri;
-    private final HttpClient httpClient;
+    private final CloseableHttpClient httpClient;
     private final ObjectMapper mapper;
 
-    public MessageSenderImpl(URI endpointUri, HttpClient httpClient) {
+    public MessageSenderImpl(URI endpointUri, CloseableHttpClient httpClient) {
         this.endpointUri = "http://localhost:9093";//endpointUri.toString().replaceFirst("/$", "");
         this.httpClient = httpClient;
 
@@ -90,7 +93,7 @@ public class MessageSenderImpl implements MessageSender {
         HttpPost httpPost = new HttpPost(endpointUri + CREATE_ENDPOINT_PATH);
         httpPost.setEntity(new StringEntity(json));
         httpPost.setHeader("content-type", "application/json");
-        CloseableHttpResponse response = HttpClients.createDefault().execute(httpPost);
+        CloseableHttpResponse response = httpClient.execute(httpPost);
         LOG.info(EntityUtils.toString(response.getEntity()));
         handleResponse(response.getStatusLine().getStatusCode());
 
@@ -121,13 +124,27 @@ public class MessageSenderImpl implements MessageSender {
     private void closeMessage(StandardBusinessDocument sbd) throws IOException {
         String messageEndpointPath = String.format(MESSAGE_ENDPOINT_PATH_TEMPLATE, sbd.getConversationId());
         HttpPost fileHttpPost = new HttpPost(endpointUri + messageEndpointPath);
-        CloseableHttpResponse response = HttpClients.createDefault().execute(fileHttpPost);
+        CloseableHttpResponse response = httpClient.execute(fileHttpPost);
         LOG.info(EntityUtils.toString(response.getEntity()));
         handleResponse(response.getStatusLine().getStatusCode());
     }
 
     @Override
     public void bekreft(KanBekreftesSomBehandletKvittering kanBekreftesSomBehandletKvittering) {
+
+    }
+
+    @Override
+    public void hentKvittering() {
+        HttpGet httpGet= new HttpGet(endpointUri + STATUSES_PATH);
+
+        try {
+            final CloseableHttpResponse response = httpClient.execute(httpGet);
+            LOG.info(EntityUtils.toString(response.getEntity()));
+            handleResponse(response.getStatusLine().getStatusCode());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 }

@@ -1,7 +1,20 @@
 package no.difi.sdp.client2.internal;
-
+//
+//import no.difi.sdp.client2.domain.Organisasjonsnummer;
+//import no.difi.sdp.client2.domain.exceptions.SikkerDigitalPostException;
+//import no.difi.sdp.client2.domain.kvittering.AapningsKvittering;
+//import no.difi.sdp.client2.domain.kvittering.Feil;
+//import no.difi.sdp.client2.domain.kvittering.ForretningsKvittering;
+//import no.difi.sdp.client2.domain.kvittering.KvitteringForespoersel;
+//import no.difi.sdp.client2.domain.kvittering.KvitteringsInfo;
+//import no.difi.sdp.client2.domain.kvittering.LeveringsKvittering;
+//import no.difi.sdp.client2.domain.kvittering.MottaksKvittering;
+//import no.difi.sdp.client2.domain.kvittering.ReturpostKvittering;
+//import no.difi.sdp.client2.domain.kvittering.VarslingFeiletKvittering;
+//import no.digipost.api.representations.EbmsPullRequest;
+//
 public class KvitteringBuilder {
-
+//
 //    public EbmsPullRequest buildEbmsPullRequest(Organisasjonsnummer meldingsformidler, KvitteringForespoersel kvitteringForespoersel) {
 //        return new EbmsPullRequest(meldingsformidler(meldingsformidler), kvitteringForespoersel.getPrioritet().getEbmsPrioritet(), kvitteringForespoersel.getMpcId());
 //    }
@@ -72,5 +85,5 @@ public class KvitteringBuilder {
 //        }
 //        return VarslingFeiletKvittering.Varslingskanal.SMS;
 //    }
-
+//
 }

@@ -12,6 +12,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.SocketConfig;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
@@ -40,6 +41,8 @@ public interface MessageSender {
 //    }
 
     void bekreft(KanBekreftesSomBehandletKvittering kanBekreftesSomBehandletKvittering);
+
+    void hentKvittering();
 
 
     @FunctionalInterface
@@ -158,7 +161,7 @@ public interface MessageSender {
         }
 
 
-        private HttpClient getHttpClient() {
+        private CloseableHttpClient getHttpClient() {
             PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
             connectionManager.setValidateAfterInactivity((int)validateAfterInactivity.toMillis());
             connectionManager.setMaxTotal(maxTotal);

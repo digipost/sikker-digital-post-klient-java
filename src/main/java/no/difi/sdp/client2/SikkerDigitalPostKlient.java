@@ -76,6 +76,8 @@ public class SikkerDigitalPostKlient {
      * </dl>
      */
     public ForretningsKvittering hentKvitteringOgBekreftForrige(KvitteringForespoersel kvitteringForespoersel, KanBekreftesSomBehandletKvittering forrigeKvittering) throws SendException {
+        integrasjonspunktMessageSenderFacade.hentKvittering();
+
         return null;
 //        EbmsPullRequest ebmsPullRequest = kvitteringBuilder.buildEbmsPullRequest(klientKonfigurasjon.getMeldingsformidlerOrganisasjon(), kvitteringForespoersel);
 //

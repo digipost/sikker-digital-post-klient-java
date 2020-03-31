@@ -45,4 +45,9 @@ public class SmokeTest {
             .confirm_receipt();
     }
 
+    @Test
+    public void hentKvitteringer() {
+        new SmokeTestHelper(Miljo.FUNKSJONELT_TESTMILJO).fetch_receipt();
+    }
+
 }
