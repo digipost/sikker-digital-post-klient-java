@@ -6,36 +6,20 @@ import no.difi.sdp.client2.domain.Avsender;
 import no.difi.sdp.client2.domain.Databehandler;
 import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.Miljo;
-import no.difi.sdp.client2.domain.Noekkelpar;
 import no.difi.sdp.client2.domain.Organisasjonsnummer;
 import no.difi.sdp.client2.domain.kvittering.ForretningsKvittering;
 import no.difi.sdp.client2.domain.kvittering.KvitteringForespoersel;
 import no.difi.sdp.client2.domain.kvittering.LeveringsKvittering;
-import org.bouncycastle.asn1.x500.RDN;
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.asn1.x500.style.BCStyle;
-import org.bouncycastle.asn1.x500.style.IETFUtils;
-import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.X509Certificate;
 import java.util.UUID;
 
 import static java.lang.System.out;
 import static java.lang.Thread.sleep;
+import static no.difi.sdp.client2.ObjectMother.BRING_ORGNR;
 import static no.difi.sdp.client2.ObjectMother.POSTEN_ORGNR;
-import static no.difi.sdp.client2.ObjectMother.TESTMILJO_VIRKSOMHETSSERTIFIKAT_ALIAS_ENVIRONMENT_VARIABLE;
-import static no.difi.sdp.client2.ObjectMother.TESTMILJO_VIRKSOMHETSSERTIFIKAT_ALIAS_VALUE;
-import static no.difi.sdp.client2.ObjectMother.TESTMILJO_VIRKSOMHETSSERTIFIKAT_PASSWORD_ENVIRONMENT_VARIABLE;
-import static no.difi.sdp.client2.ObjectMother.TESTMILJO_VIRKSOMHETSSERTIFIKAT_PASSWORD_VALUE;
-import static no.difi.sdp.client2.ObjectMother.TESTMILJO_VIRKSOMHETSSERTIFIKAT_PATH_ENVIRONMENT_VARIABLE;
-import static no.difi.sdp.client2.ObjectMother.TESTMILJO_VIRKSOMHETSSERTIFIKAT_PATH_VALUE;
 import static no.difi.sdp.client2.ObjectMother.digitalForsendelse;
 import static no.difi.sdp.client2.ObjectMother.ehfForsendelse;
 import static no.difi.sdp.client2.ObjectMother.fysiskPostForsendelse;
-import static no.difi.sdp.client2.ObjectMother.getVirksomhetssertifikat;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.instanceOf;
@@ -50,36 +34,13 @@ class SmokeTestHelper {
     private ForretningsKvittering _forretningskvittering;
 
     SmokeTestHelper(Miljo miljo) {
-        verifyEnvironmentVariables();
-        KeyStore databehandlerCertificate = getVirksomhetssertifikat();
-        Organisasjonsnummer databehanderOrgnr = getOrganisasjonsnummerFraSertifikat(databehandlerCertificate);
+        Organisasjonsnummer databehanderOrgnr = Organisasjonsnummer.of(BRING_ORGNR.getOrganisasjonsnummer());
         _mpcId = UUID.randomUUID().toString();
 
-        Noekkelpar databehandlerNoekkelpar = createValidDatabehandlerNoekkelparFromCertificate(databehandlerCertificate);
-        Databehandler databehandler = Databehandler.builder(POSTEN_ORGNR.forfremTilDatabehandler()).build();//databehandlerMedSertifikat(databehanderOrgnr, databehandlerNoekkelpar);
+        Databehandler databehandler = Databehandler.builder(POSTEN_ORGNR.forfremTilDatabehandler()).build();
 
         KlientKonfigurasjon klientKonfigurasjon = KlientKonfigurasjon.builder(miljo).build();
         _klient = new SikkerDigitalPostKlient(databehandler, klientKonfigurasjon);
-    }
-
-    private static Noekkelpar createValidDatabehandlerNoekkelparFromCertificate(KeyStore databehandlerCertificate) {
-        return Noekkelpar.fraKeyStoreUtenTrustStore(databehandlerCertificate, TESTMILJO_VIRKSOMHETSSERTIFIKAT_ALIAS_VALUE, TESTMILJO_VIRKSOMHETSSERTIFIKAT_PASSWORD_VALUE);
-    }
-
-    private static Organisasjonsnummer getOrganisasjonsnummerFraSertifikat(KeyStore keyStore) {
-        try {
-            X509Certificate cert = (X509Certificate) keyStore.getCertificate(TESTMILJO_VIRKSOMHETSSERTIFIKAT_ALIAS_VALUE);
-            if (cert == null) {
-                throw new RuntimeException(String.format("Klarte ikke hente ut virksomhetssertifikatet fra keystoren med alias '%s'", TESTMILJO_VIRKSOMHETSSERTIFIKAT_ALIAS_VALUE));
-            }
-            X500Name x500name = new JcaX509CertificateHolder(cert).getSubject();
-            RDN serialnumber = x500name.getRDNs(BCStyle.SN)[0];
-            return Organisasjonsnummer.of(IETFUtils.valueToString(serialnumber.getFirst().getValue()));
-        } catch (CertificateEncodingException e) {
-            throw new RuntimeException("Klarte ikke hente ut organisasjonsnummer fra sertifikatet.", e);
-        } catch (KeyStoreException e) {
-            throw new RuntimeException("Klarte ikke hente ut virksomhetssertifikatet fra keystoren.", e);
-        }
     }
 
     SmokeTestHelper create_print_forsendelse() {
@@ -157,24 +118,6 @@ class SmokeTestHelper {
         _klient.bekreft(_forretningskvittering);
 
         return this;
-    }
-
-    private static void verifyEnvironmentVariables() {
-        throwIfEnvironmentVariableNotSet("sti", TESTMILJO_VIRKSOMHETSSERTIFIKAT_PATH_VALUE);
-        throwIfEnvironmentVariableNotSet("alias", TESTMILJO_VIRKSOMHETSSERTIFIKAT_ALIAS_VALUE);
-        throwIfEnvironmentVariableNotSet("passord", TESTMILJO_VIRKSOMHETSSERTIFIKAT_PASSWORD_VALUE);
-    }
-
-    private static void throwIfEnvironmentVariableNotSet(String variabel, String value) {
-        String oppsett = "For å kjøre smoketestene må det brukes et gyldig virksomhetssertifikat. \n" +
-                "1) Sett environmentvariabel '" + TESTMILJO_VIRKSOMHETSSERTIFIKAT_PATH_ENVIRONMENT_VARIABLE + "' til full sti til virksomhetsssertifikatet. \n" +
-                "2) Sett environmentvariabel '" + TESTMILJO_VIRKSOMHETSSERTIFIKAT_ALIAS_ENVIRONMENT_VARIABLE  + "' til aliaset (siste avsnitt, første del før komma): \n" +
-                "       keytool -list -keystore VIRKSOMHETSSERTIFIKAT.p12 -storetype pkcs12 \n" +
-                "3) Sett environmentvariabel '" + TESTMILJO_VIRKSOMHETSSERTIFIKAT_PASSWORD_ENVIRONMENT_VARIABLE + "' til passordet til virksomhetssertifikatet. \n";
-
-        if (value == null) {
-            throw new RuntimeException(String.format("Finner ikke %s til virksomhetssertifikat. \n %s", variabel, oppsett));
-        }
     }
 
     private void assertState(Object object) {
