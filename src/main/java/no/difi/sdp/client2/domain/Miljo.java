@@ -1,38 +1,21 @@
 package no.difi.sdp.client2.domain;
 
-import no.digipost.security.cert.Trust;
-
 import java.net.URI;
 
 
 public class Miljo {
 
-    @Deprecated
-    public static Miljo PRODUKSJON = new Miljo();
-    @Deprecated
-    public static Miljo PRODUKSJON_NORSK_HELSENETT = new Miljo();
-    @Deprecated
-    public static Miljo FUNKSJONELT_TESTMILJO = new Miljo();
-    @Deprecated
-    public static Miljo FUNKSJONELT_TESTMILJO_NORSK_HELSENETT = new Miljo();
+    URI integrasjonspunktRoot;
 
-    Trust godkjenteKjedeSertifikater;
-    URI meldingsformidlerRoot;
-
-    private Miljo() {}
-
-    public Miljo(Trust godkjenteKjedeSertifikater, URI meldingsformidlerRoot) {
-        this.godkjenteKjedeSertifikater = godkjenteKjedeSertifikater;
-        this.meldingsformidlerRoot = meldingsformidlerRoot;
+    public Miljo(URI integrasjonspunktRoot) {
+        this.integrasjonspunktRoot = integrasjonspunktRoot;
     }
 
-    @Deprecated
-    public URI getMeldingsformidlerRoot() {
-        return meldingsformidlerRoot;
+    public URI getIntegrasjonspunktRoot() {
+        return integrasjonspunktRoot;
     }
 
-    @Deprecated
-    public void setMeldingsformidlerRoot(URI meldingsformidlerRoot) {
-        this.meldingsformidlerRoot = meldingsformidlerRoot;
+    public void setIntegrasjonspunktRoot(URI integrasjonspunktRoot) {
+        this.integrasjonspunktRoot = integrasjonspunktRoot;
     }
 }

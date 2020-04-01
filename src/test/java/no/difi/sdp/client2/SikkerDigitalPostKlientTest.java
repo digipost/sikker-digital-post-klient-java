@@ -60,12 +60,4 @@ public class SikkerDigitalPostKlientTest {
             assertThat(interceptorString.toString(), equalTo("First interceptor called, and second too!"));
         }
     }
-
-    @Test
-    public void calls_certificate_validator_on_init() {
-        Databehandler databehandlerWithTestCertificate = databehandler();
-        KlientKonfigurasjon konfigurasjon = KlientKonfigurasjon.builder(Miljo.PRODUKSJON).build();
-
-        assertThrows(SertifikatException.class, () -> new SikkerDigitalPostKlient(databehandlerWithTestCertificate, konfigurasjon));
-    }
 }

@@ -21,13 +21,10 @@ public class KlientKonfigurasjon {
         return builder(URI.create(integrasjonspunktRootUri));
     }
 
-    @Deprecated
     public static Builder builder(URI integrasjonspunktRoot) {
-        return builder(new Miljo(null, integrasjonspunktRoot));
+        return new Builder(new Miljo(integrasjonspunktRoot));
     }
 
-
-    private final Organisasjonsnummer meldingsformidlerOrganisasjon = Organisasjonsnummer.of("984661185");
 
     private final Miljo miljo;
     private String proxyHost;
@@ -77,8 +74,9 @@ public class KlientKonfigurasjon {
         return !isEmpty(proxyHost) && proxyPort > 0;
     }
 
+    @Deprecated
     public Organisasjonsnummer getMeldingsformidlerOrganisasjon() {
-        return meldingsformidlerOrganisasjon;
+        return Organisasjonsnummer.of("984661185");
     }
 
     public HttpRequestInterceptor[] getHttpRequestInterceptors() {
@@ -94,7 +92,7 @@ public class KlientKonfigurasjon {
     }
 
     public URI getIntegrasjonspunktRoot() {
-        return miljo.getMeldingsformidlerRoot();
+        return miljo.getIntegrasjonspunktRoot();
     }
 
 

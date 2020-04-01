@@ -47,7 +47,8 @@ public class MessageSenderImpl implements MessageSender {
     private final ObjectMapper mapper;
 
     public MessageSenderImpl(URI endpointUri, CloseableHttpClient httpClient) {
-        this.endpointUri = "http://localhost:9093";//endpointUri.toString().replaceFirst("/$", "");
+        //Fjern trailing slash hvis den eksisterer
+        this.endpointUri = endpointUri.toString().replaceFirst("/$", "");
         this.httpClient = httpClient;
 
         final SimpleModule sbdSerializerModule = new SimpleModule("sbd-serializer");

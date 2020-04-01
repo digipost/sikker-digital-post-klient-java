@@ -28,7 +28,7 @@ public class IntegrasjonspunktMessageSenderFacade {
         final int socketTimeoutInMillis = (int) klientKonfigurasjon.getSocketTimeoutInMillis();
         final int connectionRequestTimeoutInMillis = (int) klientKonfigurasjon.getConnectionRequestTimeoutInMillis();
 
-        MessageSender.Builder messageSenderBuilder = MessageSender.create(klientKonfigurasjon.getIntegrasjonspunktRoot())
+        MessageSender.Builder messageSenderBuilder = MessageSender.create(klientKonfigurasjon.getMiljo().getIntegrasjonspunktRoot())
                 .withConnectTimeout(connectTimeoutInMillis)
                 .withSocketTimeout(socketTimeoutInMillis)
                 .withConnectionRequestTimeout(connectionRequestTimeoutInMillis)

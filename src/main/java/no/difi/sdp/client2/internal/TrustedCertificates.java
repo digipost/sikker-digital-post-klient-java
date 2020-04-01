@@ -14,6 +14,7 @@ import static no.difi.sdp.client2.internal.TrustedCertificates.Environment.TEST;
 import static no.digipost.security.DigipostSecurity.readCertificate;
 
 
+@Deprecated
 public class TrustedCertificates {
 
     enum Environment {
@@ -73,6 +74,7 @@ public class TrustedCertificates {
         return new IllegalStateException(exceptionDescription);
     }
 
+    @Deprecated
     public static KeyStore getTrustStore() {
         KeyStore trustStore;
 
@@ -95,6 +97,7 @@ public class TrustedCertificates {
         return trustStore;
     }
 
+    @Deprecated
     public static void addCertificatesToTrustStore(Stream<X509Certificate> certificates, KeyStore trustStore) throws KeyStoreException {
         for (X509Certificate cert : certificates.collect(Collectors.toList())) {
             String uniqueCertificateAlias = cert.getSerialNumber().toString() + Math.random();
