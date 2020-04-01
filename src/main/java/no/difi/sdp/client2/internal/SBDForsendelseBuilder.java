@@ -1,7 +1,7 @@
 package no.difi.sdp.client2.internal;
 
+import no.difi.sdp.client2.domain.Avsender;
 import no.difi.sdp.client2.domain.DatabehandlerOrganisasjonsnummer;
-import no.difi.sdp.client2.domain.Dokument;
 import no.difi.sdp.client2.domain.ForretningsMelding;
 import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.digital_post.DigitalPost;
@@ -11,21 +11,23 @@ import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocumentHeader;
 import java.time.Clock;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static no.difi.sdp.client2.domain.Forsendelse.Type.DIGITAL;
 import static no.difi.sdp.client2.domain.sbdh.Process.DIGITAL_POST_INFO;
 
 public class SBDForsendelseBuilder {
-
     public static StandardBusinessDocument buildSBD(DatabehandlerOrganisasjonsnummer databehandler, Forsendelse forsendelse) {
         Clock clock = Clock.system(ZoneId.of("UTC"));
+        return buildSBD(databehandler,forsendelse, clock);
+    }
 
+    public static StandardBusinessDocument buildSBD(DatabehandlerOrganisasjonsnummer databehandler, Forsendelse forsendelse, Clock clock) {
         //SBD
         ForretningsMelding forretningsMelding = forsendelse.getForretningsMelding();
         forretningsMelding.setHoveddokument(forsendelse.getDokumentpakke().getHoveddokument().getFilnavn());
+        final Avsender avsender = forsendelse.getAvsender();
+        forretningsMelding.setAvsenderId(avsender.getAvsenderIdentifikator());
+        forretningsMelding.setFakturaReferanse(avsender.getFakturaReferanse());
 
         if(forsendelse.type == DIGITAL) {
             forsendelse.getDokumentpakke().getHoveddokumentOgVedlegg()
@@ -35,15 +37,17 @@ public class SBDForsendelseBuilder {
 
         StandardBusinessDocument sbd = new StandardBusinessDocument();
 
-        String instanceIdentifier = UUID.randomUUID().toString();
+        String konversasjonsId = forsendelse.getKonversasjonsId();
+
         final StandardBusinessDocumentHeader sbdHeader = new StandardBusinessDocumentHeader.Builder().process(DIGITAL_POST_INFO)
             .standard(forsendelse.type)
-            .from(databehandler).onBehalfOf(forsendelse.getAvsender().getOrganisasjonsnummer())
+            .from(databehandler).onBehalfOf(avsender.getOrganisasjonsnummer())
             .to(forsendelse.getMottaker())
             .type(forretningsMelding.getType())
-            .relatedToConversationId(instanceIdentifier)
-            .relatedToMessageId(instanceIdentifier)
-            .creationDateAndTime(ZonedDateTime.now(clock)).build();
+            .relatedToConversationId(konversasjonsId)
+            .relatedToMessageId(konversasjonsId)
+            .creationDateAndTime(ZonedDateTime.now(clock))
+            .build();
 
         sbd.setStandardBusinessDocumentHeader(sbdHeader);
         sbd.setAny(forretningsMelding);

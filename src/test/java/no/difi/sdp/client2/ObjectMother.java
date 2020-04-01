@@ -155,7 +155,11 @@ public class ObjectMother {
     }
 
     public static Avsender avsender(AktoerOrganisasjonsnummer aktoerOrganisasjonsnummer) {
-        return Avsender.builder(aktoerOrganisasjonsnummer.forfremTilAvsender()).build();
+        return Avsender
+            .builder(aktoerOrganisasjonsnummer.forfremTilAvsender())
+            .avsenderIdentifikator("avdeling4")
+            .fakturaReferanse("eksepsjonell digital melding")
+            .build();
     }
 
     public static Sertifikat mottakerSertifikat() {
