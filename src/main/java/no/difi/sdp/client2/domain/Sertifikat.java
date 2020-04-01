@@ -13,6 +13,7 @@ import java.security.cert.X509Certificate;
 
 import static java.util.Base64.getDecoder;
 
+@Deprecated
 public class Sertifikat {
 
     private X509Certificate x509Certificate;
@@ -21,10 +22,12 @@ public class Sertifikat {
         this.x509Certificate = x509Certificate;
     }
 
+    @Deprecated
     public X509Certificate getX509Certificate() {
         return x509Certificate;
     }
 
+    @Deprecated
     public byte[] getEncoded() {
         try {
             return x509Certificate.getEncoded();
@@ -33,6 +36,7 @@ public class Sertifikat {
         }
     }
 
+    @Deprecated
     public static Sertifikat fraBase64X509String(String base64) {
         try {
 
@@ -42,6 +46,7 @@ public class Sertifikat {
         }
     }
 
+    @Deprecated
     public static Sertifikat fraByteArray(byte[] certificate) {
         try {
             return lagSertifikat(certificate);
@@ -50,10 +55,12 @@ public class Sertifikat {
         }
     }
 
+    @Deprecated
     public static Sertifikat fraCertificate(X509Certificate certificate) {
         return new Sertifikat(certificate);
     }
 
+    @Deprecated
     public static Sertifikat fraKeyStore(KeyStore keyStore, String alias) {
         Certificate certificate;
         try {
