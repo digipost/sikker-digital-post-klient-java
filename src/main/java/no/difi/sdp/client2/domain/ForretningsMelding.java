@@ -9,6 +9,9 @@ public abstract class ForretningsMelding {
 
     public String hoveddokument;
 
+    private String avsenderId;
+    private String fakturaReferanse;
+
     public ForretningsMelding(ForretningsMeldingType type, String hoveddokument) {
         this.type = type;
         this.hoveddokument = hoveddokument;
@@ -33,6 +36,21 @@ public abstract class ForretningsMelding {
         return this.hoveddokument;
     }
 
+    public String getAvsenderId() {
+        return avsenderId;
+    }
+
+    public void setAvsenderId(String avsenderId) {
+        this.avsenderId = avsenderId;
+    }
+
+    public String getFakturaReferanse() {
+        return fakturaReferanse;
+    }
+
+    public void setFakturaReferanse(String fakturaReferanse) {
+        this.fakturaReferanse = fakturaReferanse;
+    }
 
     public boolean isType(ForretningsMeldingType type){
         return this.type.equals(type);
