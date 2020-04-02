@@ -2,7 +2,7 @@ package no.difi.sdp.client2.internal.http;
 
 
 import no.difi.sdp.client2.domain.Dokumentpakke;
-import no.difi.sdp.client2.domain.kvittering.KanBekreftesSomBehandletKvittering;
+import no.digipost.api.representations.KanBekreftesSomBehandletKvittering;
 import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequestInterceptor;
@@ -21,6 +21,7 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 
@@ -40,7 +41,7 @@ public interface MessageSender {
 
     void bekreft(KanBekreftesSomBehandletKvittering kanBekreftesSomBehandletKvittering);
 
-    void hentKvittering();
+    Optional<IntegrasjonspunktKvittering> hentKvittering();
 
 
     @FunctionalInterface

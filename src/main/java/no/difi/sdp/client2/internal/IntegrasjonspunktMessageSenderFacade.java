@@ -5,15 +5,16 @@ import no.difi.sdp.client2.KlientKonfigurasjon;
 import no.difi.sdp.client2.domain.Databehandler;
 import no.difi.sdp.client2.domain.Dokumentpakke;
 import no.difi.sdp.client2.domain.exceptions.SendException;
-import no.difi.sdp.client2.domain.kvittering.KanBekreftesSomBehandletKvittering;
+import no.digipost.api.representations.KanBekreftesSomBehandletKvittering;
 import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
+import no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering;
 import no.difi.sdp.client2.internal.http.MessageSender;
 import no.digipost.http.client3.DigipostHttpClientFactory;
 import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class IntegrasjonspunktMessageSenderFacade {
@@ -78,7 +79,7 @@ public class IntegrasjonspunktMessageSenderFacade {
         this.exceptionMapper = exceptionMapper;
     }
 
-    public void hentKvittering() {
-        performRequest(() -> messageSender.hentKvittering());
+    public Optional<IntegrasjonspunktKvittering> hentKvittering() {
+        return performRequest(messageSender::hentKvittering);
     }
 }

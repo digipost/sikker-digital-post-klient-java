@@ -1,5 +1,8 @@
-package no.difi.sdp.client2.domain.kvittering;
+package no.digipost.api.representations;
 
+import org.w3.xmldsig.Reference;
+
+@Deprecated
 public class KvitteringsReferanse {
 
     private final String marshalled;
@@ -8,15 +11,23 @@ public class KvitteringsReferanse {
         marshalled = marshalledReference;
     }
 
+    @Deprecated
     public static Builder builder(String marshalledReference) {
         return new Builder(marshalledReference);
     }
 
+    @Deprecated
     public String getMarshalled() {
         return marshalled;
     }
 
+    @Deprecated
+    public Reference getUnmarshalled() {
+        return null;
+    }
 
+
+    @Deprecated
     public static class Builder {
         private KvitteringsReferanse target;
         private boolean built = false;
@@ -25,6 +36,7 @@ public class KvitteringsReferanse {
             this.target = new KvitteringsReferanse(marshalledReference);
         }
 
+        @Deprecated
         public KvitteringsReferanse build() {
             if (built) {
                 throw new IllegalStateException("Kan ikke bygges flere ganger.");
@@ -32,6 +44,5 @@ public class KvitteringsReferanse {
             built = true;
             return target;
         }
-
     }
 }
