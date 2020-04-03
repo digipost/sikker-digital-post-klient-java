@@ -3,16 +3,25 @@ package no.difi.sdp.client2.domain;
 public class Databehandler {
 
     public final DatabehandlerOrganisasjonsnummer organisasjonsnummer;
+    @Deprecated
+    public final Noekkelpar noekkelpar;
 
-    private Databehandler(DatabehandlerOrganisasjonsnummer organisasjonsnummer) {
+    private Databehandler(DatabehandlerOrganisasjonsnummer organisasjonsnummer, Noekkelpar noekkelpar) {
         this.organisasjonsnummer = organisasjonsnummer;
+        this.noekkelpar = noekkelpar;
+    }
+
+    public static Builder builder(DatabehandlerOrganisasjonsnummer organisasjonsnummer) {
+        return new Builder(organisasjonsnummer, null);
     }
 
     /**
      * @param organisasjonsnummer Organisasjonsnummeret til avsender av brevet.
+     * @param noekkelpar          Avsenders nøkkelpar: signert virksomhetssertifikat og tilhørende privatnøkkel.
      */
-    public static Builder builder(DatabehandlerOrganisasjonsnummer organisasjonsnummer) {
-        return new Builder(organisasjonsnummer);
+    @Deprecated
+    public static Builder builder(DatabehandlerOrganisasjonsnummer organisasjonsnummer, Noekkelpar noekkelpar) {
+        return new Builder(organisasjonsnummer, noekkelpar);
     }
 
     public static class Builder {
@@ -20,8 +29,8 @@ public class Databehandler {
         private final Databehandler target;
         private boolean built = false;
 
-        private Builder(DatabehandlerOrganisasjonsnummer organisasjonsnummer) {
-            target = new Databehandler(organisasjonsnummer);
+        private Builder(DatabehandlerOrganisasjonsnummer organisasjonsnummer, Noekkelpar noekkelpar) {
+            target = new Databehandler(organisasjonsnummer, noekkelpar);
         }
 
         public Databehandler build() {

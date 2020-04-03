@@ -4,11 +4,11 @@ import no.difi.sdp.client2.domain.Databehandler;
 import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.exceptions.SendException;
 import no.difi.sdp.client2.domain.kvittering.ForretningsKvittering;
-import no.difi.sdp.client2.domain.kvittering.KanBekreftesSomBehandletKvittering;
+import no.digipost.api.representations.KanBekreftesSomBehandletKvittering;
 import no.difi.sdp.client2.domain.kvittering.KvitteringForespoersel;
 import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
 import no.difi.sdp.client2.internal.IntegrasjonspunktMessageSenderFacade;
-import no.difi.sdp.client2.internal.KvitteringBuilder;
+import no.difi.sdp.client2.internal.kvittering.KvitteringBuilder;
 import no.difi.sdp.client2.internal.SBDForsendelseBuilder;
 
 public class SikkerDigitalPostKlient {
@@ -76,21 +76,10 @@ public class SikkerDigitalPostKlient {
      * </dl>
      */
     public ForretningsKvittering hentKvitteringOgBekreftForrige(KvitteringForespoersel kvitteringForespoersel, KanBekreftesSomBehandletKvittering forrigeKvittering) throws SendException {
-        return null;
-//        EbmsPullRequest ebmsPullRequest = kvitteringBuilder.buildEbmsPullRequest(klientKonfigurasjon.getMeldingsformidlerOrganisasjon(), kvitteringForespoersel);
-//
-//        EbmsApplikasjonsKvittering ebmsApplikasjonsKvittering;
-//        if (forrigeKvittering == null) {
-//            ebmsApplikasjonsKvittering = integrasjonspunktMessageSenderFacade.hentKvittering(ebmsPullRequest);
-//        } else {
-//            ebmsApplikasjonsKvittering = integrasjonspunktMessageSenderFacade.hentKvittering(ebmsPullRequest, forrigeKvittering);
-//        }
-//
-//        if (ebmsApplikasjonsKvittering == null) {
-//            return null;
-//        }
-//
-//        return kvitteringBuilder.buildForretningsKvittering(ebmsApplikasjonsKvittering);
+        return integrasjonspunktMessageSenderFacade
+            .hentKvittering()
+            .map(kvitteringBuilder::buildForretningsKvittering)
+            .orElse(null);
     }
 
     /**

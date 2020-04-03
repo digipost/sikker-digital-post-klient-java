@@ -4,7 +4,9 @@ package no.digipost.api.representations;
 public class EbmsOutgoingMessage {
     @Deprecated
     public enum Prioritet {
+        @Deprecated
         NORMAL("normal"),
+        @Deprecated
         PRIORITERT("prioritert");
         private final String value;
 

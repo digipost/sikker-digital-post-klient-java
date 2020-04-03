@@ -2,16 +2,15 @@ package no.difi.sdp.client2.internal.http;
 
 
 import no.difi.sdp.client2.domain.Dokumentpakke;
-import no.difi.sdp.client2.domain.kvittering.KanBekreftesSomBehandletKvittering;
+import no.digipost.api.representations.KanBekreftesSomBehandletKvittering;
 import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
-import no.difi.sdp.client2.internal.temp.RemoveContentLengthInterceptor;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponseInterceptor;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.SocketConfig;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
@@ -22,6 +21,7 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 
@@ -40,6 +40,8 @@ public interface MessageSender {
 //    }
 
     void bekreft(KanBekreftesSomBehandletKvittering kanBekreftesSomBehandletKvittering);
+
+    Optional<IntegrasjonspunktKvittering> hentKvittering();
 
 
     @FunctionalInterface
@@ -158,7 +160,7 @@ public interface MessageSender {
         }
 
 
-        private HttpClient getHttpClient() {
+        private CloseableHttpClient getHttpClient() {
             PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
             connectionManager.setValidateAfterInactivity((int)validateAfterInactivity.toMillis());
             connectionManager.setMaxTotal(maxTotal);
@@ -185,8 +187,7 @@ public interface MessageSender {
                 httpClientBuilder.addInterceptorFirst(httpResponseInterceptor);
             }
 
-            return httpClientBuilder.addInterceptorFirst(new RemoveContentLengthInterceptor())
-                    .setConnectionManager(connectionManager).setDefaultRequestConfig(requestConfigBuilder.build()).build();
+            return httpClientBuilder.setConnectionManager(connectionManager).setDefaultRequestConfig(requestConfigBuilder.build()).build();
         }
 
     }

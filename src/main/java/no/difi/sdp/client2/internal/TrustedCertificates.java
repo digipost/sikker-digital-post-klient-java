@@ -1,7 +1,6 @@
 package no.difi.sdp.client2.internal;
 
 import no.difi.sdp.client2.domain.exceptions.SertifikatException;
-import no.digipost.security.cert.Trust;
 
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -10,19 +9,19 @@ import java.text.MessageFormat;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static no.difi.sdp.client2.internal.Environment.PRODUCTION;
-import static no.difi.sdp.client2.internal.Environment.TEST;
+import static no.difi.sdp.client2.internal.TrustedCertificates.Environment.PRODUCTION;
+import static no.difi.sdp.client2.internal.TrustedCertificates.Environment.TEST;
 import static no.digipost.security.DigipostSecurity.readCertificate;
 
 
+@Deprecated
 public class TrustedCertificates {
 
-    public static Trust createTrust(Environment environment) {
-        return new Trust(
-                getTrustedRootCertificates(environment),
-                getTrustedIntermediateCertificates(environment)
-        );
+    enum Environment {
+        PRODUCTION,
+        TEST
     }
+
 
     private static Stream<X509Certificate> getTrustedRootCertificates(Environment environment) {
         Stream.Builder<X509Certificate> trustedCertificates = Stream.builder();
@@ -75,6 +74,7 @@ public class TrustedCertificates {
         return new IllegalStateException(exceptionDescription);
     }
 
+    @Deprecated
     public static KeyStore getTrustStore() {
         KeyStore trustStore;
 
@@ -97,6 +97,7 @@ public class TrustedCertificates {
         return trustStore;
     }
 
+    @Deprecated
     public static void addCertificatesToTrustStore(Stream<X509Certificate> certificates, KeyStore trustStore) throws KeyStoreException {
         for (X509Certificate cert : certificates.collect(Collectors.toList())) {
             String uniqueCertificateAlias = cert.getSerialNumber().toString() + Math.random();

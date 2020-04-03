@@ -5,14 +5,16 @@ import no.difi.sdp.client2.KlientKonfigurasjon;
 import no.difi.sdp.client2.domain.Databehandler;
 import no.difi.sdp.client2.domain.Dokumentpakke;
 import no.difi.sdp.client2.domain.exceptions.SendException;
-import no.difi.sdp.client2.domain.kvittering.KanBekreftesSomBehandletKvittering;
+import no.digipost.api.representations.KanBekreftesSomBehandletKvittering;
 import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
+import no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering;
 import no.difi.sdp.client2.internal.http.MessageSender;
 import no.digipost.http.client3.DigipostHttpClientFactory;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.impl.client.CloseableHttpClient;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public class IntegrasjonspunktMessageSenderFacade {
@@ -27,7 +29,7 @@ public class IntegrasjonspunktMessageSenderFacade {
         final int socketTimeoutInMillis = (int) klientKonfigurasjon.getSocketTimeoutInMillis();
         final int connectionRequestTimeoutInMillis = (int) klientKonfigurasjon.getConnectionRequestTimeoutInMillis();
 
-        MessageSender.Builder messageSenderBuilder = MessageSender.create(klientKonfigurasjon.getIntegrasjonspunktRoot())
+        MessageSender.Builder messageSenderBuilder = MessageSender.create(klientKonfigurasjon.getMiljo().getIntegrasjonspunktRoot())
                 .withConnectTimeout(connectTimeoutInMillis)
                 .withSocketTimeout(socketTimeoutInMillis)
                 .withConnectionRequestTimeout(connectionRequestTimeoutInMillis)
@@ -77,4 +79,7 @@ public class IntegrasjonspunktMessageSenderFacade {
         this.exceptionMapper = exceptionMapper;
     }
 
+    public Optional<IntegrasjonspunktKvittering> hentKvittering() {
+        return performRequest(messageSender::hentKvittering);
+    }
 }

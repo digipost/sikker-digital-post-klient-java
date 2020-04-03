@@ -12,18 +12,18 @@ public class KlientKonfigurasjonTest {
 
     @Test
     public void uri_builder_initializes_meldingsformidler_root_and_miljo() {
-        URI meldingsformidlerRoot = URI.create("http://meldingsformidlerroot.no");
+        URI integrasjonspunktRoot = URI.create("http://meldingsformidlerroot.no");
 
         @SuppressWarnings("deprecation")
-        KlientKonfigurasjon klientKonfigurasjon = KlientKonfigurasjon.builder(meldingsformidlerRoot).build();
+        KlientKonfigurasjon klientKonfigurasjon = KlientKonfigurasjon.builder(integrasjonspunktRoot).build();
 
-        assertThat(klientKonfigurasjon.getIntegrasjonspunktRoot(), is(meldingsformidlerRoot));
-        assertThat(klientKonfigurasjon.getMiljo().getMeldingsformidlerRoot(), is(meldingsformidlerRoot));
+        assertThat(klientKonfigurasjon.getIntegrasjonspunktRoot(), is(integrasjonspunktRoot));
+        assertThat(klientKonfigurasjon.getMiljo().getIntegrasjonspunktRoot(), is(integrasjonspunktRoot));
     }
 
     @Test
     public void miljo_builder_initializes_meldingsformidler_root_and_miljo() {
-        Miljo funksjoneltTestmiljo = Miljo.FUNKSJONELT_TESTMILJO;
+        Miljo funksjoneltTestmiljo = new Miljo(URI.create("http://meldingsformidlerroot.no"));;
         KlientKonfigurasjon klientKonfigurasjon = KlientKonfigurasjon
                 .builder(funksjoneltTestmiljo)
                 .build();
@@ -31,7 +31,7 @@ public class KlientKonfigurasjonTest {
         Miljo actualMiljo = klientKonfigurasjon.getMiljo();
 
         assertThat(actualMiljo, is(funksjoneltTestmiljo));
-        assertThat(actualMiljo.getMeldingsformidlerRoot(), is(klientKonfigurasjon.getIntegrasjonspunktRoot()));
+        assertThat(actualMiljo.getIntegrasjonspunktRoot(), is(klientKonfigurasjon.getIntegrasjonspunktRoot()));
     }
 
 }

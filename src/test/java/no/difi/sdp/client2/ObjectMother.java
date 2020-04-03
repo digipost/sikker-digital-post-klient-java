@@ -11,7 +11,6 @@ import no.difi.sdp.client2.domain.Dokumentpakke;
 import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.MetadataDokument;
 import no.difi.sdp.client2.domain.Mottaker;
-import no.difi.sdp.client2.domain.NoValidationNoekkelpar;
 import no.difi.sdp.client2.domain.Noekkelpar;
 import no.difi.sdp.client2.domain.Organisasjonsnummer;
 import no.difi.sdp.client2.domain.Sertifikat;
@@ -24,18 +23,12 @@ import no.difi.sdp.client2.domain.fysisk_post.KonvoluttAdresse;
 import no.difi.sdp.client2.domain.fysisk_post.Posttype;
 import no.difi.sdp.client2.domain.fysisk_post.Returhaandtering;
 import no.difi.sdp.client2.domain.fysisk_post.Utskriftsfarge;
-import no.difi.sdp.client2.internal.TrustedCertificates;
-import no.digipost.security.DigipostSecurity;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.security.KeyStore;
-import java.security.cert.X509Certificate;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
@@ -43,52 +36,11 @@ import java.util.UUID;
 
 public class ObjectMother {
 
-    public static final X509Certificate POSTEN_TEST_CERTIFICATE = DigipostSecurity.readCertificate("certificates/test/posten_test.pem");
-    public static final X509Certificate POSTEN_PROD_CERTIFICATE = DigipostSecurity.readCertificate("certificates/prod/posten_prod.pem");
-
     public static final AktoerOrganisasjonsnummer POSTEN_ORGNR = AktoerOrganisasjonsnummer.of("984661185");
     public static final AktoerOrganisasjonsnummer BRING_ORGNR = AktoerOrganisasjonsnummer.of("988015814");
 
-    public static final String SELVSIGNERT_VIRKSOMHETSSERTIFIKAT_ALIAS = "avsender";
-    public static final String SELVSIGNERT_VIRKSOMHETSSERTIFIKAT_PASSORD = "password1234";
-    public static final String TESTMILJO_VIRKSOMHETSSERTIFIKAT_PATH_ENVIRONMENT_VARIABLE = "no_difi_sdp_client2_virksomhetssertifikat_sti";
-    public static final String TESTMILJO_VIRKSOMHETSSERTIFIKAT_ALIAS_ENVIRONMENT_VARIABLE = "no_difi_sdp_client2_virksomhetssertifikat_alias";
-    public static final String TESTMILJO_VIRKSOMHETSSERTIFIKAT_PASSWORD_ENVIRONMENT_VARIABLE = "no_difi_sdp_client2_virksomhetssertifikat_passord";
     public static final String EHFMimeType = "application/ehf+xml";
-    public static String TESTMILJO_VIRKSOMHETSSERTIFIKAT_PATH_VALUE = System.getenv(TESTMILJO_VIRKSOMHETSSERTIFIKAT_PATH_ENVIRONMENT_VARIABLE);
-    public static String TESTMILJO_VIRKSOMHETSSERTIFIKAT_ALIAS_VALUE = System.getenv(TESTMILJO_VIRKSOMHETSSERTIFIKAT_ALIAS_ENVIRONMENT_VARIABLE);
-    public static String TESTMILJO_VIRKSOMHETSSERTIFIKAT_PASSWORD_VALUE = System.getenv(TESTMILJO_VIRKSOMHETSSERTIFIKAT_PASSWORD_ENVIRONMENT_VARIABLE);
     public static final String PERSONIDENTIFIKATOR = "30066714477";
-
-    public static Noekkelpar testEnvironmentNoekkelpar() {
-        return Noekkelpar.fraKeyStoreUtenTrustStore(getVirksomhetssertifikat(), TESTMILJO_VIRKSOMHETSSERTIFIKAT_ALIAS_VALUE, TESTMILJO_VIRKSOMHETSSERTIFIKAT_PASSWORD_VALUE);
-    }
-
-    public static KeyStore getVirksomhetssertifikat() {
-        KeyStore keyStore;
-        try {
-            keyStore = KeyStore.getInstance("PKCS12");
-            keyStore.load(new FileInputStream(TESTMILJO_VIRKSOMHETSSERTIFIKAT_PATH_VALUE), TESTMILJO_VIRKSOMHETSSERTIFIKAT_PASSWORD_VALUE.toCharArray());
-            return keyStore;
-        } catch (Exception e) {
-            throw new RuntimeException(MessageFormat.format("Fant ikke virksomhetssertifikat på sti {0}. Eksporter environmentvariabel {1} til virksomhetssertifikatet.", TESTMILJO_VIRKSOMHETSSERTIFIKAT_PATH_VALUE, TESTMILJO_VIRKSOMHETSSERTIFIKAT_PATH_ENVIRONMENT_VARIABLE), e);
-        }
-    }
-
-    public static KeyStore testEnvironmentTrustStore() {
-        return getKeyStore("/test-environment-trust-keystore.jceks", "sophisticatedpassword", "jceks");
-    }
-
-    private static KeyStore getKeyStore(String path, String password, String keyStoreType) {
-        try {
-            KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-            keyStore.load(ObjectMother.class.getResourceAsStream(path), password.toCharArray());
-            return keyStore;
-
-        } catch (Exception e) {
-            throw new RuntimeException("Kunne ikke laste keystore", e);
-        }
-    }
 
     public static Forsendelse digitalForsendelse() {
         DigitalPost digitalPost = digitalPost();
@@ -201,20 +153,10 @@ public class ObjectMother {
         return Databehandler.builder(databehandlerOrganisasjonsnummer()).build();
     }
 
-    public static Noekkelpar selvsignertNoekkelparUtenTrustStore() {
-        return new NoValidationNoekkelpar(selvsignertKeyStore(), SELVSIGNERT_VIRKSOMHETSSERTIFIKAT_ALIAS, SELVSIGNERT_VIRKSOMHETSSERTIFIKAT_PASSORD);
-    }
 
-    public static Noekkelpar selvsignertNoekkelparMedTrustStore() {
-        return new NoValidationNoekkelpar(selvsignertKeyStore(), TrustedCertificates.getTrustStore(), SELVSIGNERT_VIRKSOMHETSSERTIFIKAT_ALIAS, SELVSIGNERT_VIRKSOMHETSSERTIFIKAT_PASSORD);
-    }
 
     public static DatabehandlerOrganisasjonsnummer databehandlerOrganisasjonsnummer() {
         return AktoerOrganisasjonsnummer.of("984661185").forfremTilDatabehandler();
-    }
-
-    public static KeyStore selvsignertKeyStore() {
-        return getKeyStore("/selfsigned-keystore.jks", SELVSIGNERT_VIRKSOMHETSSERTIFIKAT_PASSORD, "jks");
     }
 
     public static Mottaker mottaker() {

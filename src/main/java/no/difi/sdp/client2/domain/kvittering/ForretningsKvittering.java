@@ -1,5 +1,8 @@
 package no.difi.sdp.client2.domain.kvittering;
 
+import no.digipost.api.representations.KanBekreftesSomBehandletKvittering;
+import no.digipost.api.representations.KvitteringsReferanse;
+
 import java.time.Instant;
 
 public abstract class ForretningsKvittering implements KanBekreftesSomBehandletKvittering {
