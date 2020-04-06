@@ -103,7 +103,7 @@ public class SimpleSBDMessage {
         }
 
         public boolean erAlleredeAapnet() {
-            return type == Type.FLYTTET ? getFlyttetDigitalPost().isAapnet() : false;
+            return type == Type.FLYTTET && getFlyttetDigitalPost().isAapnet();
         }
 
         public static enum Type {

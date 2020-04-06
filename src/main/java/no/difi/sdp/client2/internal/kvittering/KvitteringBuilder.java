@@ -17,11 +17,13 @@ import no.difi.sdp.client2.domain.kvittering.VarslingFeiletKvittering;
 import no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering;
 import no.digipost.api.representations.KanBekreftesSomBehandletKvittering;
 
+import static no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.KvitteringStatus.LEVETID_UTLOPT;
+import static no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.KvitteringStatus.OPPRETTET;
 import static no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.KvitteringStatus.SENDT;
 
 public class KvitteringBuilder {
 
-    private KvitteringTransformer transformer = new KvitteringTransformer();
+    private RawKvitteringTransformer transformer = new RawKvitteringTransformer();
 
 
     public ForretningsKvittering buildForretningsKvittering(IntegrasjonspunktKvittering integrasjonspunktKvittering) {
@@ -34,7 +36,9 @@ public class KvitteringBuilder {
         if(integrasjonspunktKvittering.getRawReceipt() != null) {
             final SimpleSBDMessage simpleSBDMessage = transformer.transform(integrasjonspunktKvittering.getRawReceipt());
             return buildForretningsKvittering(simpleSBDMessage, kvitteringsinfo);
-        } else  if (integrasjonspunktKvittering.getStatus().equals(SENDT)) {
+        } else if (integrasjonspunktKvittering.getStatus().equals(SENDT) || integrasjonspunktKvittering.getStatus().equals(LEVETID_UTLOPT)
+            || integrasjonspunktKvittering.getStatus().equals(OPPRETTET)
+        ) {
             return null;
         } else if (integrasjonspunktKvittering.getStatus().equals(IntegrasjonspunktKvittering.KvitteringStatus.ANNET)) {
             throw new SikkerDigitalPostException("Kvittering tilbake fra meldingsformidler var verken kvittering eller feil.");

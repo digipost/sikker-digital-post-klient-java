@@ -8,7 +8,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.StringReader;
 
-public class KvitteringTransformer {
+public class RawKvitteringTransformer {
 
     private static final JAXBContext context;
     private static final String contextPath = SDPKvittering.class.getPackage().getName() + ":org.unece.cefact.namespaces.standardbusinessdocumentheader";
