@@ -147,6 +147,7 @@ public class Forsendelse {
          *
          * @see no.difi.sdp.client2.domain.kvittering.KvitteringForespoersel.Builder#mpcId(String)
          */
+        @Deprecated
         public Builder mpcId(String mpcId) {
             target.mpcId = mpcId;
             return this;

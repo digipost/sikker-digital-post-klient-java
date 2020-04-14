@@ -17,7 +17,7 @@ import static no.difi.sdp.client2.domain.sbdh.Process.DIGITAL_POST_INFO;
 
 public class SBDForsendelseBuilder {
     public static StandardBusinessDocument buildSBD(DatabehandlerOrganisasjonsnummer databehandler, Forsendelse forsendelse) {
-        Clock clock = Clock.system(ZoneId.of("UTC"));
+        Clock clock = Clock.systemDefaultZone();
         return buildSBD(databehandler,forsendelse, clock);
     }
 
