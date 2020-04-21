@@ -1,5 +1,7 @@
 package no.difi.sdp.client2.domain;
 
+import no.difi.sdp.client2.domain.exceptions.SikkerDigitalPostException;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -44,7 +46,14 @@ public class Dokumentpakke {
         }
 
         public Builder vedlegg(List<Dokument> vedlegg) {
-            target.vedlegg = new ArrayList<Dokument>(vedlegg);
+            boolean hasMetadatadokument = vedlegg.stream()
+                .map(Dokument::getMetadataDocument)
+                .anyMatch(Optional::isPresent);
+            if(hasMetadatadokument) {
+                throw new SikkerDigitalPostException("Vedlegg støtter ikke metadatadokument/utvidelser.");
+            }
+
+            target.vedlegg = new ArrayList<>(vedlegg);
             return this;
         }
 
