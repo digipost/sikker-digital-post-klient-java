@@ -39,6 +39,12 @@ public abstract class ForretningsKvittering implements KanBekreftesSomBehandletK
     }
 
     @Override
+    public Long getIntegrasjonspunktId() {
+        return kanBekreftesSomBehandletKvittering.getIntegrasjonspunktId();
+    }
+
+    @Override
+    @Deprecated
     public String getMeldingsId(){
        return kanBekreftesSomBehandletKvittering.getMeldingsId();
     }

@@ -24,7 +24,6 @@ public class SikkerDigitalPostKlientTest {
 
     @Test
     public void handles_connection_timeouts() {
-        @SuppressWarnings("deprecation")
         KlientKonfigurasjon klientKonfigurasjon = KlientKonfigurasjon.builder(lokalTimeoutUrl)
                 .connectionTimeout(1, TimeUnit.MILLISECONDS)
                 .build();
@@ -43,7 +42,6 @@ public class SikkerDigitalPostKlientTest {
     public void calls_http_interceptors() {
         final StringBuilder interceptorString = new StringBuilder();
 
-        @SuppressWarnings("deprecation")
         KlientKonfigurasjon klientKonfigurasjon = KlientKonfigurasjon.builder(lokalTimeoutUrl)
                 .connectionTimeout(1, TimeUnit.MILLISECONDS)
                 .httpRequestInterceptors(

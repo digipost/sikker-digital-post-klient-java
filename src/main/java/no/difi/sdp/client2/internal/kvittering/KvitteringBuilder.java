@@ -31,15 +31,16 @@ public class KvitteringBuilder {
             .konversasjonsId(integrasjonspunktKvittering.getConversationId().toString())
             .referanseTilMeldingId(integrasjonspunktKvittering.getMessageId().toString())
             .tidspunkt(integrasjonspunktKvittering.getLastUpdate().toInstant())
+            .integrasjonspunktId(integrasjonspunktKvittering.getId())
             .build();
 
         if(integrasjonspunktKvittering.getRawReceipt() != null) {
             final SimpleSBDMessage simpleSBDMessage = transformer.transform(integrasjonspunktKvittering.getRawReceipt());
             return buildForretningsKvittering(simpleSBDMessage, kvitteringsinfo);
-        } else if (integrasjonspunktKvittering.getStatus().equals(SENDT) || integrasjonspunktKvittering.getStatus().equals(LEVETID_UTLOPT)
-            || integrasjonspunktKvittering.getStatus().equals(OPPRETTET)
-        ) {
-            return null;
+        } else if (integrasjonspunktKvittering.getStatus().equals(LEVETID_UTLOPT)) {
+            return Feil.builder(toKanBekreftesSomBehandletKvittering(kvitteringsinfo), kvitteringsinfo, Feil.Feiltype.KLIENT)
+                .detaljer("Sjekk integrasjonspunktet for detaljer.")
+                .build();
         } else if (integrasjonspunktKvittering.getStatus().equals(IntegrasjonspunktKvittering.KvitteringStatus.ANNET)) {
             throw new SikkerDigitalPostException("Kvittering tilbake fra meldingsformidler var verken kvittering eller feil.");
         } else {
@@ -53,7 +54,7 @@ public class KvitteringBuilder {
 //
     private ForretningsKvittering buildForretningsKvittering(SimpleSBDMessage simpleSBDMessage, KvitteringsInfo kvitteringsInfo) {
 
-        KanBekreftesSomBehandletKvittering kvittering = kvitteringsInfo::getReferanseTilMeldingId;
+        KanBekreftesSomBehandletKvittering kvittering = toKanBekreftesSomBehandletKvittering(kvitteringsInfo);
         if (simpleSBDMessage.erKvittering()) {
             SDPKvittering sdpKvittering = simpleSBDMessage.getKvittering().kvittering;
 
@@ -86,9 +87,22 @@ public class KvitteringBuilder {
         SDPVarslingfeilet varslingfeilet = sdpKvittering.getVarslingfeilet();
         VarslingFeiletKvittering.Varslingskanal varslingskanal = mapVarslingsKanal(varslingfeilet.getVarslingskanal());
 
-        return VarslingFeiletKvittering.builder(kvitteringsInfo::getReferanseTilMeldingId, kvitteringsInfo, varslingskanal)
+        return VarslingFeiletKvittering.builder(toKanBekreftesSomBehandletKvittering(kvitteringsInfo), kvitteringsInfo, varslingskanal)
                 .beskrivelse(varslingfeilet.getBeskrivelse())
                 .build();
+    }
+
+    private KanBekreftesSomBehandletKvittering toKanBekreftesSomBehandletKvittering(KvitteringsInfo kvitteringsInfo) {
+        return new KanBekreftesSomBehandletKvittering() {
+            @Override
+            public Long getIntegrasjonspunktId() {
+                return kvitteringsInfo.getIntegrasjonspunktId();
+            }
+            @Override
+            public String getMeldingsId() {
+                return kvitteringsInfo.getReferanseTilMeldingId();
+            }
+        };
     }
 
     private Feil.Feiltype mapFeilType(SDPFeiltype feiltype) {
