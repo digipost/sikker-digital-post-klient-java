@@ -8,6 +8,7 @@ import no.difi.sdp.client2.domain.Dokument;
 import no.difi.sdp.client2.domain.Dokumentpakke;
 import no.difi.sdp.client2.domain.MedDokumentEgenskaper;
 import no.difi.sdp.client2.domain.exceptions.SendException;
+import no.difi.sdp.client2.domain.exceptions.SendIOException;
 import no.difi.sdp.client2.domain.fysisk_post.FysiskPost;
 import no.difi.sdp.client2.domain.fysisk_post.FysiskPostSerializer;
 import no.digipost.api.representations.KanBekreftesSomBehandletKvittering;
@@ -31,6 +32,7 @@ import java.net.URI;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
+import static no.difi.sdp.client2.domain.exceptions.SendException.AntattSkyldig.UKJENT;
 import static no.difi.sdp.client2.domain.exceptions.SendException.AntattSkyldig.fraHttpStatusCode;
 
 public class MessageSenderImpl implements MessageSender {
@@ -82,7 +84,7 @@ public class MessageSenderImpl implements MessageSender {
             LOG.info("---------------------------");
             closeMessage(sbd);
         } catch (IOException e) {
-            LOG.info("", e);
+            throw new SendIOException(e);
         }
     }
 

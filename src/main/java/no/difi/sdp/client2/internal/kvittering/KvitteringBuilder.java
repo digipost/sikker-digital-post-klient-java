@@ -35,12 +35,16 @@ public class KvitteringBuilder {
             .build();
 
         if(integrasjonspunktKvittering.getRawReceipt() != null) {
+            // De fleste kvitteringer har RawReceipt fra IP, så benytter det fremfor å mappe basert på integrasjonspunktKvittering.getStatus()
             final SimpleSBDMessage simpleSBDMessage = transformer.transform(integrasjonspunktKvittering.getRawReceipt());
             return buildForretningsKvittering(simpleSBDMessage, kvitteringsinfo);
         } else if (integrasjonspunktKvittering.getStatus().equals(LEVETID_UTLOPT)) {
             return Feil.builder(toKanBekreftesSomBehandletKvittering(kvitteringsinfo), kvitteringsinfo, Feil.Feiltype.KLIENT)
                 .detaljer("Sjekk integrasjonspunktet for detaljer.")
                 .build();
+        } else if(integrasjonspunktKvittering.getStatus().equals(SENDT) || integrasjonspunktKvittering.getStatus().equals(OPPRETTET)) {
+            //IP-spesifikke statusmeldinger
+            return null;
         } else if (integrasjonspunktKvittering.getStatus().equals(IntegrasjonspunktKvittering.KvitteringStatus.ANNET)) {
             throw new SikkerDigitalPostException("Kvittering tilbake fra meldingsformidler var verken kvittering eller feil.");
         } else {
