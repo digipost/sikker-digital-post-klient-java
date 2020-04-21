@@ -9,7 +9,6 @@ import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
 import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocumentHeader;
 
 import java.time.Clock;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 import static no.difi.sdp.client2.domain.Forsendelse.Type.DIGITAL;

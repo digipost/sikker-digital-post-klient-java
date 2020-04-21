@@ -2,7 +2,6 @@ package no.difi.sdp.client2.internal.http;
 
 
 import no.difi.sdp.client2.domain.Dokumentpakke;
-import no.digipost.api.representations.KanBekreftesSomBehandletKvittering;
 import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequestInterceptor;

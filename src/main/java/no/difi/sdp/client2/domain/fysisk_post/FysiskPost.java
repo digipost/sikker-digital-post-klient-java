@@ -1,7 +1,7 @@
 package no.difi.sdp.client2.domain.fysisk_post;
 
-import no.difi.sdp.client2.domain.ForretningsMeldingType;
 import no.difi.sdp.client2.domain.ForretningsMelding;
+import no.difi.sdp.client2.domain.ForretningsMeldingType;
 import no.difi.sdp.client2.domain.TekniskMottaker;
 
 public class FysiskPost extends ForretningsMelding {

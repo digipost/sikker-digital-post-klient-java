@@ -1,21 +1,15 @@
 package no.difi.sdp.client2;
 
-import no.difi.sdp.client2.domain.Databehandler;
-import no.difi.sdp.client2.domain.Miljo;
 import no.difi.sdp.client2.domain.exceptions.SendIOException;
-import no.difi.sdp.client2.domain.exceptions.SertifikatException;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import static no.difi.sdp.client2.ObjectMother.databehandler;
-import static no.difi.sdp.client2.ObjectMother.digitalForsendelse;
 import static no.difi.sdp.client2.domain.exceptions.SendException.AntattSkyldig.UKJENT;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class SikkerDigitalPostKlientTest {

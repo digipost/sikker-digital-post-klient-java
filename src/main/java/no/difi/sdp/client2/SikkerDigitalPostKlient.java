@@ -4,19 +4,18 @@ import no.difi.sdp.client2.domain.Databehandler;
 import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.exceptions.SendException;
 import no.difi.sdp.client2.domain.kvittering.ForretningsKvittering;
-import no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering;
-import no.digipost.api.representations.KanBekreftesSomBehandletKvittering;
 import no.difi.sdp.client2.domain.kvittering.KvitteringForespoersel;
 import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
 import no.difi.sdp.client2.internal.IntegrasjonspunktMessageSenderFacade;
-import no.difi.sdp.client2.internal.kvittering.KvitteringBuilder;
 import no.difi.sdp.client2.internal.SBDForsendelseBuilder;
+import no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering;
+import no.difi.sdp.client2.internal.kvittering.KvitteringBuilder;
+import no.digipost.api.representations.KanBekreftesSomBehandletKvittering;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
-import static no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.KvitteringStatus.LEVETID_UTLOPT;
 import static no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.KvitteringStatus.OPPRETTET;
 import static no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.KvitteringStatus.SENDT;
 

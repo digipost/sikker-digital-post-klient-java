@@ -1,8 +1,8 @@
 package no.difi.sdp.client2.domain.digital_post;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import no.difi.sdp.client2.domain.ForretningsMeldingType;
 import no.difi.sdp.client2.domain.ForretningsMelding;
+import no.difi.sdp.client2.domain.ForretningsMeldingType;
 import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.Mottaker;
 
