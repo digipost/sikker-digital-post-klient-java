@@ -31,12 +31,7 @@ public interface MessageSender {
         return new Builder(uri);
     }
 
-    void send(StandardBusinessDocument sbd, Dokumentpakke dokumentpakke);
-//    EbmsApplikasjonsKvittering hentKvittering(EbmsPullRequest pullRequest, KanBekreftesSomBehandletKvittering tidligereKvitteringSomSkalBekreftes);
-
-//    default EbmsApplikasjonsKvittering hentKvittering(EbmsPullRequest pullRequest) {
-//        return hentKvittering(pullRequest, null);
-//    }
+    String send(StandardBusinessDocument sbd, Dokumentpakke dokumentpakke);
 
     Optional<IntegrasjonspunktKvittering> hentKvittering();
 

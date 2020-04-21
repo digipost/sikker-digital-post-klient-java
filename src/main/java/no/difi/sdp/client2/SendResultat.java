@@ -2,25 +2,34 @@ package no.difi.sdp.client2;
 
 public class SendResultat {
 
-    private final String meldingsId;
-    private final String referanseTilMeldingsId;
-    private final long fakturerbareBytes;
+    private final String conversationId;
 
-    public SendResultat(String meldingsId, String referanseTilMeldingsId, long fakturerbareBytes) {
-        this.meldingsId = meldingsId;
-        this.referanseTilMeldingsId = referanseTilMeldingsId;
-        this.fakturerbareBytes = fakturerbareBytes;
+    public SendResultat(String conversationId) {
+        this.conversationId = conversationId;
     }
 
+    public String getConversationId() {
+        return conversationId;
+    }
+
+    /**
+     * @see #getConversationId()
+     */
+    @Deprecated
     public String getMeldingsId() {
-        return meldingsId;
+        return null;
     }
 
+    /**
+     * @see #getConversationId()
+     */
+    @Deprecated
     public String getReferanseTilMeldingsId() {
-        return referanseTilMeldingsId;
+        return null;
     }
 
+    @Deprecated
     public long getFakturerbareBytes() {
-        return fakturerbareBytes;
+        return 0;
     }
 }

@@ -49,8 +49,8 @@ public class IntegrasjonspunktMessageSenderFacade {
         messageSender = messageSenderBuilder.build();
     }
 
-    public void send(StandardBusinessDocument forsendelse, final Dokumentpakke sbdForsendelse) {
-        performRequest(() -> messageSender.send(forsendelse, sbdForsendelse));
+    public String send(StandardBusinessDocument forsendelse, final Dokumentpakke sbdForsendelse) {
+        return performRequest(() -> messageSender.send(forsendelse, sbdForsendelse));
     }
 
     public void bekreft(final long id) {

@@ -24,7 +24,6 @@ public class SikkerDigitalPostKlient {
     private final Databehandler databehandler;
     private final KvitteringBuilder kvitteringBuilder;
     private final IntegrasjonspunktMessageSenderFacade integrasjonspunktMessageSenderFacade;
-    private final KlientKonfigurasjon klientKonfigurasjon;
     private static final Logger LOG = LoggerFactory.getLogger(SikkerDigitalPostKlient.class);
 
     /**
@@ -35,8 +34,6 @@ public class SikkerDigitalPostKlient {
     public SikkerDigitalPostKlient(Databehandler databehandler, KlientKonfigurasjon klientKonfigurasjon) {
         this.kvitteringBuilder = new KvitteringBuilder();
         this.integrasjonspunktMessageSenderFacade = new IntegrasjonspunktMessageSenderFacade(databehandler, klientKonfigurasjon);
-
-        this.klientKonfigurasjon = klientKonfigurasjon;
         this.databehandler = databehandler;
     }
 
@@ -49,9 +46,9 @@ public class SikkerDigitalPostKlient {
      */
     public SendResultat send(Forsendelse forsendelse) throws SendException {
         StandardBusinessDocument sbd = SBDForsendelseBuilder.buildSBD(databehandler.organisasjonsnummer, forsendelse);
-        integrasjonspunktMessageSenderFacade.send(sbd, forsendelse.getDokumentpakke());
+        final String conversationId = integrasjonspunktMessageSenderFacade.send(sbd, forsendelse.getDokumentpakke());
 
-        return null;
+        return new SendResultat(conversationId);
     }
 
     /**
@@ -152,6 +149,7 @@ public class SikkerDigitalPostKlient {
      * @see <a href="https://docs.spring.io/spring-ws/docs/3.0.7.RELEASE/reference/#_using_the_client_side_api">Spring WS - 6.2. Using the client-side API</a>
      * @see <a href="https://docs.spring.io/spring-ws/docs/3.0.7.RELEASE/reference/#_client_side_testing">Spring WS - 6.3. Client-side testing</a>
      */
+    @Deprecated
     public void getMeldingTemplate() {
     }
 

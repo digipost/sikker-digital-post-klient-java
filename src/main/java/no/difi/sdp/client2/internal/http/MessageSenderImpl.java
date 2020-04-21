@@ -35,7 +35,6 @@ import static no.difi.sdp.client2.domain.exceptions.SendException.AntattSkyldig.
 
 public class MessageSenderImpl implements MessageSender {
 
-
     private static final Logger LOG = LoggerFactory.getLogger(MessageSenderImpl.class);
 
     private final static String CREATE_ENDPOINT_PATH = "/api/messages/out";
@@ -66,21 +65,21 @@ public class MessageSenderImpl implements MessageSender {
     }
 
     @Override
-    public void send(StandardBusinessDocument sbd, Dokumentpakke dokumentpakke) {
+    public String send(StandardBusinessDocument sbd, Dokumentpakke dokumentpakke) {
         try {
             createMessage(sbd);
 
             final String conversationId = sbd.getConversationId();
 
             for (Dokument dokument : dokumentpakke.getHoveddokumentOgVedlegg().collect(toList())) {
-                LOG.info("---------------------------");
                 addContent(conversationId, dokument);
                 if (dokument.getMetadataDocument().isPresent()) {
                     addContent(conversationId, dokument.getMetadataDocument().get());
                 }
             }
-            LOG.info("---------------------------");
+
             closeMessage(sbd);
+            return conversationId;
         } catch (IOException e) {
             throw new SendIOException(e);
         }
@@ -88,17 +87,16 @@ public class MessageSenderImpl implements MessageSender {
 
     private void createMessage(StandardBusinessDocument sbd) throws IOException {
         final String json = mapper.writeValueAsString(sbd);
-        LOG.info(json);
-        LOG.info("");
-        LOG.info("---------------------------");
-        LOG.info("");
+        LOG.debug("Generert følgende json, vil nå sende til integrasjonspunkt: {} ", json);
+
         HttpPost httpPost = new HttpPost(endpointUri + CREATE_ENDPOINT_PATH);
         httpPost.setEntity(new StringEntity(json));
         httpPost.setHeader("content-type", "application/json");
         CloseableHttpResponse response = httpClient.execute(httpPost);
-        LOG.info(EntityUtils.toString(response.getEntity()));
+        LOG.debug("Response fra integrasjonspunkt: {}",EntityUtils.toString(response.getEntity()));
         handleResponse(response.getStatusLine().getStatusCode());
 
+        LOG.info(EntityUtils.toString(response.getEntity()));
     }
 
     private void handleResponse(int statusCode) {
@@ -119,16 +117,16 @@ public class MessageSenderImpl implements MessageSender {
         documentPut.setHeader("content-disposition", contentDisposition);
 
         final HttpResponse response = httpClient.execute(documentPut);
-        LOG.info(EntityUtils.toString(response.getEntity()));
         handleResponse(response.getStatusLine().getStatusCode());
+        LOG.info("Lagt til dokument til sending");
     }
 
     private void closeMessage(StandardBusinessDocument sbd) throws IOException {
         String messageEndpointPath = String.format(MESSAGE_ENDPOINT_PATH_TEMPLATE, sbd.getConversationId());
         HttpPost fileHttpPost = new HttpPost(endpointUri + messageEndpointPath);
         CloseableHttpResponse response = httpClient.execute(fileHttpPost);
-        LOG.info(EntityUtils.toString(response.getEntity()));
         handleResponse(response.getStatusLine().getStatusCode());
+        LOG.info("Sending til integrasjonspunkt fullført");
     }
 
     @Override
@@ -147,7 +145,7 @@ public class MessageSenderImpl implements MessageSender {
             final IntegrasjonspunktKvittering kvittering = mapper.readerFor(IntegrasjonspunktKvittering.class).readValue(kvitteringJson);
             return Optional.ofNullable(kvittering);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new SendIOException(e);
         }
     }
 
@@ -160,7 +158,7 @@ public class MessageSenderImpl implements MessageSender {
             final CloseableHttpResponse response = httpClient.execute(httpDelete);
             handleResponse(response.getStatusLine().getStatusCode());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new SendIOException(e);
         }
     }
 }
