@@ -1,7 +1,5 @@
 package no.difi.sdp.client2.domain.digital_post;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 public class DigitaltVarsel {
 
     private String epostTekst;

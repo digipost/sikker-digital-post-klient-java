@@ -32,7 +32,6 @@ public class DigitalPost extends ForretningsMelding {
      * @see Forsendelse#getMottaker()
      */
     @JsonIgnore
-    @Deprecated
     public Mottaker getMottaker() {
         return mottaker;
     }
@@ -80,6 +79,11 @@ public class DigitalPost extends ForretningsMelding {
     }
 
     public String getTittel() {
+        return tittel;
+    }
+
+    @JsonIgnore
+    public String getIkkeSensitivTittel() {
         return tittel;
     }
 
