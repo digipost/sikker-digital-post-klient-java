@@ -1,4 +1,4 @@
-package no.difi.sdp.client2.foretningsmelding;
+package no.difi.sdp.client2.internal;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;

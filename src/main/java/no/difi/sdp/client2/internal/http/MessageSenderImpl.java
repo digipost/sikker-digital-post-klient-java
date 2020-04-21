@@ -12,7 +12,7 @@ import no.difi.sdp.client2.domain.exceptions.SendIOException;
 import no.difi.sdp.client2.domain.fysisk_post.FysiskPost;
 import no.difi.sdp.client2.domain.fysisk_post.FysiskPostSerializer;
 import no.difi.sdp.client2.domain.sbd.StandardBusinessDocument;
-import no.difi.sdp.client2.foretningsmelding.IntegrasjonspunktMessageSerializer;
+import no.difi.sdp.client2.internal.IntegrasjonspunktMessageSerializer;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
