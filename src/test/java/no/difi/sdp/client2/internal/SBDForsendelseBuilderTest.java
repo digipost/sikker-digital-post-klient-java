@@ -8,7 +8,7 @@ import no.difi.sdp.client2.domain.Dokumentpakke;
 import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.Organisasjonsnummer;
 import no.difi.sdp.client2.domain.digital_post.DigitalPost;
-import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
+import no.difi.sdp.client2.domain.sbd.StandardBusinessDocument;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;

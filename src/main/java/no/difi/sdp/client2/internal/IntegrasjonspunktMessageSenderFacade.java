@@ -5,7 +5,7 @@ import no.difi.sdp.client2.KlientKonfigurasjon;
 import no.difi.sdp.client2.domain.Databehandler;
 import no.difi.sdp.client2.domain.Dokumentpakke;
 import no.difi.sdp.client2.domain.exceptions.SendException;
-import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
+import no.difi.sdp.client2.domain.sbd.StandardBusinessDocument;
 import no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering;
 import no.difi.sdp.client2.internal.http.MessageSender;
 import org.apache.http.HttpRequestInterceptor;

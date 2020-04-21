@@ -2,7 +2,7 @@ package no.difi.sdp.client2.internal.http;
 
 
 import no.difi.sdp.client2.domain.Dokumentpakke;
-import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
+import no.difi.sdp.client2.domain.sbd.StandardBusinessDocument;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponseInterceptor;

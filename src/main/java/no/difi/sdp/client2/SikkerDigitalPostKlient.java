@@ -5,7 +5,7 @@ import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.exceptions.SendException;
 import no.difi.sdp.client2.domain.kvittering.ForretningsKvittering;
 import no.difi.sdp.client2.domain.kvittering.KvitteringForespoersel;
-import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
+import no.difi.sdp.client2.domain.sbd.StandardBusinessDocument;
 import no.difi.sdp.client2.internal.IntegrasjonspunktMessageSenderFacade;
 import no.difi.sdp.client2.internal.SBDForsendelseBuilder;
 import no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering;
