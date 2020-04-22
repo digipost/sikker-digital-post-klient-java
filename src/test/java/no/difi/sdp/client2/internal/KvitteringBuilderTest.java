@@ -31,10 +31,11 @@ class KvitteringBuilderTest {
     }
 
     @Test
-    public void skal_handtere_levetidutlopt() {
+    public void skal_handtere_levetidutlopt_som_feil() {
         IntegrasjonspunktKvittering kvittering = new IntegrasjonspunktKvittering(1L, ZonedDateTime.now(), IntegrasjonspunktKvittering.KvitteringStatus.LEVETID_UTLOPT, "Beskrivelse", null, UUID.fromString(levertMessageId), 1L, UUID.fromString(levertConversationId));
         final ForretningsKvittering forretningsKvittering = kvitteringBuilder.buildForretningsKvittering(kvittering);
-        assertNull(forretningsKvittering);
+        assertThat(forretningsKvittering, is(instanceOf(Feil.class)));
+        assertThat(((Feil)forretningsKvittering), where(Feil::getFeiltype, is(KLIENT)));
     }
 
     @Test

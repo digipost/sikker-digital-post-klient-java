@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class KvitteringsInfoTest {
 
     @Test
-    public void builder_initializes() throws Exception {
+    public void builder_initializes() {
         String konversasjonsid = "konversasjonsid";
         String referanse = "referanse";
         Instant tidspunkt = Instant.now();

@@ -3,6 +3,7 @@ package no.difi.sdp.client2.domain.fysisk_post;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static no.difi.sdp.client2.domain.fysisk_post.KonvoluttAdresse.Type.NORSK;
 import static no.difi.sdp.client2.domain.fysisk_post.KonvoluttAdresse.Type.UTENLANDSK;
@@ -18,7 +19,7 @@ public class PostadresseBuilderTest {
     @Test
     public void inkluderer_kun_ikke_null_adresselinjer() {
         KonvoluttAdresse adresse = KonvoluttAdresse.build("Ola Hansen").iNorge("Osloveien 5", null, null, "0560", "Oslo").build();
-        assertThat(adresse.getAdresselinjer(), equalTo(Arrays.asList("Osloveien 5")));
+        assertThat(adresse.getAdresselinjer(), equalTo(Collections.singletonList("Osloveien 5")));
 
         adresse = KonvoluttAdresse.build("Ola Hansen").iUtlandet("Somewhere St. 5", null, "70482 City", null, USA).build();
         assertEquals(adresse.getAdresselinjer(), Arrays.asList("Somewhere St. 5", "70482 City"));
