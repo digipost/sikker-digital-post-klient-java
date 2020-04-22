@@ -175,32 +175,4 @@ public class DigitalPost extends ForretningsMelding {
         }
     }
 
-//    public static DigitalPost from(Forsendelse forsendelse) {
-//        int sikkerhetsnivaa = forsendelse.getDigitalPost().getSikkerhetsnivaa().getVerdi();
-//        String hoveddokument = forsendelse.getDokumentpakke().getHoveddokument().getFilnavn();
-//        String tittel = forsendelse.getDokumentpakke().getHoveddokument().getTittel();
-//        String spraak = "NO";
-//        DigitalPostInfo digitalPostInfo = new DigitalPostInfo(forsendelse.getDigitalPost().getVirkningsdato(), forsendelse.getDigitalPost().isAapningskvittering());
-//        DigitaltVarsel varsler = new DigitaltVarsel(forsendelse.getDigitalPost().getEpostVarsel().getVarslingsTekst(), forsendelse.getDigitalPost().getSmsVarsel().getVarslingsTekst());
-//        return new DigitalPost(sikkerhetsnivaa, hoveddokument, tittel, spraak, digitalPostInfo, varsler);
-//    }
-
-
-//{
-//    "digital": {
-//        "sikkerhetsnivaa": "",
-//        "hoveddokument": "",
-//        "tittel": "",
-//        "spraak": "NO",
-//        "digitalPostInfo": {
-//            "virkningsdato": "",
-//            "aapningskvittering": "false"
-//        },
-//        "varsler": {
-//            "epostTekst": "Varseltekst",
-//            "smsTekst": "Varseltekst"
-//        }
-//    }
-//}
-
 }

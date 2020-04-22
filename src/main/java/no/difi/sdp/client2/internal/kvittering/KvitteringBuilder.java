@@ -17,11 +17,13 @@ import no.difi.sdp.client2.domain.kvittering.VarslingFeiletKvittering;
 import no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering;
 import no.digipost.api.representations.KanBekreftesSomBehandletKvittering;
 
+import static no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.KvitteringStatus.LEVETID_UTLOPT;
+import static no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.KvitteringStatus.OPPRETTET;
 import static no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.KvitteringStatus.SENDT;
 
 public class KvitteringBuilder {
 
-    private KvitteringTransformer transformer = new KvitteringTransformer();
+    private RawKvitteringTransformer transformer = new RawKvitteringTransformer();
 
 
     public ForretningsKvittering buildForretningsKvittering(IntegrasjonspunktKvittering integrasjonspunktKvittering) {
@@ -29,12 +31,19 @@ public class KvitteringBuilder {
             .konversasjonsId(integrasjonspunktKvittering.getConversationId().toString())
             .referanseTilMeldingId(integrasjonspunktKvittering.getMessageId().toString())
             .tidspunkt(integrasjonspunktKvittering.getLastUpdate().toInstant())
+            .integrasjonspunktId(integrasjonspunktKvittering.getId())
             .build();
 
         if(integrasjonspunktKvittering.getRawReceipt() != null) {
+            // De fleste kvitteringer har RawReceipt fra IP, så benytter det fremfor å mappe basert på integrasjonspunktKvittering.getStatus()
             final SimpleSBDMessage simpleSBDMessage = transformer.transform(integrasjonspunktKvittering.getRawReceipt());
             return buildForretningsKvittering(simpleSBDMessage, kvitteringsinfo);
-        } else  if (integrasjonspunktKvittering.getStatus().equals(SENDT)) {
+        } else if (integrasjonspunktKvittering.getStatus().equals(LEVETID_UTLOPT)) {
+            return Feil.builder(toKanBekreftesSomBehandletKvittering(kvitteringsinfo), kvitteringsinfo, Feil.Feiltype.KLIENT)
+                .detaljer("Sjekk integrasjonspunktet for detaljer.")
+                .build();
+        } else if(integrasjonspunktKvittering.getStatus().equals(SENDT) || integrasjonspunktKvittering.getStatus().equals(OPPRETTET)) {
+            //IP-spesifikke statusmeldinger
             return null;
         } else if (integrasjonspunktKvittering.getStatus().equals(IntegrasjonspunktKvittering.KvitteringStatus.ANNET)) {
             throw new SikkerDigitalPostException("Kvittering tilbake fra meldingsformidler var verken kvittering eller feil.");
@@ -49,7 +58,7 @@ public class KvitteringBuilder {
 //
     private ForretningsKvittering buildForretningsKvittering(SimpleSBDMessage simpleSBDMessage, KvitteringsInfo kvitteringsInfo) {
 
-        KanBekreftesSomBehandletKvittering kvittering = kvitteringsInfo::getReferanseTilMeldingId;
+        KanBekreftesSomBehandletKvittering kvittering = toKanBekreftesSomBehandletKvittering(kvitteringsInfo);
         if (simpleSBDMessage.erKvittering()) {
             SDPKvittering sdpKvittering = simpleSBDMessage.getKvittering().kvittering;
 
@@ -82,9 +91,22 @@ public class KvitteringBuilder {
         SDPVarslingfeilet varslingfeilet = sdpKvittering.getVarslingfeilet();
         VarslingFeiletKvittering.Varslingskanal varslingskanal = mapVarslingsKanal(varslingfeilet.getVarslingskanal());
 
-        return VarslingFeiletKvittering.builder(kvitteringsInfo::getReferanseTilMeldingId, kvitteringsInfo, varslingskanal)
+        return VarslingFeiletKvittering.builder(toKanBekreftesSomBehandletKvittering(kvitteringsInfo), kvitteringsInfo, varslingskanal)
                 .beskrivelse(varslingfeilet.getBeskrivelse())
                 .build();
+    }
+
+    private KanBekreftesSomBehandletKvittering toKanBekreftesSomBehandletKvittering(KvitteringsInfo kvitteringsInfo) {
+        return new KanBekreftesSomBehandletKvittering() {
+            @Override
+            public Long getIntegrasjonspunktId() {
+                return kvitteringsInfo.getIntegrasjonspunktId();
+            }
+            @Override
+            public String getMeldingsId() {
+                return kvitteringsInfo.getReferanseTilMeldingId();
+            }
+        };
     }
 
     private Feil.Feiltype mapFeilType(SDPFeiltype feiltype) {

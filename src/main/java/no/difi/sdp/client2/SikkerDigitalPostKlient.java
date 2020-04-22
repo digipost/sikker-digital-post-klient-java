@@ -4,12 +4,21 @@ import no.difi.sdp.client2.domain.Databehandler;
 import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.exceptions.SendException;
 import no.difi.sdp.client2.domain.kvittering.ForretningsKvittering;
+import no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering;
 import no.digipost.api.representations.KanBekreftesSomBehandletKvittering;
 import no.difi.sdp.client2.domain.kvittering.KvitteringForespoersel;
 import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
 import no.difi.sdp.client2.internal.IntegrasjonspunktMessageSenderFacade;
 import no.difi.sdp.client2.internal.kvittering.KvitteringBuilder;
 import no.difi.sdp.client2.internal.SBDForsendelseBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
+
+import static no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.KvitteringStatus.LEVETID_UTLOPT;
+import static no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.KvitteringStatus.OPPRETTET;
+import static no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.KvitteringStatus.SENDT;
 
 public class SikkerDigitalPostKlient {
 
@@ -17,6 +26,7 @@ public class SikkerDigitalPostKlient {
     private final KvitteringBuilder kvitteringBuilder;
     private final IntegrasjonspunktMessageSenderFacade integrasjonspunktMessageSenderFacade;
     private final KlientKonfigurasjon klientKonfigurasjon;
+    private static final Logger LOG = LoggerFactory.getLogger(SikkerDigitalPostKlient.class);
 
     /**
      * @param databehandler       parten som er ansvarlig for den tekniske utførelsen av sendingen.
@@ -41,7 +51,6 @@ public class SikkerDigitalPostKlient {
     public SendResultat send(Forsendelse forsendelse) throws SendException {
         StandardBusinessDocument sbd = SBDForsendelseBuilder.buildSBD(databehandler.organisasjonsnummer, forsendelse);
         integrasjonspunktMessageSenderFacade.send(sbd, forsendelse.getDokumentpakke());
-
 
         return null;
     }
@@ -76,10 +85,32 @@ public class SikkerDigitalPostKlient {
      * </dl>
      */
     public ForretningsKvittering hentKvitteringOgBekreftForrige(KvitteringForespoersel kvitteringForespoersel, KanBekreftesSomBehandletKvittering forrigeKvittering) throws SendException {
-        return integrasjonspunktMessageSenderFacade
-            .hentKvittering()
-            .map(kvitteringBuilder::buildForretningsKvittering)
-            .orElse(null);
+        if (forrigeKvittering != null) {
+            bekreft(forrigeKvittering);
+        }
+
+        //TODO: Discuss guard
+        int guard = 100;
+        for (int count = 0; count < guard; count++) {
+            final Optional<IntegrasjonspunktKvittering> kvitteringOptional = integrasjonspunktMessageSenderFacade.hentKvittering();
+            boolean shouldFetchAgain = kvitteringOptional.map(IntegrasjonspunktKvittering::getStatus)
+                .filter(status -> status.equals(SENDT) || status.equals(OPPRETTET))
+                .isPresent();
+
+            if (shouldFetchAgain) {
+                LOG.info("Fikk integrasjonspunktspesifikk statusmelding ved henting av kvittering. Bekreft den og henter neste kvittering fra kø.");
+                integrasjonspunktMessageSenderFacade.bekreft(kvitteringOptional.get().getId());
+            } else {
+                return kvitteringOptional
+                    .map(kvitteringBuilder::buildForretningsKvittering)
+                    .orElse(null);
+            }
+
+        }
+        LOG.info("Antall forsøk på å hente kvittering overskredet. " +
+            "Det kan komme av det er mange " + SENDT + " og " + OPPRETTET + "-kvitteringer på integrasjonspunktkøen." +
+            "Hent kvitteringer på nyttReturner.");
+        return null;
     }
 
     /**
@@ -94,7 +125,14 @@ public class SikkerDigitalPostKlient {
      * </ol>
      */
     public void bekreft(KanBekreftesSomBehandletKvittering forrigeKvittering) throws SendException {
-        integrasjonspunktMessageSenderFacade.bekreft(forrigeKvittering);
+        final Long id = forrigeKvittering.getIntegrasjonspunktId();
+        if (id != null) {
+            integrasjonspunktMessageSenderFacade.bekreft(id);
+        } else {
+            integrasjonspunktMessageSenderFacade.hentKvittering()
+                .map(IntegrasjonspunktKvittering::getId)
+                .ifPresent(integrasjonspunktMessageSenderFacade::bekreft);
+        }
     }
 
     /**

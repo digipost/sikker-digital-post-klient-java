@@ -15,6 +15,11 @@ public class ForretningsKvitteringTest {
     public void constructor_initializes_properly() {
         KanBekreftesSomBehandletKvittering kanBekreftesSomBehandletKvittering = new KanBekreftesSomBehandletKvittering() {
             @Override
+            public Long getIntegrasjonspunktId() {
+                return 1L;
+            }
+
+            @Override
             public String getMeldingsId() {
                 return "MeldingsId";
             }
@@ -24,7 +29,7 @@ public class ForretningsKvitteringTest {
                 return null;
             }
         };
-        KvitteringsInfo kvitteringsInfo = new KvitteringsInfo("konversasjonsId", "referanseTilMeldingId", Instant.now());
+        KvitteringsInfo kvitteringsInfo = new KvitteringsInfo("konversasjonsId", "referanseTilMeldingId", Instant.now(), 1L);
         LeveringsKvittering leveringsKvittering = new LeveringsKvittering(kanBekreftesSomBehandletKvittering, kvitteringsInfo);
 
         assertThat(leveringsKvittering.getReferanseTilMeldingSomKvitteres(), equalTo(kanBekreftesSomBehandletKvittering.getReferanseTilMeldingSomKvitteres()));
@@ -32,5 +37,6 @@ public class ForretningsKvitteringTest {
         assertThat(leveringsKvittering.getKonversasjonsId(), equalTo(kvitteringsInfo.getKonversasjonsId()));
         assertThat(leveringsKvittering.getReferanseTilMeldingId(), equalTo(kvitteringsInfo.getReferanseTilMeldingId()));
         assertThat(leveringsKvittering.getTidspunkt(), equalTo(kvitteringsInfo.getTidspunkt()));
+        assertThat(leveringsKvittering.getIntegrasjonspunktId(), equalTo(kvitteringsInfo.getIntegrasjonspunktId()));
     }
 }

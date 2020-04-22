@@ -58,7 +58,6 @@
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
             <version>2.3.2</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -129,6 +128,12 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.2.3</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>co.unruly</groupId>
+            <artifactId>java-8-matchers</artifactId>
+            <version>1.6</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -274,6 +279,14 @@
                                     <include>com.fasterxml.jackson.core:jackson-databind</include>
                                     <include>com.fasterxml.jackson.datatype:jackson-datatype-jsr310</include>
                                     <include>no.digipost:http-client-builder3</include>
+                                    <include>no.digipost:sdp-xsd</include>
+                                    <include>org.glassfish.jaxb</include>
+                                    <include>jakarta.xml.bind</include>
+                                    <include>com.sun.istack</include>
+                                    <include>org.jvnet.jaxb2_commons:jaxb2-basics-runtime</include>
+                                    <include>com.sun.xml.fastinfoset</include>
+                                    <include>org.jvnet.staxex:stax-ex</include>
+                                    <include>jakarta.activation</include>
                                 </includes>
                                 <searchTransitive>true</searchTransitive>
                                 <message>

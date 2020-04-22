@@ -5,24 +5,28 @@ import no.difi.sdp.client2.KlientKonfigurasjon;
 import no.difi.sdp.client2.domain.Databehandler;
 import no.difi.sdp.client2.domain.Dokumentpakke;
 import no.difi.sdp.client2.domain.exceptions.SendException;
-import no.digipost.api.representations.KanBekreftesSomBehandletKvittering;
 import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
 import no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering;
 import no.difi.sdp.client2.internal.http.MessageSender;
-import no.digipost.http.client3.DigipostHttpClientFactory;
+import no.digipost.api.representations.KanBekreftesSomBehandletKvittering;
 import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
+
+import static no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.KvitteringStatus.LEVETID_UTLOPT;
+import static no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.KvitteringStatus.OPPRETTET;
+import static no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.KvitteringStatus.SENDT;
 
 public class IntegrasjonspunktMessageSenderFacade {
 
     private final MessageSender messageSender;
-    private CloseableHttpClient httpClient = DigipostHttpClientFactory.createDefault();
     private ExceptionMapper exceptionMapper = new ExceptionMapper();
-
+    private static final Logger LOG = LoggerFactory.getLogger(IntegrasjonspunktMessageSenderFacade.class);
 
     public IntegrasjonspunktMessageSenderFacade(final Databehandler databehandler, final KlientKonfigurasjon klientKonfigurasjon) {
         final int connectTimeoutInMillis = (int) klientKonfigurasjon.getConnectTimeoutInMillis();
@@ -30,11 +34,11 @@ public class IntegrasjonspunktMessageSenderFacade {
         final int connectionRequestTimeoutInMillis = (int) klientKonfigurasjon.getConnectionRequestTimeoutInMillis();
 
         MessageSender.Builder messageSenderBuilder = MessageSender.create(klientKonfigurasjon.getMiljo().getIntegrasjonspunktRoot())
-                .withConnectTimeout(connectTimeoutInMillis)
-                .withSocketTimeout(socketTimeoutInMillis)
-                .withConnectionRequestTimeout(connectionRequestTimeoutInMillis)
-                .withDefaultMaxPerRoute(klientKonfigurasjon.getMaxConnectionPoolSize())
-                .withMaxTotal(klientKonfigurasjon.getMaxConnectionPoolSize());
+            .withConnectTimeout(connectTimeoutInMillis)
+            .withSocketTimeout(socketTimeoutInMillis)
+            .withConnectionRequestTimeout(connectionRequestTimeoutInMillis)
+            .withDefaultMaxPerRoute(klientKonfigurasjon.getMaxConnectionPoolSize())
+            .withMaxTotal(klientKonfigurasjon.getMaxConnectionPoolSize());
 
 
         if (klientKonfigurasjon.useProxy()) {
@@ -55,9 +59,8 @@ public class IntegrasjonspunktMessageSenderFacade {
         performRequest(() -> messageSender.send(forsendelse, sbdForsendelse));
     }
 
-    public void bekreft(final KanBekreftesSomBehandletKvittering kanBekreftesSomBehandletKvittering) {
-        performRequest(() -> messageSender.bekreft(kanBekreftesSomBehandletKvittering));
-
+    public void bekreft(final long id) {
+        performRequest(() -> messageSender.bekreftKvittering(id));
     }
 
     private void performRequest(final Runnable request) {

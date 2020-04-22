@@ -7,6 +7,7 @@ public class KvitteringsInfo {
     private String konversasjonsId;
     private String referanseTilMeldingId;
     private Instant tidspunkt;
+    private Long integrasjonspunktId;
 
 
     public String getKonversasjonsId() {
@@ -21,10 +22,15 @@ public class KvitteringsInfo {
         return tidspunkt;
     }
 
-    protected KvitteringsInfo(String konversasjonsId, String referanseTilMeldingId, Instant tidspunkt) {
+    public Long getIntegrasjonspunktId() {
+        return integrasjonspunktId;
+    }
+
+    protected KvitteringsInfo(String konversasjonsId, String referanseTilMeldingId, Instant tidspunkt, Long integrasjonspunktId) {
         this.konversasjonsId = konversasjonsId;
         this.referanseTilMeldingId = referanseTilMeldingId;
         this.tidspunkt = tidspunkt;
+        this.integrasjonspunktId = integrasjonspunktId;
     }
 
     public static Builder builder() {
@@ -36,6 +42,7 @@ public class KvitteringsInfo {
         private String konversasjonsId;
         private String referanseTilMeldingId;
         private Instant tidspunkt;
+        private Long integrasjonspunktId;
 
         private Builder() {
 
@@ -48,6 +55,11 @@ public class KvitteringsInfo {
 
         public Builder referanseTilMeldingId(String referanseTilMeldingId) {
             this.referanseTilMeldingId = referanseTilMeldingId;
+            return this;
+        }
+
+        public Builder integrasjonspunktId(Long integrasjonspunktId) {
+            this.integrasjonspunktId = integrasjonspunktId;
             return this;
         }
 
@@ -67,7 +79,7 @@ public class KvitteringsInfo {
 
             built = true;
 
-            return new KvitteringsInfo(konversasjonsId, referanseTilMeldingId, tidspunkt);
+            return new KvitteringsInfo(konversasjonsId, referanseTilMeldingId, tidspunkt, integrasjonspunktId);
         }
     }
 }

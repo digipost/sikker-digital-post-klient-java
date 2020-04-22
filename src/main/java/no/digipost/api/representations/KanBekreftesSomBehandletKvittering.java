@@ -2,7 +2,15 @@ package no.digipost.api.representations;
 
 public interface KanBekreftesSomBehandletKvittering {
 
-    String getMeldingsId();
+    //Defaulter for å bevare API.
+    default Long getIntegrasjonspunktId() {
+        return null;
+    }
+
+    @Deprecated
+    default String getMeldingsId() {
+        return null;
+    }
 
     @Deprecated
     default KvitteringsReferanse getReferanseTilMeldingSomKvitteres() {

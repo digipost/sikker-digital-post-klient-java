@@ -39,9 +39,9 @@ public interface MessageSender {
 //        return hentKvittering(pullRequest, null);
 //    }
 
-    void bekreft(KanBekreftesSomBehandletKvittering kanBekreftesSomBehandletKvittering);
-
     Optional<IntegrasjonspunktKvittering> hentKvittering();
+
+    void bekreftKvittering(long id);
 
 
     @FunctionalInterface

@@ -76,7 +76,7 @@ public class ObjectMother {
 
         return DigitalPost.builder(mottaker, "Forretningsmeldingtittel")
                 .virkningsdato(new Date())
-                .aapningskvittering(false)
+                .aapningskvittering(true)
                 .sikkerhetsnivaa(Sikkerhetsnivaa.NIVAA_3)
                 .epostVarsel(epostVarsel)
                 .smsVarsel(smsVarsel)
@@ -109,7 +109,6 @@ public class ObjectMother {
     public static Avsender avsender(AktoerOrganisasjonsnummer aktoerOrganisasjonsnummer) {
         return Avsender
             .builder(aktoerOrganisasjonsnummer.forfremTilAvsender())
-            .avsenderIdentifikator("avdeling4")
             .fakturaReferanse("eksepsjonell digital melding")
             .build();
     }
@@ -279,7 +278,7 @@ public class ObjectMother {
     public static Forsendelse digitalForsendelse(String mpcId, InputStream dokumentStream, Avsender avsender) {
         DigitalPost digitalPost = digitalPost();
 
-        Dokument hovedDokument = Dokument.builder("HoveddokumentTittel", "faktura.pdf", ObjectMother.class.getResourceAsStream("/test.pdf"))
+        Dokument hovedDokument = Dokument.builder("Med åpningskvittering", "faktura.pdf", ObjectMother.class.getResourceAsStream("/test.pdf"))
             .mimeType("application/pdf")
             .metadataDocument(lenkeMetadataDokument())
             .build();
