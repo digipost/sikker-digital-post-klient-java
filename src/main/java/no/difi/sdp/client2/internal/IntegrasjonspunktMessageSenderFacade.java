@@ -20,9 +20,8 @@ public class IntegrasjonspunktMessageSenderFacade {
 
     private final MessageSender messageSender;
     private ExceptionMapper exceptionMapper = new ExceptionMapper();
-    private static final Logger LOG = LoggerFactory.getLogger(IntegrasjonspunktMessageSenderFacade.class);
 
-    public IntegrasjonspunktMessageSenderFacade(final Databehandler databehandler, final KlientKonfigurasjon klientKonfigurasjon) {
+    public IntegrasjonspunktMessageSenderFacade(final KlientKonfigurasjon klientKonfigurasjon) {
         final int connectTimeoutInMillis = (int) klientKonfigurasjon.getConnectTimeoutInMillis();
         final int socketTimeoutInMillis = (int) klientKonfigurasjon.getSocketTimeoutInMillis();
         final int connectionRequestTimeoutInMillis = (int) klientKonfigurasjon.getConnectionRequestTimeoutInMillis();
@@ -49,8 +48,8 @@ public class IntegrasjonspunktMessageSenderFacade {
         messageSender = messageSenderBuilder.build();
     }
 
-    public String send(StandardBusinessDocument forsendelse, final Dokumentpakke sbdForsendelse) {
-        return performRequest(() -> messageSender.send(forsendelse, sbdForsendelse));
+    public void send(StandardBusinessDocument forsendelse, final Dokumentpakke sbdForsendelse) {
+        performRequest(() -> messageSender.send(forsendelse, sbdForsendelse));
     }
 
     public void bekreft(final long id) {

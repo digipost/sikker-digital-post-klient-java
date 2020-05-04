@@ -65,7 +65,7 @@ public class MessageSenderImpl implements MessageSender {
     }
 
     @Override
-    public String send(StandardBusinessDocument sbd, Dokumentpakke dokumentpakke) {
+    public void send(StandardBusinessDocument sbd, Dokumentpakke dokumentpakke) {
         try {
             createMessage(sbd);
 
@@ -79,7 +79,6 @@ public class MessageSenderImpl implements MessageSender {
             }
 
             closeMessage(sbd);
-            return conversationId;
         } catch (IOException e) {
             throw new SendIOException(e);
         }

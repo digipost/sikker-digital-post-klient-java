@@ -33,7 +33,7 @@ public class SikkerDigitalPostKlient {
      */
     public SikkerDigitalPostKlient(Databehandler databehandler, KlientKonfigurasjon klientKonfigurasjon) {
         this.kvitteringBuilder = new KvitteringBuilder();
-        this.integrasjonspunktMessageSenderFacade = new IntegrasjonspunktMessageSenderFacade(databehandler, klientKonfigurasjon);
+        this.integrasjonspunktMessageSenderFacade = new IntegrasjonspunktMessageSenderFacade(klientKonfigurasjon);
         this.databehandler = databehandler;
     }
 
@@ -46,9 +46,9 @@ public class SikkerDigitalPostKlient {
      */
     public SendResultat send(Forsendelse forsendelse) throws SendException {
         StandardBusinessDocument sbd = SBDForsendelseBuilder.buildSBD(databehandler.organisasjonsnummer, forsendelse);
-        final String conversationId = integrasjonspunktMessageSenderFacade.send(sbd, forsendelse.getDokumentpakke());
+        integrasjonspunktMessageSenderFacade.send(sbd, forsendelse.getDokumentpakke());
 
-        return new SendResultat(conversationId);
+        return new SendResultat(sbd.getConversationId());
     }
 
     /**

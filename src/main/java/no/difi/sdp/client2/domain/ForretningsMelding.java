@@ -52,7 +52,7 @@ public abstract class ForretningsMelding {
         this.fakturaReferanse = fakturaReferanse;
     }
 
-    public boolean isType(ForretningsMeldingType type){
+    public boolean is(ForretningsMeldingType type){
         return this.type.equals(type);
     }
 

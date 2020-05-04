@@ -31,7 +31,7 @@ public interface MessageSender {
         return new Builder(uri);
     }
 
-    String send(StandardBusinessDocument sbd, Dokumentpakke dokumentpakke);
+    void send(StandardBusinessDocument sbd, Dokumentpakke dokumentpakke);
 
     Optional<IntegrasjonspunktKvittering> hentKvittering();
 
