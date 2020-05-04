@@ -1,9 +1,9 @@
-package no.difi.sdp.client2.foretningsmelding;
+package no.difi.sdp.client2.internal;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
+import no.difi.sdp.client2.domain.sbd.StandardBusinessDocument;
 
 import java.io.IOException;
 

@@ -3,7 +3,6 @@ package no.difi.sdp.client2.domain.digital_post;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SmsVarsel extends Varsel {

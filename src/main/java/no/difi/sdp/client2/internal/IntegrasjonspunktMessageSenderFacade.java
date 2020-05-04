@@ -5,30 +5,23 @@ import no.difi.sdp.client2.KlientKonfigurasjon;
 import no.difi.sdp.client2.domain.Databehandler;
 import no.difi.sdp.client2.domain.Dokumentpakke;
 import no.difi.sdp.client2.domain.exceptions.SendException;
-import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
+import no.difi.sdp.client2.domain.sbd.StandardBusinessDocument;
 import no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering;
 import no.difi.sdp.client2.internal.http.MessageSender;
-import no.digipost.api.representations.KanBekreftesSomBehandletKvittering;
 import org.apache.http.HttpRequestInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
-
-import static no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.KvitteringStatus.LEVETID_UTLOPT;
-import static no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.KvitteringStatus.OPPRETTET;
-import static no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.KvitteringStatus.SENDT;
 
 public class IntegrasjonspunktMessageSenderFacade {
 
     private final MessageSender messageSender;
     private ExceptionMapper exceptionMapper = new ExceptionMapper();
-    private static final Logger LOG = LoggerFactory.getLogger(IntegrasjonspunktMessageSenderFacade.class);
 
-    public IntegrasjonspunktMessageSenderFacade(final Databehandler databehandler, final KlientKonfigurasjon klientKonfigurasjon) {
+    public IntegrasjonspunktMessageSenderFacade(final KlientKonfigurasjon klientKonfigurasjon) {
         final int connectTimeoutInMillis = (int) klientKonfigurasjon.getConnectTimeoutInMillis();
         final int socketTimeoutInMillis = (int) klientKonfigurasjon.getSocketTimeoutInMillis();
         final int connectionRequestTimeoutInMillis = (int) klientKonfigurasjon.getConnectionRequestTimeoutInMillis();

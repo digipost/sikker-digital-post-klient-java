@@ -1,7 +1,6 @@
 package no.difi.sdp.client2.internal.http;
 
 import java.time.ZonedDateTime;
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 public class IntegrasjonspunktKvittering {

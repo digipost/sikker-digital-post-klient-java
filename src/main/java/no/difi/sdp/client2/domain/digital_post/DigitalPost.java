@@ -1,8 +1,8 @@
 package no.difi.sdp.client2.domain.digital_post;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import no.difi.sdp.client2.domain.ForretningsMeldingType;
 import no.difi.sdp.client2.domain.ForretningsMelding;
+import no.difi.sdp.client2.domain.ForretningsMeldingType;
 import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.Mottaker;
 
@@ -32,7 +32,6 @@ public class DigitalPost extends ForretningsMelding {
      * @see Forsendelse#getMottaker()
      */
     @JsonIgnore
-    @Deprecated
     public Mottaker getMottaker() {
         return mottaker;
     }
@@ -80,6 +79,11 @@ public class DigitalPost extends ForretningsMelding {
     }
 
     public String getTittel() {
+        return tittel;
+    }
+
+    @JsonIgnore
+    public String getIkkeSensitivTittel() {
         return tittel;
     }
 

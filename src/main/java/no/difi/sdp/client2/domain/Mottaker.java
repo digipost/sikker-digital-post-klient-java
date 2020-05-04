@@ -12,10 +12,12 @@ public class Mottaker {
         this.postkasse = new TekniskMottaker(organisasjonsnummerPostkasse, mottakerSertifikat);
     }
 
+    @Deprecated
     public TekniskMottaker getMottakersPostkasse() {
     	return postkasse;
     }
 
+    @Deprecated
     public String getPostkasseadresse() {
         return postkasseadresse;
     }
@@ -33,9 +35,16 @@ public class Mottaker {
      * @param mottakerSertifikat Mottakers sertifikat.
      * @param organisasjonsnummerPostkasse Identifikator (organisasjonsnummer) til virksomheten som er sluttmottaker i meldingsprosessen.
      */
+    @Deprecated
     public static Builder builder(String personidentifikator, String postkasseadresse, Sertifikat mottakerSertifikat, Organisasjonsnummer organisasjonsnummerPostkasse) {
         return new Builder(personidentifikator, postkasseadresse, mottakerSertifikat, organisasjonsnummerPostkasse);
     }
+
+    /**
+     * Informasjon om mottaker. Vil vanligvis være hentet fra <a href="http://begrep.difi.no/Oppslagstjenesten/">Oppslagstjenesten</a>.
+     *
+     * @param personidentifikator Identifikator (fødselsnummer eller D-nummer) til mottaker av brevet.
+     */
     public static Builder builder(String personidentifikator) {
         return new Builder(personidentifikator, null, null, null);
     }

@@ -76,7 +76,7 @@ public class ObjectMother {
 
         return DigitalPost.builder(mottaker, "Forretningsmeldingtittel")
                 .virkningsdato(new Date())
-                .aapningskvittering(true)
+                .aapningskvittering(false)
                 .sikkerhetsnivaa(Sikkerhetsnivaa.NIVAA_3)
                 .epostVarsel(epostVarsel)
                 .smsVarsel(smsVarsel)

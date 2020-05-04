@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+@Deprecated
 public class EpostVarsel extends Varsel {
 
     private static final Logger LOG = LoggerFactory.getLogger(EpostVarsel.class);

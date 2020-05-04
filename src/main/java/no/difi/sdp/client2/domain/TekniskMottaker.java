@@ -1,5 +1,6 @@
 package no.difi.sdp.client2.domain;
 
+@Deprecated
 public class TekniskMottaker {
 
 	public final Organisasjonsnummer organisasjonsnummer;

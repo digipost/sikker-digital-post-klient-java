@@ -1,19 +1,19 @@
-package no.difi.sdp.client2.domain.sbdh;
+package no.difi.sdp.client2.domain.sbd;
 
 import java.util.List;
 
-public class Sender extends Partner {
+public class Receiver extends Partner {
 
-    public Sender(PartnerIdentification identifier) {
+    public Receiver(PartnerIdentification identifier) {
         super(identifier);
     }
 
-    public Sender(PartnerIdentification identifier, List<ContactInformation> contactInformation) {
+    public Receiver(PartnerIdentification identifier, List<ContactInformation> contactInformation) {
         super(identifier, contactInformation);
     }
 
     @Override
-    public Sender setIdentifier(PartnerIdentification identifier) {
+    public Receiver setIdentifier(PartnerIdentification identifier) {
         this.identifier = identifier;
         return this;
     }
@@ -22,5 +22,4 @@ public class Sender extends Partner {
     public void setContactInformation(List<ContactInformation> contactInformation) {
         this.contactInformation = contactInformation;
     }
-
 }

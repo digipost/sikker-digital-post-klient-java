@@ -1,10 +1,14 @@
 package no.difi.sdp.client2.internal;
 
+import no.difi.sdp.client2.domain.kvittering.AapningsKvittering;
 import no.difi.sdp.client2.domain.kvittering.Feil;
 import no.difi.sdp.client2.domain.kvittering.ForretningsKvittering;
 import no.difi.sdp.client2.domain.kvittering.LeveringsKvittering;
 import no.difi.sdp.client2.domain.kvittering.MottaksKvittering;
+import no.difi.sdp.client2.domain.kvittering.ReturpostKvittering;
+import no.difi.sdp.client2.domain.kvittering.VarslingFeiletKvittering;
 import no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering;
+import no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.KvitteringStatus;
 import no.difi.sdp.client2.internal.kvittering.KvitteringBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +21,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class KvitteringBuilderTest {
@@ -25,22 +31,23 @@ class KvitteringBuilderTest {
 
     @Test
     public void skal_handtere_sendtkvittering() {
-        IntegrasjonspunktKvittering kvittering = new IntegrasjonspunktKvittering(1L, ZonedDateTime.now(), IntegrasjonspunktKvittering.KvitteringStatus.SENDT, "Beskrivelse", null, UUID.fromString(levertMessageId), 1L, UUID.fromString(levertConversationId));
+        IntegrasjonspunktKvittering kvittering = new IntegrasjonspunktKvittering(1L, ZonedDateTime.now(), KvitteringStatus.SENDT, "Beskrivelse", null, UUID.fromString(levertMessageId), 1L, UUID.fromString(levertConversationId));
         final ForretningsKvittering forretningsKvittering = kvitteringBuilder.buildForretningsKvittering(kvittering);
         assertNull(forretningsKvittering);
     }
 
     @Test
-    public void skal_handtere_levetidutlopt() {
-        IntegrasjonspunktKvittering kvittering = new IntegrasjonspunktKvittering(1L, ZonedDateTime.now(), IntegrasjonspunktKvittering.KvitteringStatus.LEVETID_UTLOPT, "Beskrivelse", null, UUID.fromString(levertMessageId), 1L, UUID.fromString(levertConversationId));
+    public void skal_handtere_levetidutlopt_som_feil() {
+        IntegrasjonspunktKvittering kvittering = new IntegrasjonspunktKvittering(1L, ZonedDateTime.now(), KvitteringStatus.LEVETID_UTLOPT, "Beskrivelse", null, UUID.fromString(levertMessageId), 1L, UUID.fromString(levertConversationId));
         final ForretningsKvittering forretningsKvittering = kvitteringBuilder.buildForretningsKvittering(kvittering);
-        assertNull(forretningsKvittering);
+        assertThat(forretningsKvittering, is(instanceOf(Feil.class)));
+        assertThat(((Feil) forretningsKvittering), where(Feil::getFeiltype, is(KLIENT)));
     }
 
     @Test
     public void skal_parse_levert_kvitteringsmeldinger() {
         final ZonedDateTime kvitteringDateTime = ZonedDateTime.now();
-        IntegrasjonspunktKvittering kvittering = new IntegrasjonspunktKvittering(1L, kvitteringDateTime, IntegrasjonspunktKvittering.KvitteringStatus.LEVERT, "Beskrivelse", levertRawReceipt, UUID.fromString(levertMessageId), 1L, UUID.fromString(levertConversationId));
+        IntegrasjonspunktKvittering kvittering = new IntegrasjonspunktKvittering(1L, kvitteringDateTime, KvitteringStatus.LEVERT, "Beskrivelse", levertRawReceipt, UUID.fromString(levertMessageId), 1L, UUID.fromString(levertConversationId));
         final ForretningsKvittering forretningsKvittering = kvitteringBuilder.buildForretningsKvittering(kvittering);
         assertThat(forretningsKvittering, where(ForretningsKvittering::getKonversasjonsId, is(levertConversationId)));
         assertThat(forretningsKvittering, where(ForretningsKvittering::getMeldingsId, is(levertMessageId)));
@@ -50,7 +57,7 @@ class KvitteringBuilderTest {
 
     @Test
     public void skal_parse_feilet_kvittering() {
-        IntegrasjonspunktKvittering kvittering = new IntegrasjonspunktKvittering(1L, ZonedDateTime.now(), IntegrasjonspunktKvittering.KvitteringStatus.LEVERT, "Beskrivelse", feiletRawReceipt, UUID.randomUUID(), 1L, UUID.randomUUID());
+        IntegrasjonspunktKvittering kvittering = new IntegrasjonspunktKvittering(1L, ZonedDateTime.now(), KvitteringStatus.LEVERT, "Beskrivelse", feiletRawReceipt, UUID.randomUUID(), 1L, UUID.randomUUID());
         final ForretningsKvittering forretningsKvittering = kvitteringBuilder.buildForretningsKvittering(kvittering);
         assertThat(forretningsKvittering, is(instanceOf(Feil.class)));
 
@@ -61,9 +68,46 @@ class KvitteringBuilderTest {
 
     @Test
     public void skal_parse_mottak_kvittering() {
-        IntegrasjonspunktKvittering kvittering = new IntegrasjonspunktKvittering(1L, ZonedDateTime.now(), IntegrasjonspunktKvittering.KvitteringStatus.LEVERT, "Beskrivelse", mottakRawReceipt, UUID.randomUUID(), 1L, UUID.randomUUID());
+        IntegrasjonspunktKvittering kvittering = new IntegrasjonspunktKvittering(1L, ZonedDateTime.now(), KvitteringStatus.LEVERT, "Beskrivelse", mottakRawReceipt, UUID.randomUUID(), 1L, UUID.randomUUID());
         final ForretningsKvittering forretningsKvittering = kvitteringBuilder.buildForretningsKvittering(kvittering);
         assertThat(forretningsKvittering, is(instanceOf(MottaksKvittering.class)));
+    }
+
+    @Test
+    public void skal_parse_aapningskvittering() {
+        final String rawReceipt = KvitteringTestUtil.Åpningskvittering();
+        IntegrasjonspunktKvittering kvittering = byggKvitteringMedRawReceipt(KvitteringStatus.LEST, rawReceipt);
+        final ForretningsKvittering forretningsKvittering = kvitteringBuilder.buildForretningsKvittering(kvittering);
+        assertThat(forretningsKvittering, is(instanceOf(AapningsKvittering.class)));
+    }
+
+    @Test
+    public void skal_parse_varslingfeiletkvittering() {
+        final String rawReceipt = KvitteringTestUtil.VarslingFeiletKvittering();
+        IntegrasjonspunktKvittering kvittering = byggKvitteringMedRawReceipt(KvitteringStatus.FEIL, rawReceipt);
+        final ForretningsKvittering forretningsKvittering = kvitteringBuilder.buildForretningsKvittering(kvittering);
+        assertThat(forretningsKvittering, is(instanceOf(VarslingFeiletKvittering.class)));
+        assertThat((VarslingFeiletKvittering) forretningsKvittering, where(VarslingFeiletKvittering::getBeskrivelse, notNullValue()));
+    }
+
+    @Test
+    public void skal_parse_leveringskvittering() {
+        final String rawReceipt = KvitteringTestUtil.Leveringskvittering();
+        IntegrasjonspunktKvittering kvittering = byggKvitteringMedRawReceipt(KvitteringStatus.LEVERT, rawReceipt);
+        final ForretningsKvittering forretningsKvittering = kvitteringBuilder.buildForretningsKvittering(kvittering);
+        assertThat(forretningsKvittering, is(instanceOf(LeveringsKvittering.class)));
+    }
+
+    @Test
+    public void skal_parse_returpostkvittering() {
+        final String rawReceipt = KvitteringTestUtil.Returpostkvittering();
+        IntegrasjonspunktKvittering kvittering = byggKvitteringMedRawReceipt(KvitteringStatus.FEIL, rawReceipt);
+        final ForretningsKvittering forretningsKvittering = kvitteringBuilder.buildForretningsKvittering(kvittering);
+        assertThat(forretningsKvittering, is(instanceOf(ReturpostKvittering.class)));
+    }
+
+    private IntegrasjonspunktKvittering byggKvitteringMedRawReceipt(KvitteringStatus status, String rawReceipt) {
+        return new IntegrasjonspunktKvittering(1L, ZonedDateTime.now(), status, "", rawReceipt, UUID.randomUUID(), 1L, UUID.randomUUID());
     }
 
 

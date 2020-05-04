@@ -3,13 +3,13 @@ package no.difi.sdp.client2.smoke;
 import no.difi.sdp.client2.ObjectMother;
 import no.difi.sdp.client2.domain.AktoerOrganisasjonsnummer;
 import no.difi.sdp.client2.domain.Miljo;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
 
 
-//@Disabled("This test runs the client against a deployed backed, and thus needs correct keys set up. " +
-//        "Run it, and it will tell you how to set things up!")
+@Disabled("This test runs the client against a running 'Integrasjonspunkt'.")
 public class SmokeTest {
 
     private static final AktoerOrganisasjonsnummer avsenderOrgnr = ObjectMother.POSTEN_ORGNR;

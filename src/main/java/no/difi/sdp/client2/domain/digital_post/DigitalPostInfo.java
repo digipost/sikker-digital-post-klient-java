@@ -1,8 +1,6 @@
 package no.difi.sdp.client2.domain.digital_post;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.util.Date;
 
 public class DigitalPostInfo {

@@ -2,8 +2,7 @@ package no.difi.sdp.client2.internal.http;
 
 
 import no.difi.sdp.client2.domain.Dokumentpakke;
-import no.digipost.api.representations.KanBekreftesSomBehandletKvittering;
-import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
+import no.difi.sdp.client2.domain.sbd.StandardBusinessDocument;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponseInterceptor;
@@ -33,11 +32,6 @@ public interface MessageSender {
     }
 
     void send(StandardBusinessDocument sbd, Dokumentpakke dokumentpakke);
-//    EbmsApplikasjonsKvittering hentKvittering(EbmsPullRequest pullRequest, KanBekreftesSomBehandletKvittering tidligereKvitteringSomSkalBekreftes);
-
-//    default EbmsApplikasjonsKvittering hentKvittering(EbmsPullRequest pullRequest) {
-//        return hentKvittering(pullRequest, null);
-//    }
 
     Optional<IntegrasjonspunktKvittering> hentKvittering();
 

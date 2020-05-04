@@ -16,6 +16,10 @@ import no.difi.sdp.client2.domain.kvittering.ReturpostKvittering;
 import no.difi.sdp.client2.domain.kvittering.VarslingFeiletKvittering;
 import no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering;
 import no.digipost.api.representations.KanBekreftesSomBehandletKvittering;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Objects;
 
 import static no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.KvitteringStatus.LEVETID_UTLOPT;
 import static no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.KvitteringStatus.OPPRETTET;
@@ -24,6 +28,8 @@ import static no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.Kvit
 public class KvitteringBuilder {
 
     private RawKvitteringTransformer transformer = new RawKvitteringTransformer();
+
+    private static final Logger LOG = LoggerFactory.getLogger(KvitteringBuilder.class);
 
 
     public ForretningsKvittering buildForretningsKvittering(IntegrasjonspunktKvittering integrasjonspunktKvittering) {
@@ -35,6 +41,7 @@ public class KvitteringBuilder {
             .build();
 
         if(integrasjonspunktKvittering.getRawReceipt() != null) {
+            LOG.info("Fikk kvittering med XML. {}", integrasjonspunktKvittering);
             // De fleste kvitteringer har RawReceipt fra IP, så benytter det fremfor å mappe basert på integrasjonspunktKvittering.getStatus()
             final SimpleSBDMessage simpleSBDMessage = transformer.transform(integrasjonspunktKvittering.getRawReceipt());
             return buildForretningsKvittering(simpleSBDMessage, kvitteringsinfo);
@@ -51,11 +58,7 @@ public class KvitteringBuilder {
             throw new SikkerDigitalPostException("En uventet feil oppsto ved håndtering av kvittering: " + integrasjonspunktKvittering.toString());
         }
     }
-//
-//    public EbmsPullRequest buildEbmsPullRequest(Organisasjonsnummer meldingsformidler, KvitteringForespoersel kvitteringForespoersel) {
-//        return new EbmsPullRequest(meldingsformidler(meldingsformidler), kvitteringForespoersel.getPrioritet().getEbmsPrioritet(), kvitteringForespoersel.getMpcId());
-//    }
-//
+
     private ForretningsKvittering buildForretningsKvittering(SimpleSBDMessage simpleSBDMessage, KvitteringsInfo kvitteringsInfo) {
 
         KanBekreftesSomBehandletKvittering kvittering = toKanBekreftesSomBehandletKvittering(kvitteringsInfo);
@@ -110,6 +113,7 @@ public class KvitteringBuilder {
     }
 
     private Feil.Feiltype mapFeilType(SDPFeiltype feiltype) {
+        Objects.requireNonNull(feiltype);
         if (feiltype == SDPFeiltype.KLIENT) {
             return Feil.Feiltype.KLIENT;
         }
@@ -117,6 +121,7 @@ public class KvitteringBuilder {
     }
 
     private VarslingFeiletKvittering.Varslingskanal mapVarslingsKanal(SDPVarslingskanal varslingskanal) {
+        Objects.requireNonNull(varslingskanal);
         if (varslingskanal == SDPVarslingskanal.EPOST) {
             return VarslingFeiletKvittering.Varslingskanal.EPOST;
         }

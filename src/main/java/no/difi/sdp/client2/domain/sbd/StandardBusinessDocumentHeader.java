@@ -1,4 +1,4 @@
-package no.difi.sdp.client2.domain.sbdh;
+package no.difi.sdp.client2.domain.sbd;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import no.difi.sdp.client2.domain.AvsenderOrganisasjonsnummer;

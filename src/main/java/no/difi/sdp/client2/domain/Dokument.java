@@ -15,13 +15,13 @@ public class Dokument implements MedDokumentEgenskaper {
     private String filnavn;
     private byte[] dokument;
     private String mimeType = "application/pdf";
-    private Optional<MetadataDokument> metadataDocument;
+    private MetadataDokument metadataDocument;
 
     private Dokument(String tittel, String filnavn, byte[] dokument, MetadataDokument metadataDocument) {
         this.tittel = tittel;
         this.filnavn = filnavn;
         this.dokument = dokument;
-        this.metadataDocument = Optional.ofNullable(metadataDocument);
+        this.metadataDocument = metadataDocument;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class Dokument implements MedDokumentEgenskaper {
     }
     
     public Optional<MetadataDokument> getMetadataDocument() {
-        return metadataDocument;
+        return Optional.ofNullable(metadataDocument);
     }
 
     /**
@@ -110,9 +110,12 @@ public class Dokument implements MedDokumentEgenskaper {
             target.mimeType = mimeType;
             return this;
         }
-        
+
+        /**
+         * Kan bare bli satt for hoveddokument.
+         */
         public Builder metadataDocument(MetadataDokument metadataDokument){
-            target.metadataDocument = Optional.of(metadataDokument);
+            target.metadataDocument = metadataDokument;
             return this;
         }
 

@@ -4,19 +4,18 @@ import no.difi.sdp.client2.domain.Databehandler;
 import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.exceptions.SendException;
 import no.difi.sdp.client2.domain.kvittering.ForretningsKvittering;
-import no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering;
-import no.digipost.api.representations.KanBekreftesSomBehandletKvittering;
 import no.difi.sdp.client2.domain.kvittering.KvitteringForespoersel;
-import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
+import no.difi.sdp.client2.domain.sbd.StandardBusinessDocument;
 import no.difi.sdp.client2.internal.IntegrasjonspunktMessageSenderFacade;
-import no.difi.sdp.client2.internal.kvittering.KvitteringBuilder;
 import no.difi.sdp.client2.internal.SBDForsendelseBuilder;
+import no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering;
+import no.difi.sdp.client2.internal.kvittering.KvitteringBuilder;
+import no.digipost.api.representations.KanBekreftesSomBehandletKvittering;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
-import static no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.KvitteringStatus.LEVETID_UTLOPT;
 import static no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.KvitteringStatus.OPPRETTET;
 import static no.difi.sdp.client2.internal.http.IntegrasjonspunktKvittering.KvitteringStatus.SENDT;
 
@@ -25,7 +24,6 @@ public class SikkerDigitalPostKlient {
     private final Databehandler databehandler;
     private final KvitteringBuilder kvitteringBuilder;
     private final IntegrasjonspunktMessageSenderFacade integrasjonspunktMessageSenderFacade;
-    private final KlientKonfigurasjon klientKonfigurasjon;
     private static final Logger LOG = LoggerFactory.getLogger(SikkerDigitalPostKlient.class);
 
     /**
@@ -35,9 +33,7 @@ public class SikkerDigitalPostKlient {
      */
     public SikkerDigitalPostKlient(Databehandler databehandler, KlientKonfigurasjon klientKonfigurasjon) {
         this.kvitteringBuilder = new KvitteringBuilder();
-        this.integrasjonspunktMessageSenderFacade = new IntegrasjonspunktMessageSenderFacade(databehandler, klientKonfigurasjon);
-
-        this.klientKonfigurasjon = klientKonfigurasjon;
+        this.integrasjonspunktMessageSenderFacade = new IntegrasjonspunktMessageSenderFacade(klientKonfigurasjon);
         this.databehandler = databehandler;
     }
 
@@ -52,7 +48,7 @@ public class SikkerDigitalPostKlient {
         StandardBusinessDocument sbd = SBDForsendelseBuilder.buildSBD(databehandler.organisasjonsnummer, forsendelse);
         integrasjonspunktMessageSenderFacade.send(sbd, forsendelse.getDokumentpakke());
 
-        return null;
+        return new SendResultat(sbd.getConversationId());
     }
 
     /**
@@ -153,6 +149,7 @@ public class SikkerDigitalPostKlient {
      * @see <a href="https://docs.spring.io/spring-ws/docs/3.0.7.RELEASE/reference/#_using_the_client_side_api">Spring WS - 6.2. Using the client-side API</a>
      * @see <a href="https://docs.spring.io/spring-ws/docs/3.0.7.RELEASE/reference/#_client_side_testing">Spring WS - 6.3. Client-side testing</a>
      */
+    @Deprecated
     public void getMeldingTemplate() {
     }
 

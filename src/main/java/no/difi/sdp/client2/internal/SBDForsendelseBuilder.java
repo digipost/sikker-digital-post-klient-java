@@ -5,15 +5,15 @@ import no.difi.sdp.client2.domain.DatabehandlerOrganisasjonsnummer;
 import no.difi.sdp.client2.domain.ForretningsMelding;
 import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.digital_post.DigitalPost;
-import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocument;
-import no.difi.sdp.client2.domain.sbdh.StandardBusinessDocumentHeader;
+import no.difi.sdp.client2.domain.sbd.StandardBusinessDocument;
+import no.difi.sdp.client2.domain.sbd.StandardBusinessDocumentHeader;
 
 import java.time.Clock;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 import static no.difi.sdp.client2.domain.Forsendelse.Type.DIGITAL;
-import static no.difi.sdp.client2.domain.sbdh.Process.DIGITAL_POST_INFO;
+import static no.difi.sdp.client2.domain.sbd.Process.DIGITAL_POST_INFO;
+import static no.difi.sdp.client2.domain.sbd.Process.DIGITAL_POST_VEDTAK;
 
 public class SBDForsendelseBuilder {
     public static StandardBusinessDocument buildSBD(DatabehandlerOrganisasjonsnummer databehandler, Forsendelse forsendelse) {
@@ -39,7 +39,7 @@ public class SBDForsendelseBuilder {
 
         String konversasjonsId = forsendelse.getKonversasjonsId();
 
-        final StandardBusinessDocumentHeader sbdHeader = new StandardBusinessDocumentHeader.Builder().process(DIGITAL_POST_INFO)
+        final StandardBusinessDocumentHeader sbdHeader = new StandardBusinessDocumentHeader.Builder().process(DIGITAL_POST_VEDTAK)
             .standard(forsendelse.type)
             .from(databehandler).onBehalfOf(avsender.getOrganisasjonsnummer())
             .to(forsendelse.getMottaker())
