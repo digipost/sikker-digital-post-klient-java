@@ -9,6 +9,7 @@ import no.difi.sdp.client2.domain.fysisk_post.Landkoder;
 import no.difi.sdp.client2.domain.fysisk_post.Posttype;
 import no.difi.sdp.client2.domain.fysisk_post.Returhaandtering;
 import no.difi.sdp.client2.domain.fysisk_post.Utskriftsfarge;
+import no.digipost.api.representations.Organisasjonsnummer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

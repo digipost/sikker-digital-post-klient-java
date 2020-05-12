@@ -1,5 +1,7 @@
 package no.difi.sdp.client2.domain;
 
+import no.digipost.api.representations.Organisasjonsnummer;
+
 @Deprecated
 public class TekniskMottaker {
 

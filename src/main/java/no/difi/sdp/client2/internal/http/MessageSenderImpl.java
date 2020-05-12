@@ -92,16 +92,22 @@ public class MessageSenderImpl implements MessageSender {
         httpPost.setEntity(new StringEntity(json));
         httpPost.setHeader("content-type", "application/json");
         CloseableHttpResponse response = httpClient.execute(httpPost);
-        LOG.debug("Response fra integrasjonspunkt: {}",EntityUtils.toString(response.getEntity()));
-        handleResponse(response.getStatusLine().getStatusCode());
+        String responseEntity = EntityUtils.toString(response.getEntity());
+        LOG.debug("Response fra integrasjonspunkt: {}", responseEntity);
+        handleResponse(response.getStatusLine().getStatusCode(), responseEntity);
 
-        LOG.info(EntityUtils.toString(response.getEntity()));
+        LOG.info("Opprettet melding til integrasjonspunkt. Klar for å legge til dokumenter.");
+    }
+
+    private void handleResponse(int statusCode, String response) {
+        if (statusCode / 100 != 2) {
+            String message = String.format("Received none 2xx status code from integrasjonspunkt: %d. Response: \n %s", statusCode, response);
+            throw new SendException(message, fraHttpStatusCode(statusCode), null);
+        }
     }
 
     private void handleResponse(int statusCode) {
-        if (statusCode / 100 != 2) {
-            throw new SendException("Received none 2xx code: " + statusCode, fraHttpStatusCode(statusCode), null);
-        }
+        handleResponse(statusCode, "");
     }
 
     private void addContent(String conversationId, MedDokumentEgenskaper dokument) throws IOException {

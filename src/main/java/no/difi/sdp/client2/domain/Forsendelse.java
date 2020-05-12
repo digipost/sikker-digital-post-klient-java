@@ -2,7 +2,6 @@ package no.difi.sdp.client2.domain;
 
 import no.difi.sdp.client2.domain.digital_post.DigitalPost;
 import no.difi.sdp.client2.domain.fysisk_post.FysiskPost;
-import no.digipost.api.representations.EbmsOutgoingMessage;
 
 import java.util.UUID;
 
@@ -83,8 +82,8 @@ public class Forsendelse {
     }
 
     @Deprecated
-    public EbmsOutgoingMessage.Prioritet getPrioritet() {
-        return EbmsOutgoingMessage.Prioritet.NORMAL;
+    public Prioritet getPrioritet() {
+        return Prioritet.NORMAL;
     }
 
     public Avsender getAvsender() {
@@ -153,8 +152,11 @@ public class Forsendelse {
             return this;
         }
 
+        /**
+         * Standard er {@link no.difi.sdp.client2.domain.Prioritet#NORMAL}
+         */
         @Deprecated
-        public Builder prioritet(EbmsOutgoingMessage.Prioritet prioritet) {
+        public Builder prioritet(Prioritet prioritet) {
             return this;
         }
 

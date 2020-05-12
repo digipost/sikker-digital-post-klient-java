@@ -1,7 +1,7 @@
 package no.difi.sdp.client2.domain.sbd;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import no.difi.sdp.client2.domain.Organisasjonsnummer;
+import no.digipost.api.representations.Organisasjonsnummer;
 
 import java.io.Serializable;
 import java.util.Objects;

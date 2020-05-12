@@ -1,4 +1,4 @@
-package no.difi.sdp.client2.domain;
+package no.digipost.api.representations;
 
 import java.util.Collection;
 import java.util.Objects;

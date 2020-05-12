@@ -5,7 +5,7 @@ import no.difi.sdp.client2.domain.AvsenderOrganisasjonsnummer;
 import no.difi.sdp.client2.domain.DatabehandlerOrganisasjonsnummer;
 import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.Mottaker;
-import no.difi.sdp.client2.domain.Organisasjonsnummer;
+import no.digipost.api.representations.Organisasjonsnummer;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -13,8 +13,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static no.difi.sdp.client2.domain.Organisasjonsnummer.COUNTRY_CODE_ORGANIZATION_NUMBER_NORWAY;
-import static no.difi.sdp.client2.domain.Organisasjonsnummer.ISO6523_ACTORID;
+import static no.digipost.api.representations.Organisasjonsnummer.COUNTRY_CODE_ORGANIZATION_NUMBER_NORWAY;
+import static no.digipost.api.representations.Organisasjonsnummer.ISO6523_ACTORID;
 
 
 public class StandardBusinessDocumentHeader {

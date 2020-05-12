@@ -12,7 +12,7 @@ import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.MetadataDokument;
 import no.difi.sdp.client2.domain.Mottaker;
 import no.difi.sdp.client2.domain.Noekkelpar;
-import no.difi.sdp.client2.domain.Organisasjonsnummer;
+import no.digipost.api.representations.Organisasjonsnummer;
 import no.difi.sdp.client2.domain.Sertifikat;
 import no.difi.sdp.client2.domain.digital_post.DigitalPost;
 import no.difi.sdp.client2.domain.digital_post.EpostVarsel;
@@ -78,8 +78,8 @@ public class ObjectMother {
                 .virkningsdato(new Date())
                 .aapningskvittering(false)
                 .sikkerhetsnivaa(Sikkerhetsnivaa.NIVAA_3)
-                .epostVarsel(epostVarsel)
-                .smsVarsel(smsVarsel)
+//                .epostVarsel(epostVarsel)
+//                .smsVarsel(smsVarsel)
                 .build();
     }
 

@@ -6,7 +6,7 @@ import no.difi.sdp.client2.domain.Avsender;
 import no.difi.sdp.client2.domain.Databehandler;
 import no.difi.sdp.client2.domain.Forsendelse;
 import no.difi.sdp.client2.domain.Miljo;
-import no.difi.sdp.client2.domain.Organisasjonsnummer;
+import no.digipost.api.representations.Organisasjonsnummer;
 import no.difi.sdp.client2.domain.kvittering.ForretningsKvittering;
 import no.difi.sdp.client2.domain.kvittering.KvitteringForespoersel;
 import no.difi.sdp.client2.domain.kvittering.LeveringsKvittering;

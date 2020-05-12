@@ -103,9 +103,9 @@ public class SikkerDigitalPostKlient {
             }
 
         }
-        LOG.info("Antall forsøk på å hente kvittering overskredet. " +
+        LOG.warn("Antall forsøk på å hente kvittering overskredet. " +
             "Det kan komme av det er mange " + SENDT + " og " + OPPRETTET + "-kvitteringer på integrasjonspunktkøen." +
-            "Hent kvitteringer på nyttReturner.");
+            " Prøv igjen.");
         return null;
     }
 
