@@ -2,6 +2,7 @@ package no.difi.sdp.client2.domain.kvittering;
 
 import no.difi.sdp.client2.domain.Prioritet;
 
+@Deprecated
 public class KvitteringForespoersel {
 
     private Prioritet prioritet;

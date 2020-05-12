@@ -5,7 +5,7 @@ import java.net.URI;
 
 public class Miljo {
 
-    URI integrasjonspunktRoot;
+    final URI integrasjonspunktRoot;
 
     public Miljo(URI integrasjonspunktRoot) {
         this.integrasjonspunktRoot = integrasjonspunktRoot;
@@ -15,7 +15,4 @@ public class Miljo {
         return integrasjonspunktRoot;
     }
 
-    public void setIntegrasjonspunktRoot(URI integrasjonspunktRoot) {
-        this.integrasjonspunktRoot = integrasjonspunktRoot;
-    }
 }

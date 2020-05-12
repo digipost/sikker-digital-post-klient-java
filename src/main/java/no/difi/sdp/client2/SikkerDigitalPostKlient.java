@@ -63,8 +63,41 @@ public class SikkerDigitalPostKlient {
      * <dd>Minimum 1 minutt</dd>
      * </dl>
      */
+    public ForretningsKvittering hentKvittering() throws SendException {
+        return hentKvitteringOgBekreftForrige(null, null);
+    }
+
+    /**
+     * Forespør kvittering for forsendelser. Kvitteringer blir tilgjengeliggjort etterhvert som de er klare i meldingsformidler.
+     * Det er ikke mulig å etterspørre kvittering for en spesifikk forsendelse.
+     * <p>
+     * Dersom det ikke er tilgjengelige kvitteringer skal det ventes følgende tidsintervaller før en ny forespørsel gjøres:
+     * <dl>
+     * <dt>normal</dt>
+     * <dd>Minimum 10 minutter</dd>
+     * <dt>prioritert</dt>
+     * <dd>Minimum 1 minutt</dd>
+     * </dl>
+     */
     public ForretningsKvittering hentKvittering(KvitteringForespoersel kvitteringForespoersel) throws SendException {
         return hentKvitteringOgBekreftForrige(kvitteringForespoersel, null);
+    }
+
+    /**
+     * Forespør kvittering for forsendelser med mulighet til å samtidig bekrefte på forrige kvittering for å slippe å kjøre eget kall for bekreft.
+     * Kvitteringer blir tilgjengeliggjort etterhvert som de er klare i meldingsformidler. Det er ikke mulig å etterspørre kvittering for en
+     * spesifikk forsendelse.
+     * <p>
+     * Dersom det ikke er tilgjengelige kvitteringer skal det ventes følgende tidsintervaller før en ny forespørsel gjøres:
+     * <dl>
+     * <dt>normal</dt>
+     * <dd>Minimum 10 minutter</dd>
+     * <dt>prioritert</dt>
+     * <dd>Minimum 1 minutt</dd>
+     * </dl>
+     */
+    public ForretningsKvittering hentKvitteringOgBekreftForrige(KanBekreftesSomBehandletKvittering forrigeKvittering) throws SendException {
+        return hentKvitteringOgBekreftForrige(null, forrigeKvittering);
     }
 
     /**
@@ -137,20 +170,4 @@ public class SikkerDigitalPostKlient {
     public void setExceptionMapper(ExceptionMapper exceptionMapper) {
         this.integrasjonspunktMessageSenderFacade.setExceptionMapper(exceptionMapper);
     }
-
-    /**
-     * Hent ut Spring {@code WebServiceTemplate} som er konfigurert internt, og brukes av biblioteket
-     * til kommunikasjon med meldingsformidler. Ved hjelp av denne instansen kan man f.eks. sette opp en
-     * {@code MockWebServiceServer} for bruk i tester.
-     * <p>
-     * Man vil ikke under normale omstendigheter aksessere denne i produksjonskode.
-     *
-     * @return Spring {@code WebServiceTemplate} som er konfigurert internt i klientbiblioteket
-     * @see <a href="https://docs.spring.io/spring-ws/docs/3.0.7.RELEASE/reference/#_using_the_client_side_api">Spring WS - 6.2. Using the client-side API</a>
-     * @see <a href="https://docs.spring.io/spring-ws/docs/3.0.7.RELEASE/reference/#_client_side_testing">Spring WS - 6.3. Client-side testing</a>
-     */
-    @Deprecated
-    public void getMeldingTemplate() {
-    }
-
 }
