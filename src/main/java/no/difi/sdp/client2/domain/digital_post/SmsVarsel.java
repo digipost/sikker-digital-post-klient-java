@@ -13,6 +13,10 @@ public class SmsVarsel extends Varsel {
         super(varslingsTekst);
     }
 
+    /**
+     * Integrasjonspunkt er ansvarlig for å hente mobilnummer til mottaker.
+     * @see #builder(String)
+     */
     @Deprecated
     public static Builder builder(String mobilnummer, String varslingsTekst) {
         return new Builder(varslingsTekst);

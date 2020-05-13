@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-@Deprecated
 public class EpostVarsel extends Varsel {
 
     private static final Logger LOG = LoggerFactory.getLogger(EpostVarsel.class);
@@ -20,7 +19,10 @@ public class EpostVarsel extends Varsel {
         return null;
     }
 
-    @Deprecated
+    /**
+     * Integrasjonspunkt er ansvarlig for å hente epostadresse til mottaker.
+     * @see #builder(String)
+     */
     public static Builder builder(String epostadresse, String varslingsTekst) {
         return new Builder(varslingsTekst);
     }

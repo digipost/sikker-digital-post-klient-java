@@ -13,6 +13,9 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.text.MessageFormat;
 
+/**
+ * Benyttes ikke.
+ */
 @Deprecated
 public class Noekkelpar {
 

@@ -81,6 +81,10 @@ public class Forsendelse {
         return mpcId;
     }
 
+    /**
+     *
+     * @return returnerer alltid Prioritet.NORMAL.
+     */
     @Deprecated
     public Prioritet getPrioritet() {
         return Prioritet.NORMAL;
@@ -139,12 +143,7 @@ public class Forsendelse {
         }
 
         /**
-         * Brukes til å skille mellom ulike kvitteringskøer for samme tekniske avsender. En forsendelse gjort med en
-         * MPC Id vil kun dukke opp i kvitteringskøen med samme MPC Id.
-         *
-         * Standardverdi er blank MPC Id.
-         *
-         * @see no.difi.sdp.client2.domain.kvittering.KvitteringForespoersel.Builder#mpcId(String)
+         * Klientbibliotek har ikke lengre forhold til mpcID.
          */
         @Deprecated
         public Builder mpcId(String mpcId) {
@@ -153,7 +152,7 @@ public class Forsendelse {
         }
 
         /**
-         * Standard er {@link no.difi.sdp.client2.domain.Prioritet#NORMAL}
+         * Klientbibliotek har ikke lengre forhold til Prioritet.
          */
         @Deprecated
         public Builder prioritet(Prioritet prioritet) {

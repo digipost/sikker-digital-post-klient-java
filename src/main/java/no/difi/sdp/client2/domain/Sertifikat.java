@@ -13,6 +13,9 @@ import java.security.cert.X509Certificate;
 
 import static java.util.Base64.getDecoder;
 
+/**
+ * Benyttes ikke.
+ */
 @Deprecated
 public class Sertifikat {
 

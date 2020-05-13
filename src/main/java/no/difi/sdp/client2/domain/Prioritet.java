@@ -2,6 +2,9 @@ package no.difi.sdp.client2.domain;
 
 import no.digipost.api.representations.EbmsOutgoingMessage;
 
+/**
+ * Benyttes ikke.
+ */
 @Deprecated
 public enum Prioritet {
 

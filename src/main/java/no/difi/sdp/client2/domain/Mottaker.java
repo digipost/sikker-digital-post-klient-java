@@ -30,12 +30,7 @@ public class Mottaker {
 
 
     /**
-     * Informasjon om mottaker. Vil vanligvis være hentet fra <a href="http://begrep.difi.no/Oppslagstjenesten/">Oppslagstjenesten</a>.
-     *
-     * @param personidentifikator Identifikator (fødselsnummer eller D-nummer) til mottaker av brevet.
-     * @param postkasseadresse Mottakerens adresse hos postkasseleverandøren.
-     * @param mottakerSertifikat Mottakers sertifikat.
-     * @param organisasjonsnummerPostkasse Identifikator (organisasjonsnummer) til virksomheten som er sluttmottaker i meldingsprosessen.
+     * @see #builder(String)
      */
     @Deprecated
     public static Builder builder(String personidentifikator, String postkasseadresse, Sertifikat mottakerSertifikat, Organisasjonsnummer organisasjonsnummerPostkasse) {
@@ -43,7 +38,6 @@ public class Mottaker {
     }
 
     /**
-     * Informasjon om mottaker. Vil vanligvis være hentet fra <a href="http://begrep.difi.no/Oppslagstjenesten/">Oppslagstjenesten</a>.
      *
      * @param personidentifikator Identifikator (fødselsnummer eller D-nummer) til mottaker av brevet.
      */

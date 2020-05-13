@@ -2,6 +2,9 @@ package no.difi.sdp.client2.domain;
 
 import no.digipost.api.representations.Organisasjonsnummer;
 
+/**
+ * Benyttes ikke.
+ */
 @Deprecated
 public class TekniskMottaker {
 
