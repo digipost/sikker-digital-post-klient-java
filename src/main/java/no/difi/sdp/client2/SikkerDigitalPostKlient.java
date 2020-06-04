@@ -118,7 +118,7 @@ public class SikkerDigitalPostKlient {
             bekreft(forrigeKvittering);
         }
 
-        //TODO: Discuss guard
+        // This guard may be to low or high. The best thing to do would be to set integrasjonspunktet to not put SENDT and OPPRETTET-kvitteringer on the queue.
         int guard = 100;
         for (int count = 0; count < guard; count++) {
             final Optional<IntegrasjonspunktKvittering> kvitteringOptional = integrasjonspunktMessageSenderFacade.hentKvittering();

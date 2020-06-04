@@ -88,7 +88,7 @@ String getReferanseTilMeldingsId();
 // Returnerer nå `0` 
 long getFakturerbareBytes(); 
 ```
-Det er samtidig innført en ny metode, som det nå anbefales å benytte:
+Det er samtidig innført en ny metode, som burde benyttes fremfor dem over:
 ```java
 String getConversationId()
 ```
